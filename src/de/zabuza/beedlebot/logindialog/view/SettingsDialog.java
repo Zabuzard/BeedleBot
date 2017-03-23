@@ -53,7 +53,7 @@ public final class SettingsDialog extends JDialog {
 	/**
 	 * The height of the dialog.
 	 */
-	private final static int HEIGHT = 450;
+	private final static int HEIGHT = 380;
 	/**
 	 * The origin offset of the dialog to the owner, in both directions.
 	 */
@@ -278,6 +278,7 @@ public final class SettingsDialog extends JDialog {
 	 *            The owning frame of this dialog
 	 */
 	private void initialize(final JFrame owner) {
+		setIconImage(owner.getIconImage());
 		setBounds(owner.getX() + OWNER_OFFSET, owner.getY() + OWNER_OFFSET, WIDTH, HEIGHT);
 		setResizable(false);
 		initializePanels();
@@ -326,12 +327,12 @@ public final class SettingsDialog extends JDialog {
 		mElements.add(mBrowserBinaryBtn);
 
 		mSaveBtn = new JButton("Save");
-		mSaveBtn.setBounds((WIDTH / 2) - 100, 380, 80, 20);
+		mSaveBtn.setBounds((WIDTH / 2) - 100, 315, 80, 20);
 		mTrailerPanel.add(mSaveBtn);
 		mElements.add(mSaveBtn);
 
 		mCancelBtn = new JButton("Cancel");
-		mCancelBtn.setBounds((WIDTH / 2) + 20, 380, 80, 20);
+		mCancelBtn.setBounds((WIDTH / 2) + 20, 315, 80, 20);
 		mTrailerPanel.add(mCancelBtn);
 		mElements.add(mCancelBtn);
 	}
@@ -456,7 +457,7 @@ public final class SettingsDialog extends JDialog {
 		mBinaryPanel.setLayout(null);
 
 		mTrailerPanel = new JPanel();
-		mTrailerPanel.setBounds(10, 370, WIDTH - 25, 80);
+		mTrailerPanel.setBounds(10, 310, WIDTH - 25, 70);
 		mContainer.add(mTrailerPanel);
 		mTrailerPanel.setLayout(null);
 	}

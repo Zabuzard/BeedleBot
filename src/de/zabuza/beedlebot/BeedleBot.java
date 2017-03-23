@@ -1,7 +1,11 @@
 package de.zabuza.beedlebot;
 
 import java.awt.AWTException;
+import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
@@ -16,15 +20,18 @@ import de.zabuza.beedlebot.tray.TrayManager;
 public final class BeedleBot {
 	private TrayManager mTrayManager;
 	private LoginDialog mLoginDialog;
+	private Image mIconImage;
 
 	public BeedleBot() {
 		mTrayManager = null;
 		mLoginDialog = null;
+		mIconImage = null;
 	}
 
 	public void initialize() throws IOException, AWTException {
 		// TODO Correct error handling, don't use throw
-		mTrayManager = new TrayManager(this);
+		mIconImage = ImageIO.read(new File("res/img/icon.png"));
+		mTrayManager = new TrayManager(this, mIconImage);
 		mTrayManager.addTrayIcon();
 	}
 
@@ -32,7 +39,7 @@ public final class BeedleBot {
 		// TODO Remove debug
 		System.out.println("An");
 
-		mLoginDialog = new LoginDialog(this);
+		mLoginDialog = new LoginDialog(this, mIconImage);
 	}
 
 	public void startService(final IUserSettingsProvider userSettingsProvider,

@@ -28,11 +28,11 @@ public final class LoginDialogView {
 	/**
 	 * Height of the view.
 	 */
-	public static final int HEIGHT = 425;
+	public static final int HEIGHT = 225;
 	/**
 	 * Width of the view.
 	 */
-	public static final int WIDTH = 450;
+	public static final int WIDTH = 225;
 	/**
 	 * The default amount of columns for fields of the view.
 	 */
@@ -256,11 +256,11 @@ public final class LoginDialogView {
 	 */
 	private void initializeButtons() {
 		mLoginBtn = new JButton("Login");
-		mLoginBtn.setBounds(200, 210, 100, 23);
+		mLoginBtn.setBounds(50, 130, 100, 23);
 		mMainPanel.add(mLoginBtn);
 
 		mSettingsBtn = new LinkButton("Settings");
-		mSettingsBtn.setBounds(350, 0, 90, 23);
+		mSettingsBtn.setBounds(130, 0, 80, 23);
 		mTrailerPanel.add(mSettingsBtn);
 	}
 
@@ -270,14 +270,14 @@ public final class LoginDialogView {
 	private void initializeInputFields() {
 		mUsernameField = new JTextField();
 		mUsernameField.setHorizontalAlignment(SwingConstants.LEFT);
-		mUsernameField.setBounds((mMainPanel.getWidth() / 2) + 90, 0, 123, 20);
+		mUsernameField.setBounds(70, 0, 123, 20);
 		mMainPanel.add(mUsernameField);
 		mInputElements.add(mUsernameField);
 		mUsernameField.setColumns(DEFAULT_FIELD_COLUMNS);
 
 		mPasswordField = new JPasswordField();
 		mPasswordField.setHorizontalAlignment(SwingConstants.LEFT);
-		mPasswordField.setBounds((mMainPanel.getWidth() / 2) + 90, 30, 123, 20);
+		mPasswordField.setBounds(70, 30, 123, 20);
 		mMainPanel.add(mPasswordField);
 		mInputElements.add(mPasswordField);
 		mPasswordField.setColumns(DEFAULT_FIELD_COLUMNS);
@@ -289,7 +289,7 @@ public final class LoginDialogView {
 				mWorldChoiceBox.setSelectedItem(world);
 			}
 		}
-		mWorldChoiceBox.setBounds((mMainPanel.getWidth() / 2) + 90, 60, 123, 20);
+		mWorldChoiceBox.setBounds(70, 60, 123, 20);
 		mMainPanel.add(mWorldChoiceBox);
 		mInputElements.add(mWorldChoiceBox);
 
@@ -300,7 +300,7 @@ public final class LoginDialogView {
 				mBrowserChoiceBox.setSelectedItem(browser);
 			}
 		}
-		mBrowserChoiceBox.setBounds((mMainPanel.getWidth() / 2) + 90, 170, 123, 20);
+		mBrowserChoiceBox.setBounds(70, 90, 123, 20);
 		mMainPanel.add(mBrowserChoiceBox);
 		mInputElements.add(mBrowserChoiceBox);
 	}
@@ -312,25 +312,25 @@ public final class LoginDialogView {
 		final JLabel usernameLbl = new JLabel("Username:");
 		usernameLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		usernameLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
-		usernameLbl.setBounds((mMainPanel.getWidth() / 2) + 20, 0, 65, 14);
+		usernameLbl.setBounds(0, 0, 65, 14);
 		mMainPanel.add(usernameLbl);
 
 		final JLabel passwordLbl = new JLabel("Password:");
 		passwordLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		passwordLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
-		passwordLbl.setBounds((mMainPanel.getWidth() / 2) + 20, 30, 65, 14);
+		passwordLbl.setBounds(0, 30, 65, 14);
 		mMainPanel.add(passwordLbl);
 
 		final JLabel worldChoiceLbl = new JLabel("World:");
 		worldChoiceLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		worldChoiceLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
-		worldChoiceLbl.setBounds((mMainPanel.getWidth() / 2) + 20, 60, 65, 14);
+		worldChoiceLbl.setBounds(0, 60, 65, 14);
 		mMainPanel.add(worldChoiceLbl);
 
 		final JLabel browserChoiceLbl = new JLabel("Browser:");
 		browserChoiceLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		browserChoiceLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
-		browserChoiceLbl.setBounds((mMainPanel.getWidth() / 2) + 20, 170, 65, 14);
+		browserChoiceLbl.setBounds(0, 90, 65, 14);
 		mMainPanel.add(browserChoiceLbl);
 	}
 
@@ -339,12 +339,12 @@ public final class LoginDialogView {
 	 */
 	private void initializePanels() {
 		mMainPanel = new JPanel();
-		mMainPanel.setBounds(10, 10, WIDTH - 25, 240);
+		mMainPanel.setBounds(10, 10, WIDTH - 25, 160);
 		mContainer.add(mMainPanel);
 		mMainPanel.setLayout(null);
 
 		mTrailerPanel = new JPanel();
-		mTrailerPanel.setBounds(10, 370, WIDTH - 25, 50);
+		mTrailerPanel.setBounds(10, 170, WIDTH - 25, 50);
 		mContainer.add(mTrailerPanel);
 		mTrailerPanel.setLayout(null);
 	}

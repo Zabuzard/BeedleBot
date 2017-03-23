@@ -6,10 +6,7 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import de.zabuza.beedlebot.BeedleBot;
 import de.zabuza.beedlebot.tray.listener.ExitListener;
@@ -24,10 +21,12 @@ public final class TrayManager {
 	private final BeedleBot mBeedleBot;
 	private SystemTray mSystemTray;
 	private TrayIcon mTrayIcon;
+	private final Image mTrayIconImage;
 	
-	public TrayManager(final BeedleBot beedleBot) throws IOException {
+	public TrayManager(final BeedleBot beedleBot, final Image trayIconImage) throws IOException {
 		//TODO Correct error handling, don't use throw
 		mBeedleBot = beedleBot;
+		mTrayIconImage = trayIconImage;
 		initialize();
 	}
 	
@@ -42,8 +41,7 @@ public final class TrayManager {
 		
 		//TODO Correct error handling, don't use throw
 		//TODO Use constants for text
-		final Image trayIconImage = ImageIO.read(new File("res/img/trayIcon.png"));
-		mTrayIcon = new TrayIcon(trayIconImage, "BeedleBot");
+		mTrayIcon = new TrayIcon(mTrayIconImage, "BeedleBot");
 		mTrayIcon.setImageAutoSize(true);
 		
 		final MenuItem restartItem = new MenuItem("Restart");

@@ -2,6 +2,7 @@ package de.zabuza.beedlebot.logindialog;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
@@ -16,8 +17,10 @@ import de.zabuza.beedlebot.logindialog.view.LoginDialogView;
  *
  */
 public final class LoginDialog {
+	
 	private JFrame mFrame;
-	public LoginDialog(final BeedleBot beedleBot) {
+	
+	public LoginDialog(final BeedleBot beedleBot, final Image iconImage) {
 		EventQueue.invokeLater(new Runnable() {
 			/*
 			 * (non-Javadoc)
@@ -33,6 +36,7 @@ public final class LoginDialog {
 					mFrame.setResizable(false);
 					// TODO Use constants for text
 					mFrame.setTitle("BeedleBot Login");
+					mFrame.setIconImage(iconImage);
 					mFrame.setBounds(0, 0, LoginDialogView.WIDTH, LoginDialogView.HEIGHT);
 					mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					mFrame.getContentPane().setLayout(null);
