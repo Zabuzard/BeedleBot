@@ -17,9 +17,9 @@ import de.zabuza.beedlebot.logindialog.view.LoginDialogView;
  *
  */
 public final class LoginDialog {
-	
+
 	private JFrame mFrame;
-	
+
 	public LoginDialog(final BeedleBot beedleBot, final Image iconImage) {
 		EventQueue.invokeLater(new Runnable() {
 			/*
@@ -58,15 +58,15 @@ public final class LoginDialog {
 			}
 		});
 	}
-	
-	public boolean isActive() {
-		return mFrame != null && mFrame.isVisible();
-	}
-	
+
 	public void dispose() {
 		if (mFrame != null) {
 			mFrame.setVisible(false);
 			mFrame.dispose();
 		}
+	}
+
+	public boolean isActive() {
+		return mFrame != null && mFrame.isVisible();
 	}
 }

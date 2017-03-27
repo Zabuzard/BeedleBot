@@ -204,6 +204,22 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see de.zabuza.beedlebot.logindialog.controller.settings.
+	 * IBrowserSettingsProvider#getBrowser()
+	 */
+	@Override
+	public EBrowser getBrowser() {
+		String value = getSetting(KEY_IDENTIFIER_BROWSER);
+		if (value != null) {
+			return EBrowser.valueOf(value);
+		} else {
+			return null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.zabuza.kivabot.model.IBrowserSettingsProvider#getBrowserBinary()
 	 */
 	@Override
@@ -238,6 +254,18 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider
+	 * #getPassword()
+	 */
+	@Override
+	public String getPassword() {
+		return getSetting(KEY_IDENTIFIER_PASSWORD);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * de.zabuza.kivabot.controller.settings.ISettingsProvider#getSetting(java.
 	 * lang.String)
 	 */
@@ -248,6 +276,35 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			value = UNKNOWN_KEY_VALUE;
 		}
 		return value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider
+	 * #getUserName()
+	 */
+	@Override
+	public String getUserName() {
+		return getSetting(KEY_IDENTIFIER_USERNAME);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider
+	 * #getWorld()
+	 */
+	@Override
+	public EWorld getWorld() {
+		String value = getSetting(KEY_IDENTIFIER_WORLD);
+		if (value != null) {
+			return EWorld.valueOf(value);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -343,63 +400,6 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 				final JTextField field = mSettingsDialog.getBrowserBinaryField();
 				field.setText(entry.getValue());
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider
-	 * #getUserName()
-	 */
-	@Override
-	public String getUserName() {
-		return getSetting(KEY_IDENTIFIER_USERNAME);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider
-	 * #getPassword()
-	 */
-	@Override
-	public String getPassword() {
-		return getSetting(KEY_IDENTIFIER_PASSWORD);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider
-	 * #getWorld()
-	 */
-	@Override
-	public EWorld getWorld() {
-		String value = getSetting(KEY_IDENTIFIER_WORLD);
-		if (value != null) {
-			return EWorld.valueOf(value);
-		} else {
-			return null;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.zabuza.beedlebot.logindialog.controller.settings.
-	 * IBrowserSettingsProvider#getBrowser()
-	 */
-	@Override
-	public EBrowser getBrowser() {
-		String value = getSetting(KEY_IDENTIFIER_BROWSER);
-		if (value != null) {
-			return EBrowser.valueOf(value);
-		} else {
-			return null;
 		}
 	}
 }

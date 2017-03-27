@@ -10,18 +10,18 @@ import de.zabuza.sparkle.freewar.EWorld;
  */
 public interface IUserSettingsProvider {
 	/**
-	 * Gets the username of the user
-	 * 
-	 * @return The username of the user or <tt>null</tt> if not set
-	 */
-	public String getUserName();
-
-	/**
 	 * Gets the password of the user.
 	 * 
 	 * @return The password of the user or <tt>null</tt> if not set
 	 */
 	public String getPassword();
+
+	/**
+	 * Gets the username of the user
+	 * 
+	 * @return The username of the user or <tt>null</tt> if not set
+	 */
+	public String getUserName();
 
 	/**
 	 * Gets the world of the user.

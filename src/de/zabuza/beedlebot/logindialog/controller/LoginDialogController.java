@@ -16,14 +16,6 @@ import de.zabuza.beedlebot.logindialog.view.LoginDialogView;
  */
 public final class LoginDialogController {
 	/**
-	 * The controller for the settings.
-	 */
-	private final SettingsController mSettingsController;
-	/**
-	 * The view of the login dialog.
-	 */
-	private final LoginDialogView mView;
-	/**
 	 * The beedle bot tool.
 	 */
 	private final BeedleBot mBeedleBot;
@@ -31,6 +23,14 @@ public final class LoginDialogController {
 	 * The owning frame of this controller.
 	 */
 	private final JFrame mOwner;
+	/**
+	 * The controller for the settings.
+	 */
+	private final SettingsController mSettingsController;
+	/**
+	 * The view of the login dialog.
+	 */
+	private final LoginDialogView mView;
 
 	/**
 	 * Creates a new controller of the login dialog by connecting it to the
@@ -61,6 +61,13 @@ public final class LoginDialogController {
 	}
 
 	/**
+	 * Shuts the beedle bot tool down.
+	 */
+	public void shutdownTool() {
+		mBeedleBot.shutdown();
+	}
+
+	/**
 	 * Starts the controller.
 	 */
 	public void start() {
@@ -80,13 +87,6 @@ public final class LoginDialogController {
 
 		// Start the login
 		mBeedleBot.startService(mSettingsController, mSettingsController);
-	}
-
-	/**
-	 * Shuts the beedle bot tool down.
-	 */
-	public void shutdownTool() {
-		mBeedleBot.shutdown();
 	}
 
 	/**

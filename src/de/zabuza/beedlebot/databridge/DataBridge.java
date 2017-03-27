@@ -36,6 +36,14 @@ public final class DataBridge {
 		mStorage = chromeDriver.getSessionStorage();
 	}
 
+	public void clearStartSignal() {
+		mStorage.removeItem(buildKey(StorageKeys.START_SIGNAL));
+	}
+
+	public void clearStopSignal() {
+		mStorage.removeItem(buildKey(StorageKeys.STOP_SIGNAL));
+	}
+
 	public boolean isStartSignalSet() {
 		final String value = mStorage.getItem(buildKey(StorageKeys.START_SIGNAL));
 		return Boolean.valueOf(value).booleanValue();
@@ -44,14 +52,6 @@ public final class DataBridge {
 	public boolean isStopSignalSet() {
 		final String value = mStorage.getItem(buildKey(StorageKeys.STOP_SIGNAL));
 		return Boolean.valueOf(value).booleanValue();
-	}
-	
-	public void clearStartSignal() {
-		mStorage.removeItem(buildKey(StorageKeys.START_SIGNAL));
-	}
-	
-	public void clearStopSignal() {
-		mStorage.removeItem(buildKey(StorageKeys.STOP_SIGNAL));
 	}
 
 	public void pushItemEntry(final ItemEntry entry) {

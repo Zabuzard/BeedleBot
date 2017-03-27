@@ -11,19 +11,19 @@ import de.zabuza.sparkle.freewar.player.IPlayer;
 public final class PushDataService {
 
 	private final BeedleService mBeedleService;
-	private final IFreewarInstance mInstance;
 	private final DataBridge mDataBridge;
+	private final IFreewarInstance mInstance;
 	private BeedleRoutine mRoutine;
 
-	public PushDataService(final BeedleService beedleService,
-			final IFreewarInstance instance, final DataBridge dataBridge) {
+	public PushDataService(final BeedleService beedleService, final IFreewarInstance instance,
+			final DataBridge dataBridge) {
 		mBeedleService = beedleService;
 		mInstance = instance;
 		mDataBridge = dataBridge;
-		
+
 		mRoutine = null;
 	}
-	
+
 	public void linkRoutine(final BeedleRoutine routine) {
 		mRoutine = routine;
 	}
@@ -32,7 +32,7 @@ public final class PushDataService {
 		if (mRoutine == null) {
 			return;
 		}
-		
+
 		final boolean isActive = mBeedleService.isPaused() || !mBeedleService.isActive();
 
 		// Push active flag

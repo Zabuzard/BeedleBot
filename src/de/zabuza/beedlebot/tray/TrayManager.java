@@ -22,47 +22,47 @@ public final class TrayManager {
 	private SystemTray mSystemTray;
 	private TrayIcon mTrayIcon;
 	private final Image mTrayIconImage;
-	
+
 	public TrayManager(final BeedleBot beedleBot, final Image trayIconImage) throws IOException {
-		//TODO Correct error handling, don't use throw
+		// TODO Correct error handling, don't use throw
 		mBeedleBot = beedleBot;
 		mTrayIconImage = trayIconImage;
 		initialize();
 	}
-	
+
+	public void addTrayIcon() throws AWTException {
+		// TODO Correct error handling, don't use throw
+		mSystemTray.add(mTrayIcon);
+	}
+
+	public void removeTrayIcon() throws AWTException {
+		// TODO Correct error handling, don't use throw
+		mSystemTray.remove(mTrayIcon);
+	}
+
 	private void initialize() throws IOException {
 		// If try is not supported, abort
 		if (!SystemTray.isSupported()) {
-			//TODO Logging
+			// TODO Logging
 			return;
 		}
-		
+
 		mSystemTray = SystemTray.getSystemTray();
-		
-		//TODO Correct error handling, don't use throw
-		//TODO Use constants for text
+
+		// TODO Correct error handling, don't use throw
+		// TODO Use constants for text
 		mTrayIcon = new TrayIcon(mTrayIconImage, "BeedleBot");
 		mTrayIcon.setImageAutoSize(true);
-		
+
 		final MenuItem restartItem = new MenuItem("Restart");
 		final MenuItem exitItem = new MenuItem("Exit");
-		
+
 		final PopupMenu popup = new PopupMenu();
 		popup.add(restartItem);
 		popup.add(exitItem);
 		mTrayIcon.setPopupMenu(popup);
-		
+
 		restartItem.addActionListener(new RestartListener(mBeedleBot));
 		exitItem.addActionListener(new ExitListener(mBeedleBot));
-	}
-	
-	public void addTrayIcon() throws AWTException {
-		//TODO Correct error handling, don't use throw
-		mSystemTray.add(mTrayIcon);
-	}
-	
-	public void removeTrayIcon() throws AWTException {
-		//TODO Correct error handling, don't use throw
-		mSystemTray.remove(mTrayIcon);
 	}
 }

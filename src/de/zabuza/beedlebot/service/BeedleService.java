@@ -11,6 +11,7 @@ public final class BeedleService extends Thread {
 	private final static long SERVICE_INTERVAL = 100;
 	private final static long UPDATE_INTERVAL = 500;
 
+	private long lastUpdateMillis;
 	private final IFreewarAPI mApi;
 	private boolean mDoRun;
 	private FetchDataService mFetchDataService;
@@ -18,9 +19,8 @@ public final class BeedleService extends Thread {
 	private IFreewarInstance mInstance;
 	private boolean mPaused;
 	private PushDataService mPushDataService;
-	private boolean mShouldStopService;
 	private BeedleRoutine mRoutine;
-	private long lastUpdateMillis;
+	private boolean mShouldStopService;
 
 	public BeedleService(final IFreewarAPI api, final IFreewarInstance instance) {
 		// TODO Start with active pause

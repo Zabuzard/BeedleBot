@@ -62,6 +62,10 @@ public final class LoginDialogView {
 	 */
 	private final List<JComponent> mInputElements;
 	/**
+	 * Login button of the view.
+	 */
+	private JButton mLoginBtn;
+	/**
 	 * The main panel of the view.
 	 */
 	private JPanel mMainPanel;
@@ -73,10 +77,6 @@ public final class LoginDialogView {
 	 * Settings button of the view.
 	 */
 	private JButton mSettingsBtn;
-	/**
-	 * Login button of the view.
-	 */
-	private JButton mLoginBtn;
 	/**
 	 * The trailer panel of the view.
 	 */
@@ -104,16 +104,6 @@ public final class LoginDialogView {
 	}
 
 	/**
-	 * Adds an action listener to the settings action.
-	 * 
-	 * @param listener
-	 *            Listener to add
-	 */
-	public void addListenerToSettingsAction(final ActionListener listener) {
-		mSettingsBtn.addActionListener(listener);
-	}
-
-	/**
 	 * Adds an action listener to the login action.
 	 * 
 	 * @param listener
@@ -121,6 +111,16 @@ public final class LoginDialogView {
 	 */
 	public void addListenerToLoginAction(final ActionListener listener) {
 		mLoginBtn.addActionListener(listener);
+	}
+
+	/**
+	 * Adds an action listener to the settings action.
+	 * 
+	 * @param listener
+	 *            Listener to add
+	 */
+	public void addListenerToSettingsAction(final ActionListener listener) {
+		mSettingsBtn.addActionListener(listener);
 	}
 
 	/**
@@ -192,6 +192,16 @@ public final class LoginDialogView {
 	}
 
 	/**
+	 * Enables or disables the login button.
+	 * 
+	 * @param enabled
+	 *            Whether the button should be enabled or disabled
+	 */
+	public void setLoginButtonEnabled(final boolean enabled) {
+		mLoginBtn.setEnabled(enabled);
+	}
+
+	/**
 	 * Sets the input password.
 	 * 
 	 * @param password
@@ -209,16 +219,6 @@ public final class LoginDialogView {
 	 */
 	public void setSettingsButtonEnabled(final boolean enabled) {
 		mSettingsBtn.setEnabled(enabled);
-	}
-
-	/**
-	 * Enables or disables the login button.
-	 * 
-	 * @param enabled
-	 *            Whether the button should be enabled or disabled
-	 */
-	public void setLoginButtonEnabled(final boolean enabled) {
-		mLoginBtn.setEnabled(enabled);
 	}
 
 	/**

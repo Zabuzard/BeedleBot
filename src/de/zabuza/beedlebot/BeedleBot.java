@@ -31,16 +31,31 @@ import de.zabuza.sparkle.webdriver.IHasWebDriver;
  *
  */
 public final class BeedleBot {
-	private TrayManager mTrayManager;
-	private LoginDialog mLoginDialog;
-	private Image mIconImage;
+	/**
+	 * 
+	 * @param args
+	 *            Not supported
+	 * @throws IOException
+	 * @throws AWTException
+	 */
+	public static void main(final String[] args) throws IOException, AWTException {
+		// TODO Correct error handling, don't use throw
+		final BeedleBot beedleBot = new BeedleBot();
+		beedleBot.initialize();
+		beedleBot.start();
+	}
+
 	private IFreewarAPI mApi;
-	private IFreewarInstance mInstance;
-	private WebDriver mDriver;
-	private DataBridge mDataBridge;
 	private BeedleService mBeedleService;
-	private PushDataService mPushDataService;
+	private DataBridge mDataBridge;
+	private WebDriver mDriver;
 	private FetchDataService mFetchDataService;
+	private Image mIconImage;
+	private IFreewarInstance mInstance;
+	private LoginDialog mLoginDialog;
+	private PushDataService mPushDataService;
+
+	private TrayManager mTrayManager;
 
 	public BeedleBot() {
 		mTrayManager = null;
@@ -60,6 +75,18 @@ public final class BeedleBot {
 		mIconImage = ImageIO.read(new File("res/img/icon.png"));
 		mTrayManager = new TrayManager(this, mIconImage);
 		mTrayManager.addTrayIcon();
+	}
+
+	public void shutdown() {
+		stop();
+		try {
+			// TODO Correct error handling
+			mTrayManager.removeTrayIcon();
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Shutdown");
 	}
 
 	public void start() {
@@ -102,10 +129,12 @@ public final class BeedleBot {
 		mBeedleService.start();
 	}
 
-	private void stopService() {
-		if (mBeedleService != null && mBeedleService.isActive()) {
-			mBeedleService.stopService();
-		}
+	public void stop() {
+		// TODO Remove debug
+		System.out.println("Aus");
+
+		stopLoginDialog();
+		stopService();
 	}
 
 	private void stopLoginDialog() {
@@ -115,38 +144,10 @@ public final class BeedleBot {
 		}
 	}
 
-	public void stop() {
-		// TODO Remove debug
-		System.out.println("Aus");
-
-		stopLoginDialog();
-		stopService();
-	}
-
-	public void shutdown() {
-		stop();
-		try {
-			// TODO Correct error handling
-			mTrayManager.removeTrayIcon();
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void stopService() {
+		if (mBeedleService != null && mBeedleService.isActive()) {
+			mBeedleService.stopService();
 		}
-		System.out.println("Shutdown");
-	}
-
-	/**
-	 * 
-	 * @param args
-	 *            Not supported
-	 * @throws IOException
-	 * @throws AWTException
-	 */
-	public static void main(final String[] args) throws IOException, AWTException {
-		// TODO Correct error handling, don't use throw
-		final BeedleBot beedleBot = new BeedleBot();
-		beedleBot.initialize();
-		beedleBot.start();
 	}
 
 }

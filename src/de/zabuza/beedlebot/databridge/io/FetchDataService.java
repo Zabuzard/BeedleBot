@@ -12,16 +12,6 @@ public final class FetchDataService {
 		mDataBridge = dataBridge;
 	}
 
-	public void update() {
-		// Fetch data
-		setStartSignal(mDataBridge.isStartSignalSet());
-		setStopSignal(mDataBridge.isStopSignalSet());
-	}
-
-	private void setStartSignal(final boolean isStartSignalSet) {
-		mIsStartSignalSet = isStartSignalSet;
-	}
-
 	public void clearStartSignal() {
 		mIsStartSignalSet = false;
 		mDataBridge.clearStartSignal();
@@ -32,16 +22,26 @@ public final class FetchDataService {
 		mDataBridge.clearStopSignal();
 	}
 
-	private void setStopSignal(final boolean isStopSignalSet) {
-		mIsStopSignalSet = isStopSignalSet;
-	}
-
 	public boolean isStartSignalSet() {
 		return mIsStartSignalSet;
 	}
 
 	public boolean isStopSignalSet() {
 		return mIsStopSignalSet;
+	}
+
+	public void update() {
+		// Fetch data
+		setStartSignal(mDataBridge.isStartSignalSet());
+		setStopSignal(mDataBridge.isStopSignalSet());
+	}
+
+	private void setStartSignal(final boolean isStartSignalSet) {
+		mIsStartSignalSet = isStartSignalSet;
+	}
+
+	private void setStopSignal(final boolean isStopSignalSet) {
+		mIsStopSignalSet = isStopSignalSet;
 	}
 
 }

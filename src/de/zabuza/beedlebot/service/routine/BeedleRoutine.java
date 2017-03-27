@@ -7,8 +7,8 @@ import de.zabuza.sparkle.freewar.IFreewarInstance;
 public final class BeedleRoutine {
 
 	private final IFreewarInstance mInstance;
-	private final BeedleService mService;
 	private EPhase mPhase;
+	private final BeedleService mService;
 
 	public BeedleRoutine(final BeedleService service, final IFreewarInstance instance) {
 		mService = service;
