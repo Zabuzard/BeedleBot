@@ -6,5 +6,5 @@ package de.zabuza.beedlebot.databridge;
  *
  */
 public enum EPhase {
-	ANALYSE, PURCHASE, WAIT
+	ANALYSE, AWAITING_DELIVERY, PURCHASE, WAIT
 }

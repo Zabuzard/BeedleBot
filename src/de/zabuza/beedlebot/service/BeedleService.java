@@ -2,6 +2,7 @@ package de.zabuza.beedlebot.service;
 
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
+import de.zabuza.beedlebot.service.routine.BeedleRoutine;
 import de.zabuza.sparkle.IFreewarAPI;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 
@@ -11,34 +12,50 @@ public final class BeedleService extends Thread {
 	private final static long UPDATE_INTERVAL = 500;
 
 	private final IFreewarAPI mApi;
-	private IFreewarInstance mInstance;
-	private PushDataService mPushDataService;
-	private FetchDataService mFetchDataService;
 	private boolean mDoRun;
-	private boolean mShouldStopService;
+	private FetchDataService mFetchDataService;
+	private boolean mHasProblem;
+	private IFreewarInstance mInstance;
 	private boolean mPaused;
-
-	private long accumulatedServiceInterval;
+	private PushDataService mPushDataService;
+	private boolean mShouldStopService;
+	private BeedleRoutine mRoutine;
+	private long lastUpdateMillis;
 
 	public BeedleService(final IFreewarAPI api, final IFreewarInstance instance) {
+		// TODO Start with active pause
 		mApi = api;
 		mInstance = instance;
 		mFetchDataService = null;
 		mPushDataService = null;
+		mRoutine = null;
 
 		mDoRun = true;
 		mShouldStopService = false;
 		mPaused = false;
+		mHasProblem = false;
 
-		accumulatedServiceInterval = 0;
+		lastUpdateMillis = 0;
 	}
 
-	public void registerPushDataService(final PushDataService pushDataService) {
-		mPushDataService = pushDataService;
+	public boolean hasProblem() {
+		return mHasProblem;
+	}
+
+	public boolean isActive() {
+		return mDoRun;
+	}
+
+	public boolean isPaused() {
+		return mPaused;
 	}
 
 	public void registerFetchDataService(final FetchDataService fetchDataService) {
 		mFetchDataService = fetchDataService;
+	}
+
+	public void registerPushDataService(final PushDataService pushDataService) {
+		mPushDataService = pushDataService;
 	}
 
 	/*
@@ -48,6 +65,11 @@ public final class BeedleService extends Thread {
 	 */
 	@Override
 	public void run() {
+		// Create and link the routine
+		mRoutine = new BeedleRoutine(this, mInstance);
+		mPushDataService.linkRoutine(mRoutine);
+
+		// Enter the service loop
 		while (mDoRun) {
 			if (mFetchDataService == null || mPushDataService == null) {
 				waitIteration();
@@ -56,8 +78,9 @@ public final class BeedleService extends Thread {
 
 			// Determine if to update services
 			final boolean doUpdate;
-			if (accumulatedServiceInterval >= UPDATE_INTERVAL) {
-				accumulatedServiceInterval = 0;
+			final long currentMillis = System.currentTimeMillis();
+			if (currentMillis - lastUpdateMillis >= UPDATE_INTERVAL) {
+				lastUpdateMillis = currentMillis;
 				doUpdate = true;
 			} else {
 				doUpdate = false;
@@ -92,10 +115,9 @@ public final class BeedleService extends Thread {
 				System.out.println("Stopping service");
 			}
 
-			// Continue service
+			// Continue routine
 			if (!mPaused) {
-				// TODO Implement
-				System.out.println("Serving");
+				mRoutine.update();
 			}
 
 			// Push data
@@ -105,10 +127,29 @@ public final class BeedleService extends Thread {
 				System.out.println("Pushed");
 			}
 
+			// Delay the next iteration
 			waitIteration();
 		}
 
+		// If the service is leaved shut it down
 		shutdown();
+	}
+
+	public void setHasProblem(final boolean hasProblem) {
+		mHasProblem = hasProblem;
+	}
+
+	public void stopService() {
+		mShouldStopService = true;
+	}
+
+	public void waitIteration() {
+		try {
+			sleep(SERVICE_INTERVAL);
+		} catch (InterruptedException e) {
+			// TODO Correct error handling and logging
+			e.printStackTrace();
+		}
 	}
 
 	private void shutdown() {
@@ -121,27 +162,5 @@ public final class BeedleService extends Thread {
 		}
 		// TODO Remove debug
 		System.out.println("Service shut down");
-	}
-
-	public boolean isPaused() {
-		return mPaused;
-	}
-
-	public void waitIteration() {
-		try {
-			accumulatedServiceInterval += SERVICE_INTERVAL;
-			sleep(SERVICE_INTERVAL);
-		} catch (InterruptedException e) {
-			// TODO Correct error handling and logging
-			e.printStackTrace();
-		}
-	}
-
-	public boolean isActive() {
-		return mDoRun;
-	}
-
-	public void stopService() {
-		mShouldStopService = true;
 	}
 }
