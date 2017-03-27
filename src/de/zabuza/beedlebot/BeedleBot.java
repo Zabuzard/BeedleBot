@@ -7,10 +7,23 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
+
+import de.zabuza.beedlebot.databridge.DataBridge;
+import de.zabuza.beedlebot.databridge.io.FetchDataService;
+import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
 import de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider;
+import de.zabuza.beedlebot.service.BeedleService;
 import de.zabuza.beedlebot.tray.TrayManager;
+import de.zabuza.sparkle.IFreewarAPI;
+import de.zabuza.sparkle.Sparkle;
+import de.zabuza.sparkle.freewar.EWorld;
+import de.zabuza.sparkle.freewar.IFreewarInstance;
+import de.zabuza.sparkle.webdriver.EBrowser;
+import de.zabuza.sparkle.webdriver.IHasWebDriver;
 
 /**
  * 
@@ -21,11 +34,25 @@ public final class BeedleBot {
 	private TrayManager mTrayManager;
 	private LoginDialog mLoginDialog;
 	private Image mIconImage;
+	private IFreewarAPI mApi;
+	private IFreewarInstance mInstance;
+	private WebDriver mDriver;
+	private DataBridge mDataBridge;
+	private BeedleService mBeedleService;
+	private PushDataService mPushDataService;
+	private FetchDataService mFetchDataService;
 
 	public BeedleBot() {
 		mTrayManager = null;
 		mLoginDialog = null;
 		mIconImage = null;
+		mApi = null;
+		mInstance = null;
+		mDriver = null;
+		mDataBridge = null;
+		mBeedleService = null;
+		mPushDataService = null;
+		mFetchDataService = null;
 	}
 
 	public void initialize() throws IOException, AWTException {
@@ -47,23 +74,53 @@ public final class BeedleBot {
 		// TODO Remove debug
 		System.out.println("Starting Service");
 
-		// TODO Implement
+		// Create Freewar API
+		final EBrowser browser = browserSettingsProvider.getBrowser();
+		mApi = new Sparkle(browser);
+		final Capabilities capabilities = mApi.createCapabilities(browser,
+				browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary());
+		mApi.setCapabilities(capabilities);
+
+		// Login and create an instance
+		final String username = userSettingsProvider.getUserName();
+		final String password = userSettingsProvider.getPassword();
+		final EWorld world = userSettingsProvider.getWorld();
+		if (username == null || username.equals("") || password == null || password.equals("") || world == null) {
+			// TODO Correct error handling and logging
+		}
+
+		mInstance = mApi.login(username, password, world);
+		mDriver = ((IHasWebDriver) mInstance).getWebDriver();
+
+		// Create and start all services
+		mDataBridge = new DataBridge(mDriver);
+		mBeedleService = new BeedleService(mApi, mInstance);
+		mPushDataService = new PushDataService(mBeedleService, mInstance, mDataBridge);
+		mFetchDataService = new FetchDataService(mDataBridge);
+		mBeedleService.registerFetchDataService(mFetchDataService);
+		mBeedleService.registerPushDataService(mPushDataService);
+		mBeedleService.start();
 	}
 
-	public void stopService() {
-		// TODO Pass stop signal to service
+	private void stopService() {
+		if (mBeedleService != null && mBeedleService.isActive()) {
+			mBeedleService.stopService();
+		}
+	}
+
+	private void stopLoginDialog() {
+		if (mLoginDialog != null && mLoginDialog.isActive()) {
+			mLoginDialog.dispose();
+			mLoginDialog = null;
+		}
 	}
 
 	public void stop() {
 		// TODO Remove debug
 		System.out.println("Aus");
 
-		if (mLoginDialog != null && mLoginDialog.isActive()) {
-			mLoginDialog.dispose();
-			mLoginDialog = null;
-		}
-
-		// TODO Pass stop signal to service
+		stopLoginDialog();
+		stopService();
 	}
 
 	public void shutdown() {

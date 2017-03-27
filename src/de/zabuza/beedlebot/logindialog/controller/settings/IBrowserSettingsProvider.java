@@ -24,4 +24,11 @@ public interface IBrowserSettingsProvider {
 	 * @return The driver for the browser or <tt>null</tt> if not set
 	 */
 	public String getDriverForBrowser(final EBrowser browser);
+
+	/**
+	 * Gets the browser to use.
+	 * 
+	 * @return The browser to use or <tt>null</tt> if not set
+	 */
+	public EBrowser getBrowser();
 }

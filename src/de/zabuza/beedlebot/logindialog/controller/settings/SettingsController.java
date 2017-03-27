@@ -386,4 +386,20 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			return null;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.zabuza.beedlebot.logindialog.controller.settings.
+	 * IBrowserSettingsProvider#getBrowser()
+	 */
+	@Override
+	public EBrowser getBrowser() {
+		String value = getSetting(KEY_IDENTIFIER_BROWSER);
+		if (value != null) {
+			return EBrowser.valueOf(value);
+		} else {
+			return null;
+		}
+	}
 }
