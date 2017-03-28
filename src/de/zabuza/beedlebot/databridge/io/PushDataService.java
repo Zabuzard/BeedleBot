@@ -3,28 +3,28 @@ package de.zabuza.beedlebot.databridge.io;
 import de.zabuza.beedlebot.databridge.DataBridge;
 import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.EState;
-import de.zabuza.beedlebot.service.BeedleService;
-import de.zabuza.beedlebot.service.routine.BeedleRoutine;
+import de.zabuza.beedlebot.service.Service;
+import de.zabuza.beedlebot.service.routine.Routine;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.player.IPlayer;
 
 public final class PushDataService {
 
-	private final BeedleService mBeedleService;
+	private final Service mService;
 	private final DataBridge mDataBridge;
 	private final IFreewarInstance mInstance;
-	private BeedleRoutine mRoutine;
+	private Routine mRoutine;
 
-	public PushDataService(final BeedleService beedleService, final IFreewarInstance instance,
+	public PushDataService(final Service service, final IFreewarInstance instance,
 			final DataBridge dataBridge) {
-		mBeedleService = beedleService;
+		mService = service;
 		mInstance = instance;
 		mDataBridge = dataBridge;
 
 		mRoutine = null;
 	}
 
-	public void linkRoutine(final BeedleRoutine routine) {
+	public void linkRoutine(final Routine routine) {
 		mRoutine = routine;
 	}
 
@@ -33,7 +33,7 @@ public final class PushDataService {
 			return;
 		}
 
-		final boolean isActive = mBeedleService.isPaused() || !mBeedleService.isActive();
+		final boolean isActive = mService.isPaused() || !mService.isActive();
 
 		// Push active flag
 		mDataBridge.setActive(isActive);
@@ -46,7 +46,7 @@ public final class PushDataService {
 		final EState state;
 		if (isActive) {
 			state = EState.INACTIVE;
-		} else if (mBeedleService.hasProblem()) {
+		} else if (mService.hasProblem()) {
 			state = EState.PROBLEM;
 		} else if (phase == EPhase.AWAITING_DELIVERY) {
 			state = EState.STANDBY;

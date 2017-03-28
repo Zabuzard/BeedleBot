@@ -1,16 +1,16 @@
 package de.zabuza.beedlebot.service.routine;
 
 import de.zabuza.beedlebot.databridge.EPhase;
-import de.zabuza.beedlebot.service.BeedleService;
+import de.zabuza.beedlebot.service.Service;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 
-public final class BeedleRoutine {
+public final class Routine {
 
 	private final IFreewarInstance mInstance;
 	private EPhase mPhase;
-	private final BeedleService mService;
+	private final Service mService;
 
-	public BeedleRoutine(final BeedleService service, final IFreewarInstance instance) {
+	public Routine(final Service service, final IFreewarInstance instance) {
 		mService = service;
 		mInstance = instance;
 		mPhase = EPhase.ANALYSE;
@@ -23,6 +23,8 @@ public final class BeedleRoutine {
 	public void update() {
 		// TODO Remove debug
 		System.out.println("Routine");
+		
+		//TODO Error checking like correct place etc.
 
 		// Analyse phase
 		if (mPhase == EPhase.ANALYSE) {

@@ -16,7 +16,7 @@ import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
 import de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider;
-import de.zabuza.beedlebot.service.BeedleService;
+import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.tray.TrayManager;
 import de.zabuza.sparkle.IFreewarAPI;
 import de.zabuza.sparkle.Sparkle;
@@ -46,7 +46,7 @@ public final class BeedleBot {
 	}
 
 	private IFreewarAPI mApi;
-	private BeedleService mBeedleService;
+	private Service mService;
 	private DataBridge mDataBridge;
 	private WebDriver mDriver;
 	private FetchDataService mFetchDataService;
@@ -65,7 +65,7 @@ public final class BeedleBot {
 		mInstance = null;
 		mDriver = null;
 		mDataBridge = null;
-		mBeedleService = null;
+		mService = null;
 		mPushDataService = null;
 		mFetchDataService = null;
 	}
@@ -121,12 +121,12 @@ public final class BeedleBot {
 
 		// Create and start all services
 		mDataBridge = new DataBridge(mDriver);
-		mBeedleService = new BeedleService(mApi, mInstance);
-		mPushDataService = new PushDataService(mBeedleService, mInstance, mDataBridge);
+		mService = new Service(mApi, mInstance);
+		mPushDataService = new PushDataService(mService, mInstance, mDataBridge);
 		mFetchDataService = new FetchDataService(mDataBridge);
-		mBeedleService.registerFetchDataService(mFetchDataService);
-		mBeedleService.registerPushDataService(mPushDataService);
-		mBeedleService.start();
+		mService.registerFetchDataService(mFetchDataService);
+		mService.registerPushDataService(mPushDataService);
+		mService.start();
 	}
 
 	public void stop() {
@@ -145,8 +145,8 @@ public final class BeedleBot {
 	}
 
 	private void stopService() {
-		if (mBeedleService != null && mBeedleService.isActive()) {
-			mBeedleService.stopService();
+		if (mService != null && mService.isActive()) {
+			mService.stopService();
 		}
 	}
 

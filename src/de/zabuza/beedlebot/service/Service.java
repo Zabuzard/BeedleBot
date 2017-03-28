@@ -2,11 +2,11 @@ package de.zabuza.beedlebot.service;
 
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
-import de.zabuza.beedlebot.service.routine.BeedleRoutine;
+import de.zabuza.beedlebot.service.routine.Routine;
 import de.zabuza.sparkle.IFreewarAPI;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 
-public final class BeedleService extends Thread {
+public final class Service extends Thread {
 
 	private final static long SERVICE_INTERVAL = 100;
 	private final static long UPDATE_INTERVAL = 500;
@@ -19,10 +19,10 @@ public final class BeedleService extends Thread {
 	private IFreewarInstance mInstance;
 	private boolean mPaused;
 	private PushDataService mPushDataService;
-	private BeedleRoutine mRoutine;
+	private Routine mRoutine;
 	private boolean mShouldStopService;
 
-	public BeedleService(final IFreewarAPI api, final IFreewarInstance instance) {
+	public Service(final IFreewarAPI api, final IFreewarInstance instance) {
 		// TODO Start with active pause
 		mApi = api;
 		mInstance = instance;
@@ -66,7 +66,7 @@ public final class BeedleService extends Thread {
 	@Override
 	public void run() {
 		// Create and link the routine
-		mRoutine = new BeedleRoutine(this, mInstance);
+		mRoutine = new Routine(this, mInstance);
 		mPushDataService.linkRoutine(mRoutine);
 
 		// Enter the service loop
