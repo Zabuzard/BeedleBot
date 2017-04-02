@@ -852,12 +852,12 @@ function updateValuePanel() {
 	// Determine value status
 	var valueClass = 'valueOk';
 	var ratio = curLifepoints / maxLifepoints;
-	if (ratio <= valueStatus.lifepoints.critical.ratio
-		|| curLifepoints <= valueStatus.lifepoints.critical.min) {
+	if (ratio <= valueStatus.lifepoints.critical.ratio ||
+		curLifepoints <= valueStatus.lifepoints.critical.min) {
 		// Critical status
 		valueClass = 'valueCritical';
-	} else if (ratio <= valueStatus.lifepoints.medium.ratio
-		|| curLifepoints <= valueStatus.lifepoints.medium.min) {
+	} else if (ratio <= valueStatus.lifepoints.medium.ratio ||
+		curLifepoints <= valueStatus.lifepoints.medium.min) {
 		// Medium status
 		valueClass = 'valueMedium';
 	}
@@ -865,8 +865,8 @@ function updateValuePanel() {
 	// Set value
 	curLifepoints = numberFormat(curLifepoints);
 	maxLifepoints = numberFormat(maxLifepoints);
-	$('#beedleLifepointCell').html('<span class="' + valueClass + '">'
-		+ curLifepoints + '</span>' + valueSeparator + maxLifepoints);
+	$('#beedleLifepointCell').html('<span class="' + valueClass + '">' +
+		curLifepoints + '</span>' + valueSeparator + maxLifepoints);
 
 	// Update gold
 	var gold = Number(getItem('gold'));
@@ -883,8 +883,8 @@ function updateValuePanel() {
 
 	// Set value
 	gold = numberFormat(gold);
-	$('#beedleGoldCell').html('<span class="' + valueClass + '">'
-		+ gold + '</span>');
+	$('#beedleGoldCell').html('<span class="' + valueClass + '">' +
+		gold + '</span>');
 
 	// Update inventory size
 	var inventorySize = Number(getItem('inventorySize'));
@@ -894,12 +894,12 @@ function updateValuePanel() {
 	valueClass = 'valueOk';
 	ratio = inventorySize / maxInventorySize;
 	var minDiff = maxInventorySize - inventorySize;
-	if (ratio >= valueStatus.inventory.critical.ratio
-		|| inventorySize <= valueStatus.inventory.critical.minDiff) {
+	if (ratio >= valueStatus.inventory.critical.ratio ||
+		inventorySize <= valueStatus.inventory.critical.minDiff) {
 		// Critical status
 		valueClass = 'valueCritical';
-	} else if (ratio >= valueStatus.inventory.medium.ratio
-		|| inventorySize <= valueStatus.inventory.medium.minDiff) {
+	} else if (ratio >= valueStatus.inventory.medium.ratio ||
+		inventorySize <= valueStatus.inventory.medium.minDiff) {
 		// Medium status
 		valueClass = 'valueMedium';
 	}
@@ -907,8 +907,8 @@ function updateValuePanel() {
 	// Set value
 	inventorySize = numberFormat(inventorySize);
 	maxInventorySize = numberFormat(maxInventorySize);
-	$('#beedleInventoryCell').html('<span class="' + valueClass + '">'
-		+ inventorySize + '</span>' + valueSeparator + maxInventorySize);
+	$('#beedleInventoryCell').html('<span class="' + valueClass + '">' +
+		inventorySize + '</span>' + valueSeparator + maxInventorySize);
 
 	// Waiting time
 	var totalTimeSeconds = Number(getItem('waitingTime'));
