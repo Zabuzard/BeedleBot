@@ -75,8 +75,6 @@ public final class DataBridge {
 		value += entryValue.toString();
 
 		mStorage.setItem(buildKey(StorageKeys.ITEM_ENTRIES), value);
-
-		System.out.println(value);
 	}
 
 	public void setActive(final boolean isActive) {
