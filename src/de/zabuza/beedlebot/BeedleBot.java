@@ -7,8 +7,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import de.zabuza.beedlebot.databridge.DataBridge;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
@@ -31,6 +32,8 @@ import de.zabuza.sparkle.webdriver.IHasWebDriver;
  *
  */
 public final class BeedleBot {
+	private static final String CHROME_USER_PROFILE_KEY = "user-data-dir";
+
 	/**
 	 * 
 	 * @param args
@@ -46,7 +49,6 @@ public final class BeedleBot {
 	}
 
 	private IFreewarAPI mApi;
-	private Service mService;
 	private DataBridge mDataBridge;
 	private WebDriver mDriver;
 	private FetchDataService mFetchDataService;
@@ -54,6 +56,7 @@ public final class BeedleBot {
 	private IFreewarInstance mInstance;
 	private LoginDialog mLoginDialog;
 	private PushDataService mPushDataService;
+	private Service mService;
 
 	private TrayManager mTrayManager;
 
@@ -104,8 +107,18 @@ public final class BeedleBot {
 		// Create Freewar API
 		final EBrowser browser = browserSettingsProvider.getBrowser();
 		mApi = new Sparkle(browser);
-		final Capabilities capabilities = mApi.createCapabilities(browser,
+
+		// Set options
+		final DesiredCapabilities capabilities = mApi.createCapabilities(browser,
 				browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary());
+		final String userProfile = browserSettingsProvider.getUserProfile();
+		// Try to set the profile if browser is chrome
+		if (browser == EBrowser.CHROME) {
+			// TODO Also support other browsers
+			final ChromeOptions options = new ChromeOptions();
+			options.addArguments(CHROME_USER_PROFILE_KEY + "=" + userProfile);
+			capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+		}
 		mApi.setCapabilities(capabilities);
 
 		// Login and create an instance
@@ -121,7 +134,7 @@ public final class BeedleBot {
 
 		// Create and start all services
 		mDataBridge = new DataBridge(mDriver);
-		mService = new Service(mApi, mInstance);
+		mService = new Service(mApi, mInstance, mDriver);
 		mPushDataService = new PushDataService(mService, mInstance, mDataBridge);
 		mFetchDataService = new FetchDataService(mDataBridge);
 		mService.registerFetchDataService(mFetchDataService);

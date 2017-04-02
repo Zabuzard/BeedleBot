@@ -11,6 +11,7 @@ public final class StorageKeys {
 	public final static String GOLD = "gold";
 	public final static String INVENTORY_SIZE = "invSize";
 	public final static String IS_ACTIVE = "isActive";
+	public final static String IS_BEEDLE_BOT_SERVING = "isBeedleBotServing";
 	public final static String ITEM_ENTRIES = "itemEntries";
 	public final static String KEY_INDEX = "beedle_";
 	public final static String MAX_INVENTORY_SIZE = "maxInvSize";

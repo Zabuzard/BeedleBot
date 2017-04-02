@@ -295,6 +295,10 @@ public final class LoginDialogView {
 
 		mBrowserChoiceBox = new JComboBox<>();
 		for (final EBrowser browser : EBrowser.values()) {
+			// TODO Also support other browsers
+			if (browser != EBrowser.CHROME) {
+				continue;
+			}
 			mBrowserChoiceBox.addItem(browser);
 			if (browser == EBrowser.CHROME) {
 				mBrowserChoiceBox.setSelectedItem(browser);

@@ -1,5 +1,7 @@
 package de.zabuza.beedlebot.service;
 
+import org.openqa.selenium.WebDriver;
+
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.routine.Routine;
@@ -14,6 +16,7 @@ public final class Service extends Thread {
 	private long lastUpdateMillis;
 	private final IFreewarAPI mApi;
 	private boolean mDoRun;
+	private final WebDriver mDriver;
 	private FetchDataService mFetchDataService;
 	private boolean mHasProblem;
 	private IFreewarInstance mInstance;
@@ -22,17 +25,17 @@ public final class Service extends Thread {
 	private Routine mRoutine;
 	private boolean mShouldStopService;
 
-	public Service(final IFreewarAPI api, final IFreewarInstance instance) {
-		// TODO Start with active pause
+	public Service(final IFreewarAPI api, final IFreewarInstance instance, WebDriver driver) {
 		mApi = api;
 		mInstance = instance;
+		mDriver = driver;
 		mFetchDataService = null;
 		mPushDataService = null;
 		mRoutine = null;
 
 		mDoRun = true;
 		mShouldStopService = false;
-		mPaused = false;
+		mPaused = true;
 		mHasProblem = false;
 
 		lastUpdateMillis = 0;
@@ -66,10 +69,11 @@ public final class Service extends Thread {
 	@Override
 	public void run() {
 		// Create and link the routine
-		mRoutine = new Routine(this, mInstance);
+		mRoutine = new Routine(this, mInstance, mDriver, mPushDataService);
 		mPushDataService.linkRoutine(mRoutine);
 
 		// Enter the service loop
+		mPushDataService.setBeedleBotServing(true);
 		while (mDoRun) {
 			if (mFetchDataService == null || mPushDataService == null) {
 				waitIteration();
@@ -89,8 +93,6 @@ public final class Service extends Thread {
 			// Fetch data
 			if (doUpdate) {
 				mFetchDataService.update();
-				// TODO Remove debug
-				System.out.println("Fetched");
 			}
 
 			// Check signals
@@ -98,21 +100,22 @@ public final class Service extends Thread {
 				if (mPaused && mFetchDataService.isStartSignalSet()) {
 					mPaused = false;
 					mFetchDataService.clearStartSignal();
+					mPushDataService.updateActiveData();
 					// TODO Remove debug
-					System.out.println("Continued");
+					System.out.println("Continued.");
 				}
 				if (!mPaused && mFetchDataService.isStopSignalSet()) {
 					mPaused = true;
 					mFetchDataService.clearStopSignal();
+					mPushDataService.updateActiveData();
 					// TODO Remove debug
-					System.out.println("Paused");
+					System.out.println("Paused.");
 				}
 			}
 			if (mShouldStopService) {
 				mDoRun = false;
 				mPaused = true;
-				// TODO Remove debug
-				System.out.println("Stopping service");
+				mPushDataService.setBeedleBotServing(false);
 			}
 
 			// Continue routine
@@ -123,8 +126,6 @@ public final class Service extends Thread {
 			// Push data
 			if (doUpdate) {
 				mPushDataService.update();
-				// TODO Remove debug
-				System.out.println("Pushed");
 			}
 
 			// Delay the next iteration

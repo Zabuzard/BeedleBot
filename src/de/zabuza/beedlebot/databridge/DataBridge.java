@@ -75,10 +75,16 @@ public final class DataBridge {
 		value += entryValue.toString();
 
 		mStorage.setItem(buildKey(StorageKeys.ITEM_ENTRIES), value);
+
+		System.out.println(value);
 	}
 
 	public void setActive(final boolean isActive) {
 		mStorage.setItem(buildKey(StorageKeys.IS_ACTIVE), isActive + "");
+	}
+
+	public void setBeedleBotServing(final boolean isBeedleBotServing) {
+		mStorage.setItem(buildKey(StorageKeys.IS_BEEDLE_BOT_SERVING), isBeedleBotServing + "");
 	}
 
 	public void setCurrentLifepoints(final int currentLifepoints) {

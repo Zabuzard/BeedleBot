@@ -47,6 +47,10 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 */
 	private static final String KEY_IDENTIFIER_PASSWORD = "password";
 	/**
+	 * Key identifier for user profile setting.
+	 */
+	private static final String KEY_IDENTIFIER_USER_PROFILE = "userProfile";
+	/**
 	 * Key identifier for the username.
 	 */
 	private static final String KEY_IDENTIFIER_USERNAME = "username";
@@ -125,11 +129,19 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			}
 
 			// Binary setting
-			final JTextField binaryField = mSettingsDialog.getBrowserBinaryField();
+			final JTextField binaryField = mSettingsDialog.getBinaryField();
 			final String binaryValue = binaryField.getText();
 			if (!binaryValue.equals(UNKNOWN_KEY_VALUE)) {
 				final String key = KEY_IDENTIFIER_BINARY;
 				setSetting(key, binaryValue);
+			}
+
+			// User profile setting
+			final JTextField userProfileField = mSettingsDialog.getUserProfileField();
+			final String userProfileValue = userProfileField.getText();
+			if (!userProfileValue.equals(UNKNOWN_KEY_VALUE)) {
+				final String key = KEY_IDENTIFIER_USER_PROFILE;
+				setSetting(key, userProfileValue);
 			}
 		}
 
@@ -220,7 +232,8 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.zabuza.kivabot.model.IBrowserSettingsProvider#getBrowserBinary()
+	 * @see de.zabuza.beedlebot.logindialog.controller.settings.
+	 * IBrowserSettingsProvider#getBrowserBinary()
 	 */
 	@Override
 	public String getBrowserBinary() {
@@ -235,9 +248,9 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.zabuza.kivabot.model.IBrowserSettingsProvider#getDriverForBrowser(de.
-	 * zabuza.sparkle.webdriver.EBrowser)
+	 * @see de.zabuza.beedlebot.logindialog.controller.settings.
+	 * IBrowserSettingsProvider#getDriverForBrowser(de.zabuza.sparkle.webdriver.
+	 * EBrowser)
 	 */
 	@Override
 	public String getDriverForBrowser(final EBrowser browser) {
@@ -288,6 +301,22 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	@Override
 	public String getUserName() {
 		return getSetting(KEY_IDENTIFIER_USERNAME);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.zabuza.beedlebot.logindialog.controller.settings.
+	 * IBrowserSettingsProvider#getUserProfile()
+	 */
+	@Override
+	public String getUserProfile() {
+		String userProfile = getSetting(KEY_IDENTIFIER_USER_PROFILE);
+		if (userProfile.equals(UNKNOWN_KEY_VALUE)) {
+			return null;
+		} else {
+			return userProfile;
+		}
 	}
 
 	/*
@@ -361,14 +390,19 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 		// Browser field listener
 		for (EBrowser browser : EBrowser.values()) {
 			ActionListener listener = new FileChooseSetActionListener(mSettingsDialog,
-					mSettingsDialog.getBrowserDriverField(browser));
+					mSettingsDialog.getBrowserDriverField(browser), false);
 			mSettingsDialog.addListenerToBrowserDriverSelectionAction(browser, listener);
 		}
 
 		// Binary listener
-		ActionListener listener = new FileChooseSetActionListener(mSettingsDialog,
-				mSettingsDialog.getBrowserBinaryField());
-		mSettingsDialog.addListenerToBrowserBinarySelectionAction(listener);
+		ActionListener binaryListener = new FileChooseSetActionListener(mSettingsDialog,
+				mSettingsDialog.getBinaryField(), false);
+		mSettingsDialog.addListenerToBinarySelectionAction(binaryListener);
+
+		// User profile listener
+		ActionListener userProfileListener = new FileChooseSetActionListener(mSettingsDialog,
+				mSettingsDialog.getUserProfileField(), true);
+		mSettingsDialog.addListenerToUserProfileSelectionAction(userProfileListener);
 
 		// Save and cancel listener
 		mSettingsDialog.addListenerToSaveAction(new SaveActionListener(this));
@@ -397,7 +431,11 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 				field.setText(entry.getValue());
 			} else if (keyIdentifier.equals(KEY_IDENTIFIER_BINARY)) {
 				// Binary settings
-				final JTextField field = mSettingsDialog.getBrowserBinaryField();
+				final JTextField field = mSettingsDialog.getBinaryField();
+				field.setText(entry.getValue());
+			} else if (keyIdentifier.equals(KEY_IDENTIFIER_USER_PROFILE)) {
+				// User profile settings
+				final JTextField field = mSettingsDialog.getUserProfileField();
 				field.setText(entry.getValue());
 			}
 		}
