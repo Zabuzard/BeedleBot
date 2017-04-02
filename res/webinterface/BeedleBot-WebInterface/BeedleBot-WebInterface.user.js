@@ -254,28 +254,28 @@ function addCssRules() {
  */
 function beedleBotServingMockup() {
 	setItem('isActive', false);
-	
-	setItem('state', states['inactive']);
-	setItem('phase', phases['awaitingDelivery']);
-	
+
+	setItem('state', states.inactive);
+	setItem('phase', phases.awaitingDelivery);
+
 	setItem('curLifepoints', 301);
 	setItem('maxLifepoints', 350);
 	setItem('gold', 5304);
 	setItem('inventorySize', 453);
 	setItem('maxInventorySize', 716);
 	setItem('waitingTime', 8);
-	
+
 	setItem('totalCost', 19838);
 	setItem('totalProfit', 21949);
-	
-	var valueSeparator = itemEntryFormat['valueSeparator'];
-	var entrySeparator = itemEntryFormat['entrySeparator'];
-	var itemEntries = '1490796899' + valueSeparator + 'Seelenkapsel'
-		+ valueSeparator + '1326' + valueSeparator + '1837' + entrySeparator + 
-		'1490796902' + valueSeparator + 'Wakrudpilz'
-		+ valueSeparator + '40' + valueSeparator + '45';
+
+	var valueSeparator = itemEntryFormat.valueSeparator;
+	var entrySeparator = itemEntryFormat.entrySeparator;
+	var itemEntries = '1490796899' + valueSeparator + 'Seelenkapsel' +
+		valueSeparator + '1326' + valueSeparator + '1837' + entrySeparator +
+		'1490796902' + valueSeparator + 'Wakrudpilz' +
+		valueSeparator + '40' + valueSeparator + '45';
 	setItem('itemEntries', itemEntries);
-	
+
 	setItem('isBeedleBotServing', true);
 }
 
@@ -294,7 +294,7 @@ function isSupportingWebStorage() {
  *    to the given key identifier
  */
 function buildKey(key) {
-	return storageKeys['keyIndex'] + key;
+	return storageKeys.keyIndex + storageKeys[key];
 }
 
 /*
@@ -304,7 +304,7 @@ function buildKey(key) {
 function getItem(key) {
 	var keyOfStorage = buildKey(key);
 	var value = sessionStorage.getItem(keyOfStorage);
-	if (value == null || value == '' || value == 'undefined') {
+	if (value === null || value === '' || value == 'undefined') {
 		return null;
 	} else if (value.toLowerCase() == 'true') {
 		return true;
@@ -349,7 +349,7 @@ function sendOnSignal() {
 	if (!$('#activationOn').hasClass('activationIsOn')) {
 		return;
 	}
-	
+
 	setItem('startSignal', true);
 }
 
@@ -361,7 +361,7 @@ function sendOffSignal() {
 	if (!$('#activationOff').hasClass('activationIsOn')) {
 		return;
 	}
-	
+
 	setItem('stopSignal', true);
 }
 
@@ -391,8 +391,8 @@ function buildStatusRibbonTable(ribbonId, ribbonText) {
  * @returns The build value icon
  */
 function buildValueIcon(iconId, localizationKey, iconAlt, iconSrc) {
-	var valueIcon = '<img id="' + iconId + '" title="' + localization[localizationKey]
-		+ '" alt="' + iconAlt + '" src="' + iconSrc + '"></img>';
+	var valueIcon = '<img id="' + iconId + '" title="' + localization[localizationKey] +
+		'" alt="' + iconAlt + '" src="' + iconSrc + '"></img>';
 	return valueIcon;
 }
 
@@ -405,21 +405,21 @@ function toggleInterface() {
 	var hidebar = $('#beedleHidebar');
 	var tabNavigation = $('#beedleTabNavigation');
 	var content = $('#beedleContent');
-	
+
 	var itemFrameWidth = $(itemFrame)[0].scrollWidth;
 	var itemFrameLeft = $(itemFrame).position().left;
 	var hidebarWidth = $(hidebar)[0].scrollWidth;
-	
+
 	if ($(beedleInterface).hasClass('hiddenInterface')) {
 		// Show the interface
 		$(beedleInterface).removeClass('hiddenInterface');
-		
+
 		$(beedleInterface).css('left', itemFrameLeft);
 		$(beedleInterface).width(itemFrameWidth);
 		$(tabNavigation).show();
 		$(content).show();
-		$(hidebar).prop('title', localization['hideInterface']);
-		
+		$(hidebar).prop('title', localization.hideInterface);
+
 		setItem('isBeedleInterfaceVisible', true);
 	} else {
 		// Hide the interface
@@ -427,13 +427,13 @@ function toggleInterface() {
 		$(beedleInterface).width(hidebarWidth);
 		$(tabNavigation).hide();
 		$(content).hide();
-		$(hidebar).prop('title', localization['showInterface']);
-		
+		$(hidebar).prop('title', localization.showInterface);
+
 		$(beedleInterface).addClass('hiddenInterface');
 		setItem('isBeedleInterfaceVisible', false);
 	}
 }
-	
+
 /*
  * Opens and loads the given tab to the content panel.
  * @param event An event object with a parameter named 'data' holding a parameter
@@ -445,15 +445,15 @@ function openTab(event) {
 	var tabName = event.data.tabName;
 	var forceLoad = event.data.forceLoad;
 	var currentInterfaceTab = getItem('currentInterfaceTab');
-	
+
 	// Abort if tab is already loaded
 	if (tabName == currentInterfaceTab && !forceLoad) {
 		return;
 	}
-	
+
 	// Remove current content
 	$('#beedleContent').empty();
-	
+
 	// Load the correct tab
 	if (tabName == 'sell') {
 		openSellTab();
@@ -463,16 +463,16 @@ function openTab(event) {
 		tabName = 'purchase';
 		openPurchaseTab();
 	}
-	
+
 	// Remove all tab active classes
 	$('.beedleTab').removeClass('activeTab');
-	
+
 	// Set the current navigation tab as active
 	$('#' + tabName + 'Tab').addClass('activeTab');
-	
+
 	// Set the current loaded tab
 	setItem('currentInterfaceTab', tabName);
-	
+
 	update(true);
 }
 
@@ -518,7 +518,7 @@ function createLayout() {
 /*
  * Creates the layout of the purchase tab.
  */
-function createPurchaseTabLayout() {	
+function createPurchaseTabLayout() {
 	// Create the content layout table
 	$('#beedleContent').append('<table id="beedleContentLayout">\
 			<tr>\
@@ -533,7 +533,7 @@ function createPurchaseTabLayout() {
 			</tr>\
 		</table>');
 	$('#beedleStatusPanel, #beedleItemPanel').attr('colspan', 2);
-		
+
 	// Create the status panel layout
 	$('#beedleStatusPanel').append('<table id="beedleStatusPanelLayout">\
 			<tr>\
@@ -549,7 +549,7 @@ function createPurchaseTabLayout() {
 				<td id="beedlePhaseWaitCell" class="beedleStatusRightOuter beedleStatusLower"></td>\
 			</tr>\
 		</table>');
-		
+
 	// Create the value panel layout
 	$('#beedleValuePanel').append('<table id="beedleValuePanelLayout">\
 			<tr>\
@@ -569,16 +569,16 @@ function createPurchaseTabLayout() {
 				<td id="beedleWaitingTimeCell" class="valueText"></td>\
 			</tr>\
 		</table>');
-		
+
 	// Create the item panel layout
 	$('#beedleItemPanel').append('<table id="beedleItemPanelLayout">\
 			<thead>\
 				<tr id="beedleItemHeader">\
 					<th class="beedleItemName"></td>\
-					<th id="beedleTotalCostCell" class="beedleItemCost" title="'
-						+ localization['totalCost'] + '">0</td>\
-					<th id="beedleTotalProfitCell" class="beedleItemProfit" title="'
-						+ localization['totalProfit'] + '">+0</td>\
+					<th id="beedleTotalCostCell" class="beedleItemCost" title="' +
+						localization.totalCost + '">0</td>\
+					<th id="beedleTotalProfitCell" class="beedleItemProfit" title="' +
+						localization.totalProfit + '">+0</td>\
 				</tr>\
 			</thead>\
 			<tbody>\
@@ -591,14 +591,14 @@ function createPurchaseTabLayout() {
  */
 function createNavigationContent() {
 	$('#beedleNavigation').append('<div id="beedleTabNavigation">\
-			<button class="beedleTab" id="purchaseTab">'
-				+ localization['purchaseTab'] + '</button>\
-			<button class="beedleTab" id="sellTab">'
-				+ localization['sellTab'] + '</button>\
-			<button class="beedleTab" id="miscellaneousTab">'
-				+ localization['miscellaneousTab'] + '</button>\
+			<button class="beedleTab" id="purchaseTab">' +
+				localization.purchaseTab + '</button>\
+			<button class="beedleTab" id="sellTab">' +
+				localization.sellTab + '</button>\
+			<button class="beedleTab" id="miscellaneousTab">' +
+				localization.miscellaneousTab + '</button>\
 		</div>');
-	
+
 	// Add click event handler
 	$('#purchaseTab').click({tabName : 'purchase'}, openTab);
 	$('#sellTab').click({tabName : 'sell'}, openTab);
@@ -612,13 +612,13 @@ function createHidebarContent() {
 	var hidebar = $('#beedleHidebar');
 	// Add hide-show click event handler
 	$(hidebar).click(toggleInterface);
-	
+
 	// Add tooltip
 	var isBeedleInterfaceVisible = getItem('isBeedleInterfaceVisible');
 	if (isBeedleInterfaceVisible) {
-		$(hidebar).prop('title', localization['hideInterface']);
+		$(hidebar).prop('title', localization.hideInterface);
 	} else {
-		$(hidebar).prop('title', localization['showInterface']);
+		$(hidebar).prop('title', localization.showInterface);
 	}
 }
 
@@ -636,25 +636,25 @@ function createPurchaseTabContent() {
  * Creates the content of the status panel.
  */
 function createStatusPanelContent() {
-	$('#beedleStateCell').append(buildStatusRibbonTable('ribbonState', localization['ribbonState']));
-	
-	$('#beedlePhaseAnalyseCell').append(buildStatusRibbonTable('ribbonAnalyse', localization['ribbonAnalyse']));
-	$('#beedlePhasePurchaseCell').append(buildStatusRibbonTable('ribbonPurchase', localization['ribbonPurchase']));
-	$('#beedlePhaseWaitCell').append(buildStatusRibbonTable('ribbonWait', localization['ribbonWait']));
-	
+	$('#beedleStateCell').append(buildStatusRibbonTable('ribbonState', localization.ribbonState));
+
+	$('#beedlePhaseAnalyseCell').append(buildStatusRibbonTable('ribbonAnalyse', localization.ribbonAnalyse));
+	$('#beedlePhasePurchaseCell').append(buildStatusRibbonTable('ribbonPurchase', localization.ribbonPurchase));
+	$('#beedlePhaseWaitCell').append(buildStatusRibbonTable('ribbonWait', localization.ribbonWait));
+
 	$('#beedleActivationCell').append('<table id="statusActivationTable">\
 			<tr>\
 				<td id="statusActivationOnCell">\
-					<img id="activationOn" class="activationIsOn" title="' + localization['activationStart']['on']
-						+ '" alt="start" src="' + images['start']['on'] + '"></img>\
+					<img id="activationOn" class="activationIsOn" title="' + localization.activationStart.on +
+						'" alt="start" src="' + images.start.on + '"></img>\
 				</td>\
 				<td id="statusActivationOffCell">\
-					<img id="activationOff" class="activationIsOff" title="' + localization['activationStop']['off']
-						+ '" alt="stop" src="' + images['stop']['off'] + '"></img>\
+					<img id="activationOff" class="activationIsOff" title="' + localization.activationStop.off +
+						'" alt="stop" src="' + images.stop.off + '"></img>\
 				</td>\
 			</tr>\
 		</table>');
-		
+
 	// Add start-stop click event handler
 	$('#activationOn').click(sendOnSignal);
 	$('#activationOff').click(sendOffSignal);
@@ -665,20 +665,20 @@ function createStatusPanelContent() {
  */
 function createValuePanelContent() {
 	$('#beedleLifepointIconCell').append(
-		buildValueIcon('lifepointsIcon', 'lifepoints', 'lifepoints', images['lifepoints']));
+		buildValueIcon('lifepointsIcon', 'lifepoints', 'lifepoints', images.lifepoints));
 	$('#beedleGoldIconCell').append(
-		buildValueIcon('goldIcon', 'gold', 'gold', images['gold']));
+		buildValueIcon('goldIcon', 'gold', 'gold', images.gold));
 	$('#beedleInventoryIconCell').append(
-		buildValueIcon('inventoryIcon', 'inventory', 'inventory', images['inventory']));
+		buildValueIcon('inventoryIcon', 'inventory', 'inventory', images.inventory));
 	$('#beedleWaitingTimeIconCell').append(
-		buildValueIcon('waitingTimeIcon', 'waitingTime', 'waiting time', images['waitingTime']));
+		buildValueIcon('waitingTimeIcon', 'waitingTime', 'waiting time', images.waitingTime));
 }
 
 /*
  * Creates the content of the icon panel.
  */
 function createIconPanelContent() {
-	$('#beedleIconPanel').append('<img alt="beedleIcon" src="' + images['icon'] + '"></img>');
+	$('#beedleIconPanel').append('<img alt="beedleIcon" src="' + images.icon + '"></img>');
 }
 
 /*
@@ -702,7 +702,7 @@ function update(preventLoop) {
 		window.setTimeout(loadInterface, 500);
 		return;
 	}
-	
+
 	// Update the correct tab
 	var currentInterfaceTab = getItem('currentInterfaceTab');
 	if (currentInterfaceTab == 'sell') {
@@ -712,7 +712,7 @@ function update(preventLoop) {
 	} else {
 		updatePurchaseTab();
 	}
-	
+
 	if (!preventLoop) {
 		window.setTimeout(update, 500);
 	}
@@ -747,61 +747,61 @@ function updateMiscellaneousTab() {
 function updateStatusPanel() {
 	// Update state
 	var state = getItem('state');
-	
+
 	var ribbonState = $('#ribbonState');
-	
+
 	// Determine if a problem is new if there is one
 	var isBeedleProblemKnown = getItem('isBeedleProblemKnown');
-	if (state == states['problem'] && !$(ribbonState).hasClass('redRibbon') && !isBeedleProblemKnown) {
+	if (state == states.problem && !$(ribbonState).hasClass('redRibbon') && !isBeedleProblemKnown) {
 		setItem('isBeedleProblemKnown', true);
 		// Fire a notification
 		fireNotification();
-	} else if (state != states['problem'] && isBeedleProblemKnown) {
+	} else if (state != states.problem && isBeedleProblemKnown) {
 		setItem('isBeedleProblemKnown', false);
 	}
-	
+
 	// Update the ribbon
 	$(ribbonState).removeClass('grayRibbon blueRibbon greenRibbon redRibbon');
-	if (state == states['standby']) {
+	if (state == states.standby) {
 		$(ribbonState).addClass('blueRibbon');
-	} else if (state == states['active']) {
+	} else if (state == states.active) {
 		$(ribbonState).addClass('greenRibbon');
-	} else if (state == states['problem']) {
+	} else if (state == states.problem) {
 		$(ribbonState).addClass('redRibbon');
 	} else {
 		$(ribbonState).addClass('grayRibbon');
 	}
-	
+
 	// Update phase
 	var phase = getItem('phase');
 	var ribbonAnalyse = $('#ribbonAnalyse');
 	var ribbonPurchase = $('#ribbonPurchase');
 	var ribbonWait = $('#ribbonWait');
-	
-	if (phase == phases['analyse']) {
+
+	if (phase == phases.analyse) {
 		$(ribbonAnalyse).removeClass('grayRibbon');
 		$(ribbonAnalyse).addClass('blueRibbon');
 	} else {
 		$(ribbonAnalyse).removeClass('blueRibbon');
 		$(ribbonAnalyse).addClass('grayRibbon');
 	}
-	
-	if (phase == phases['purchase']) {
+
+	if (phase == phases.purchase) {
 		$(ribbonPurchase).removeClass('grayRibbon');
 		$(ribbonPurchase).addClass('blueRibbon');
 	} else {
 		$(ribbonPurchase).removeClass('blueRibbon');
 		$(ribbonPurchase).addClass('grayRibbon');
 	}
-	
-	if (phase == phases['wait']) {
+
+	if (phase == phases.wait) {
 		$(ribbonWait).removeClass('grayRibbon');
 		$(ribbonWait).addClass('blueRibbon');
 	} else {
 		$(ribbonWait).removeClass('blueRibbon');
 		$(ribbonWait).addClass('grayRibbon');
 	}
-	
+
 	// Update activation images
 	var isActive = getItem('isActive');
 	var startIcon = $('#activationOn');
@@ -809,30 +809,30 @@ function updateStatusPanel() {
 	if (isActive) {
 		if ($(startIcon).hasClass('activationIsOn')) {
 			// Deactivate start icon
-			$(startIcon).attr('src', images['start']['off']);
-			$(startIcon).attr('title', localization['activationStart']['off']);
+			$(startIcon).attr('src', images.start.off);
+			$(startIcon).attr('title', localization.activationStart.off);
 			$(startIcon).removeClass('activationIsOn');
 			$(startIcon).addClass('activationIsOff');
 		}
 		if ($(startIcon).hasClass('activationIsOff')) {
 			// Activate stop icon
-			$(stopIcon).attr('src', images['stop']['on']);
-			$(stopIcon).attr('title', localization['activationStop']['on']);
+			$(stopIcon).attr('src', images.stop.on);
+			$(stopIcon).attr('title', localization.activationStop.on);
 			$(stopIcon).removeClass('activationIsOff');
 			$(stopIcon).addClass('activationIsOn');
 		}
 	} else {
 		if ($(startIcon).hasClass('activationIsOff')) {
 			// Activate start icon
-			$(startIcon).attr('src', images['start']['on']);
-			$(startIcon).attr('title', localization['activationStart']['on']);
+			$(startIcon).attr('src', images.start.on);
+			$(startIcon).attr('title', localization.activationStart.on);
 			$(startIcon).removeClass('activationIsOff');
 			$(startIcon).addClass('activationIsOn');
 		}
 		if ($(startIcon).hasClass('activationIsOn')) {
 			// Deactivate stop icon
-			$(stopIcon).attr('src', images['stop']['off']);
-			$(stopIcon).attr('title', localization['activationStop']['off']);
+			$(stopIcon).attr('src', images.stop.off);
+			$(stopIcon).attr('title', localization.activationStop.off);
 			$(stopIcon).removeClass('activationIsOn');
 			$(stopIcon).addClass('activationIsOff');
 		}
@@ -844,97 +844,97 @@ function updateStatusPanel() {
  */
 function updateValuePanel() {
 	var valueSeparator = ' / ';
-	
+
 	// Update lifepoints
 	var curLifepoints = Number(getItem('curLifepoints'));
 	var maxLifepoints = Number(getItem('maxLifepoints'));
-	
+
 	// Determine value status
 	var valueClass = 'valueOk';
 	var ratio = curLifepoints / maxLifepoints;
-	if (ratio <= valueStatus['lifepoints']['critical']['ratio']
-		|| curLifepoints <= valueStatus['lifepoints']['critical']['min']) {
+	if (ratio <= valueStatus.lifepoints.critical.ratio
+		|| curLifepoints <= valueStatus.lifepoints.critical.min) {
 		// Critical status
 		valueClass = 'valueCritical';
-	} else if (ratio <= valueStatus['lifepoints']['medium']['ratio']
-		|| curLifepoints <= valueStatus['lifepoints']['medium']['min']) {
+	} else if (ratio <= valueStatus.lifepoints.medium.ratio
+		|| curLifepoints <= valueStatus.lifepoints.medium.min) {
 		// Medium status
 		valueClass = 'valueMedium';
 	}
-	
+
 	// Set value
 	curLifepoints = numberFormat(curLifepoints);
 	maxLifepoints = numberFormat(maxLifepoints);
 	$('#beedleLifepointCell').html('<span class="' + valueClass + '">'
 		+ curLifepoints + '</span>' + valueSeparator + maxLifepoints);
-	
+
 	// Update gold
 	var gold = Number(getItem('gold'));
-	
+
 	// Determine value status
 	valueClass = 'valueOk';
-	if (gold <= valueStatus['gold']['critical']) {
+	if (gold <= valueStatus.gold.critical) {
 		// Critical status
 		valueClass = 'valueCritical';
-	} else if (gold <= valueStatus['gold']['medium']) {
+	} else if (gold <= valueStatus.gold.medium) {
 		// Medium status
 		valueClass = 'valueMedium';
 	}
-	
+
 	// Set value
 	gold = numberFormat(gold);
 	$('#beedleGoldCell').html('<span class="' + valueClass + '">'
 		+ gold + '</span>');
-	
+
 	// Update inventory size
 	var inventorySize = Number(getItem('inventorySize'));
 	var maxInventorySize = Number(getItem('maxInventorySize'));
-	
+
 	// Determine value status
 	valueClass = 'valueOk';
 	ratio = inventorySize / maxInventorySize;
 	var minDiff = maxInventorySize - inventorySize;
-	if (ratio >= valueStatus['inventory']['critical']['ratio']
-		|| inventorySize <= valueStatus['inventory']['critical']['minDiff']) {
+	if (ratio >= valueStatus.inventory.critical.ratio
+		|| inventorySize <= valueStatus.inventory.critical.minDiff) {
 		// Critical status
 		valueClass = 'valueCritical';
-	} else if (ratio >= valueStatus['inventory']['medium']['ratio']
-		|| inventorySize <= valueStatus['inventory']['medium']['minDiff']) {
+	} else if (ratio >= valueStatus.inventory.medium.ratio
+		|| inventorySize <= valueStatus.inventory.medium.minDiff) {
 		// Medium status
 		valueClass = 'valueMedium';
 	}
-	
+
 	// Set value
 	inventorySize = numberFormat(inventorySize);
 	maxInventorySize = numberFormat(maxInventorySize);
 	$('#beedleInventoryCell').html('<span class="' + valueClass + '">'
 		+ inventorySize + '</span>' + valueSeparator + maxInventorySize);
-	
+
 	// Waiting time
 	var totalTimeSeconds = Number(getItem('waitingTime'));
-	
+
 	// Determine value status
 	valueClass = 'valueOk';
-	if (totalTimeSeconds >= valueStatus['waitingTime']['critical']) {
+	if (totalTimeSeconds >= valueStatus.waitingTime.critical) {
 		// Critical status
 		valueClass = 'valueCritical';
-	} else if (totalTimeSeconds >= valueStatus['waitingTime']['medium']) {
+	} else if (totalTimeSeconds >= valueStatus.waitingTime.medium) {
 		// Medium status
 		valueClass = 'valueMedium';
 	}
-	
+
 	// Set value
 	var timeMinutes = Math.floor(totalTimeSeconds / 60);
 	var timeSeconds = totalTimeSeconds - (timeMinutes * 60);
-	
+
 	var waitingTimeText = '';
 	if (timeMinutes > 0) {
 		waitingTimeText += timeMinutes + 'm ';
 	}
 	waitingTimeText += timeSeconds + 's';
-	
-	$('#beedleWaitingTimeCell').html('<span class="' + valueClass + '">'
-		+ waitingTimeText + '</span>');
+
+	$('#beedleWaitingTimeCell').html('<span class="' + valueClass + '">' +
+		waitingTimeText + '</span>');
 }
 
 /*
@@ -942,10 +942,10 @@ function updateValuePanel() {
  */
 function updateItemPanel() {
 	var itemEntriesText = getItem('itemEntries');
-	if (itemEntriesText == null || itemEntriesText == '') {
+	if (itemEntriesText === null || itemEntriesText === '') {
 		return;
 	}
-	
+
 	// Determine timestamp of newest currently displayed element
 	var newestTimestampElement = $('#beedleItemPanelLayout tbody .beedleItemEntryRow .beedleItemName input').first();
 	var newestTimestamp = 0;
@@ -953,32 +953,32 @@ function updateItemPanel() {
 		// There are already items displayed, get the timestamp
 		newestTimestamp = Number($(newestTimestampElement).val());
 	}
-	
+
 	// Iterate and add newest entries
-	var itemEntries = itemEntriesText.split(itemEntryFormat['entrySeparator']);
+	var itemEntries = itemEntriesText.split(itemEntryFormat.entrySeparator);
 	for (i = 0; i < itemEntries.length; i++) {
-		var itemData = itemEntries[i].split(itemEntryFormat['valueSeparator']);
-		
+		var itemData = itemEntries[i].split(itemEntryFormat.valueSeparator);
+
 		var itemTimestamp = Number(itemData[0]);
 		// Skip element if it is already displayed
 		if (itemTimestamp <= newestTimestamp) {
 			continue;
 		}
-		
+
 		var itemName = itemData[1];
 		var itemCost = Number(itemData[2]);
 		var itemProfit = Number(itemData[3]);
-		
+
 		// Append item
 		$('#beedleItemPanelLayout tbody').prepend('<tr class="beedleItemEntryRow">\
-				<td class="beedleItemName">' + itemName
-					+ '<input type="hidden" value="' + itemTimestamp + '">\
+				<td class="beedleItemName">' + itemName +
+					'<input type="hidden" value="' + itemTimestamp + '">\
 				</td>\
 				<td class="beedleItemCost">' + numberFormat(itemCost) + '</td>\
 				<td class="beedleItemProfit">' + numberFormat(itemProfit) + '</td>\
 			</tr>');
 	}
-	
+
 	// Update total values
 	$('#beedleTotalCostCell').text(numberFormat(getItem('totalCost')));
 	$('#beedleTotalProfitCell').text(numberFormat('+' + getItem('totalProfit')));
@@ -989,19 +989,19 @@ function updateItemPanel() {
  */
 function loadInterface() {
 	//beedleBotServingMockup();
-	
+
 	// Web storage is necessary for BeedleBots communication
 	if (!isSupportingWebStorage()) {
 		return;
 	}
-	
+
 	// Only load the interface if BeedleBot is serving
 	if (!getItem('isBeedleBotServing')) {
 		// Try again later
 		window.setTimeout(loadInterface, 500);
 		return;
 	}
-	
+
 	// Determine the size and position of the item frame,
 	// the interface will overlap it
 	var itemFrame = $('body');
@@ -1012,148 +1012,148 @@ function loadInterface() {
 	if (!$.isNumeric(itemFrameWidth) || !$.isNumeric(itemFrameHeight)) {
 		return;
 	}
-	
+
 	// Introduce new css rules
 	addCssRules();
-	
+
 	// Create the container of the interface
 	$('body').append('<div id="beedleInterface"></div>');
 	var beedleInterface = $('#beedleInterface');
-	
+
 	// Position the container
 	$(beedleInterface).css(itemFramePosition);
 	$(beedleInterface).width(itemFrameWidth);
 	$(beedleInterface).height(itemFrameHeight);
-	
+
 	// Create the layout of the interface
 	createLayout();
-	
+
 	// Create the content for every element
 	createNavigationContent();
 	createHidebarContent();
-	
+
 	// Open the correct tab
 	var currentInterfaceTab = getItem('currentInterfaceTab');
-	if (currentInterfaceTab == null) {
+	if (currentInterfaceTab === null) {
 		currentInterfaceTab = 'purchase';
 	}
-	var event = new Object();
-	event['data'] = new Object();
-	event['data']['tabName'] = currentInterfaceTab;
-	event['data']['forceLoad'] = true;
+	var event = {};
+	event.data = {};
+	event.data.tabName = currentInterfaceTab;
+	event.data.forceLoad = true;
 	openTab(event);
-	
+
 	// Update the data and display of the interface
 	update(false);
-		
+
 	// Hide the interface initially or if already hidden
 	var isBeedleInterfaceVisible = getItem('isBeedleInterfaceVisible');
-	if (isBeedleInterfaceVisible == null || !isBeedleInterfaceVisible) {
+	if (isBeedleInterfaceVisible === null || !isBeedleInterfaceVisible) {
 		toggleInterface();
 	}
 }
 
 // Storage key constants
-var storageKeys = new Object();
-storageKeys['keyIndex'] = 'beedle_';
-storageKeys['isBeedleInterfaceVisible'] = 'isBeedleInterfaceVisible';
-storageKeys['isBeedleProblemKnown'] = 'isBeedleProblemKnown';
-storageKeys['currentInterfaceTab'] = 'currentInterfaceTab';
-storageKeys['isBeedleBotServing'] = 'isBeedleBotServing';
-storageKeys['isActive'] = 'isActive';
-storageKeys['state'] = 'state';
-storageKeys['phase'] = 'phase';
-storageKeys['startSignal'] = 'startSignal';
-storageKeys['stopSignal'] = 'stopSignal';
-storageKeys['curLifepoints'] = 'curLife';
-storageKeys['maxLifepoints'] = 'maxLife';
-storageKeys['gold'] = 'gold';
-storageKeys['inventorySize'] = 'invSize';
-storageKeys['maxInventorySize'] = 'maxInvSize';
-storageKeys['waitingTime'] = 'waitingTime';
-storageKeys['totalCost'] = 'totalCost';
-storageKeys['totalProfit'] = 'totalProfit';
-storageKeys['itemEntries'] = 'itemEntries';
+var storageKeys = {};
+storageKeys.keyIndex = 'beedle_';
+storageKeys.isBeedleInterfaceVisible = 'isBeedleInterfaceVisible';
+storageKeys.isBeedleProblemKnown = 'isBeedleProblemKnown';
+storageKeys.currentInterfaceTab = 'currentInterfaceTab';
+storageKeys.isBeedleBotServing = 'isBeedleBotServing';
+storageKeys.isActive = 'isActive';
+storageKeys.state = 'state';
+storageKeys.phase = 'phase';
+storageKeys.startSignal = 'startSignal';
+storageKeys.stopSignal = 'stopSignal';
+storageKeys.curLifepoints = 'curLife';
+storageKeys.maxLifepoints = 'maxLife';
+storageKeys.gold = 'gold';
+storageKeys.inventorySize = 'invSize';
+storageKeys.maxInventorySize = 'maxInvSize';
+storageKeys.waitingTime = 'waitingTime';
+storageKeys.totalCost = 'totalCost';
+storageKeys.totalProfit = 'totalProfit';
+storageKeys.itemEntries = 'itemEntries';
 
 // BeedleBots states
-var states = new Object();
-states['inactive'] = 'INACTIVE';
-states['standby'] = 'STANDBY';
-states['active'] = 'ACTIVE';
-states['problem'] = 'PROBLEM';
+var states = {};
+states.inactive = 'INACTIVE';
+states.standby = 'STANDBY';
+states.active = 'ACTIVE';
+states.problem = 'PROBLEM';
 
 // BeedleBots phases
-var phases = new Object();
-phases['analyse'] = 'ANALYSE';
-phases['awaitingDelivery'] = 'AWAITING_DELIVERY';
-phases['purchase'] = 'PURCHASE';
-phases['wait'] = 'WAIT';
+var phases = {};
+phases.analyse = 'ANALYSE';
+phases.awaitingDelivery = 'AWAITING_DELIVERY';
+phases.purchase = 'PURCHASE';
+phases.wait = 'WAIT';
 
 // Value status constants
-var valueStatus = new Object();
-valueStatus['lifepoints'] = new Object();
-valueStatus['lifepoints']['medium'] = new Object();
-valueStatus['lifepoints']['medium']['ratio'] = 0.5;
-valueStatus['lifepoints']['medium']['min'] = 50;
-valueStatus['lifepoints']['critical'] = new Object();
-valueStatus['lifepoints']['critical']['ratio'] = 0.16;
-valueStatus['lifepoints']['critical']['min'] = 10;
-valueStatus['gold'] = new Object();
-valueStatus['gold']['medium'] = 2000;
-valueStatus['gold']['critical'] = 500;
-valueStatus['inventory'] = new Object();
-valueStatus['inventory']['medium'] = new Object();
-valueStatus['inventory']['medium']['ratio'] = 0.8;
-valueStatus['inventory']['medium']['minDiff'] = 50;
-valueStatus['inventory']['critical'] = new Object();
-valueStatus['inventory']['critical']['ratio'] = 0.9;
-valueStatus['inventory']['critical']['minDiff'] = 10;
-valueStatus['waitingTime'] = new Object();
-valueStatus['waitingTime']['medium'] = 15;
-valueStatus['waitingTime']['critical'] = 30;
+var valueStatus = {};
+valueStatus.lifepoints = {};
+valueStatus.lifepoints.medium = {};
+valueStatus.lifepoints.medium.ratio = 0.5;
+valueStatus.lifepoints.medium.min = 50;
+valueStatus.lifepoints.critical = {};
+valueStatus.lifepoints.critical.ratio = 0.16;
+valueStatus.lifepoints.critical.min = 10;
+valueStatus.gold = {};
+valueStatus.gold.medium = 2000;
+valueStatus.gold.critical = 500;
+valueStatus.inventory = {};
+valueStatus.inventory.medium = {};
+valueStatus.inventory.medium.ratio = 0.8;
+valueStatus.inventory.medium.minDiff = 50;
+valueStatus.inventory.critical = {};
+valueStatus.inventory.critical.ratio = 0.9;
+valueStatus.inventory.critical.minDiff = 10;
+valueStatus.waitingTime = {};
+valueStatus.waitingTime.medium = 15;
+valueStatus.waitingTime.critical = 30;
 
 // Item entry format constants
-var itemEntryFormat = new Object();
-itemEntryFormat['valueSeparator'] = '?';
-itemEntryFormat['entrySeparator'] = ';';
+var itemEntryFormat = {};
+itemEntryFormat.valueSeparator = '?';
+itemEntryFormat.entrySeparator = ';';
 
 // Image ressource constants
-var images = new Object();
-images['icon'] = 'http://file1.npage.de/005000/36/bilder/webicon.png';
-images['start'] = new Object();
-images['start']['on'] = 'http://file1.npage.de/005000/36/bilder/webstarton.png';
-images['start']['off'] = 'http://file1.npage.de/005000/36/bilder/webstartoff.png';
-images['stop'] = new Object();
-images['stop']['on'] = 'http://file1.npage.de/005000/36/bilder/webstopon.png';
-images['stop']['off'] = 'http://file1.npage.de/005000/36/bilder/webstopoff.png';
-images['lifepoints'] = 'http://file1.npage.de/005000/36/bilder/weblifepoints.png';
-images['gold'] = 'http://file1.npage.de/005000/36/bilder/webgold.png';
-images['inventory'] = 'http://file1.npage.de/005000/36/bilder/webinventory.png';
-images['waitingTime'] = 'http://file1.npage.de/005000/36/bilder/webwaitingtime.png';
+var images = {};
+images.icon = 'http://file1.npage.de/005000/36/bilder/webicon.png';
+images.start = {};
+images.start.on = 'http://file1.npage.de/005000/36/bilder/webstarton.png';
+images.start.off = 'http://file1.npage.de/005000/36/bilder/webstartoff.png';
+images.stop = {};
+images.stop.on = 'http://file1.npage.de/005000/36/bilder/webstopon.png';
+images.stop.off = 'http://file1.npage.de/005000/36/bilder/webstopoff.png';
+images.lifepoints = 'http://file1.npage.de/005000/36/bilder/weblifepoints.png';
+images.gold = 'http://file1.npage.de/005000/36/bilder/webgold.png';
+images.inventory = 'http://file1.npage.de/005000/36/bilder/webinventory.png';
+images.waitingTime = 'http://file1.npage.de/005000/36/bilder/webwaitingtime.png';
 
 // Localization constants
-var localization = new Object();
-localization['purchaseTab'] = 'Ankauf';
-localization['sellTab'] = 'Verkauf';
-localization['miscellaneousTab'] = 'Sonstiges';
-localization['hideInterface'] = 'Interface ausblenden';
-localization['showInterface'] = 'Interface einblenden';
-localization['ribbonState'] = 'Status';
-localization['ribbonAnalyse'] = 'Analyse';
-localization['ribbonPurchase'] = 'Kaufen';
-localization['ribbonWait'] = 'Warten';
-localization['activationStart'] = new Object();
-localization['activationStart']['on'] = 'Starte Ankauf';
-localization['activationStart']['off'] = 'Ankauf ist bereits gestartet';
-localization['activationStop'] = new Object();
-localization['activationStop']['on'] ='Stoppe Ankauf';
-localization['activationStop']['off'] = 'Ankauf ist bereits gestoppt';
-localization['lifepoints'] = 'aktuelle / maximale Lebenspunkte';
-localization['gold'] = 'Goldm&uuml;nzen';
-localization['inventory'] = 'aktuelle / maximale Inventargr&ouml;&szlig;e';
-localization['waitingTime'] = 'Wartezeit pro Itemkauf';
-localization['totalCost'] = 'gesamte Kosten';
-localization['totalProfit'] = 'gesamte Einnahmen';
+var localization = {};
+localization.purchaseTab = 'Ankauf';
+localization.sellTab = 'Verkauf';
+localization.miscellaneousTab = 'Sonstiges';
+localization.hideInterface = 'Interface ausblenden';
+localization.showInterface = 'Interface einblenden';
+localization.ribbonState = 'Status';
+localization.ribbonAnalyse = 'Analyse';
+localization.ribbonPurchase = 'Kaufen';
+localization.ribbonWait = 'Warten';
+localization.activationStart = {};
+localization.activationStart.on = 'Starte Ankauf';
+localization.activationStart.off = 'Ankauf ist bereits gestartet';
+localization.activationStop = {};
+localization.activationStop.on ='Stoppe Ankauf';
+localization.activationStop.off = 'Ankauf ist bereits gestoppt';
+localization.lifepoints = 'aktuelle / maximale Lebenspunkte';
+localization.gold = 'Goldm&uuml;nzen';
+localization.inventory = 'aktuelle / maximale Inventargr&ouml;&szlig;e';
+localization.waitingTime = 'Wartezeit pro Itemkauf';
+localization.totalCost = 'gesamte Kosten';
+localization.totalProfit = 'gesamte Einnahmen';
 
 // Notification sound
 var notificationSound = document.createElement('audio');
