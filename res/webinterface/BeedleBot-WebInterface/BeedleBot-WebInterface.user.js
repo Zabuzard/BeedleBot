@@ -698,6 +698,8 @@ function update(preventLoop) {
 	if (!getItem('isBeedleBotServing')) {
 		toggleInterface();
 		$('#beedleInterface').remove();
+		// Try again later
+		window.setTimeout(loadInterface, 500);
 		return;
 	}
 	
@@ -995,6 +997,8 @@ function loadInterface() {
 	
 	// Only load the interface if BeedleBot is serving
 	if (!getItem('isBeedleBotServing')) {
+		// Try again later
+		window.setTimeout(loadInterface, 500);
 		return;
 	}
 	
