@@ -18,6 +18,7 @@ import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
 import de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider;
 import de.zabuza.beedlebot.service.Service;
+import de.zabuza.beedlebot.store.Store;
 import de.zabuza.beedlebot.tray.TrayManager;
 import de.zabuza.sparkle.IFreewarAPI;
 import de.zabuza.sparkle.Sparkle;
@@ -57,6 +58,7 @@ public final class BeedleBot {
 	private LoginDialog mLoginDialog;
 	private PushDataService mPushDataService;
 	private Service mService;
+	private Store mStore;
 
 	private TrayManager mTrayManager;
 
@@ -71,6 +73,7 @@ public final class BeedleBot {
 		mService = null;
 		mPushDataService = null;
 		mFetchDataService = null;
+		mStore = null;
 	}
 
 	public void initialize() throws IOException, AWTException {
@@ -104,6 +107,14 @@ public final class BeedleBot {
 		// TODO Remove debug
 		System.out.println("Starting Service");
 
+		final EWorld world = userSettingsProvider.getWorld();
+		if (world == null) {
+			// TODO Correct error handling and logging
+		}
+
+		// Create the store
+		mStore = new Store(world);
+
 		// Create Freewar API
 		final EBrowser browser = browserSettingsProvider.getBrowser();
 		mApi = new Sparkle(browser);
@@ -124,8 +135,7 @@ public final class BeedleBot {
 		// Login and create an instance
 		final String username = userSettingsProvider.getUserName();
 		final String password = userSettingsProvider.getPassword();
-		final EWorld world = userSettingsProvider.getWorld();
-		if (username == null || username.equals("") || password == null || password.equals("") || world == null) {
+		if (username == null || username.equals("") || password == null || password.equals("")) {
 			// TODO Correct error handling and logging
 		}
 
@@ -134,7 +144,7 @@ public final class BeedleBot {
 
 		// Create and start all services
 		mDataBridge = new DataBridge(mDriver);
-		mService = new Service(mApi, mInstance, mDriver);
+		mService = new Service(mApi, mInstance, mDriver, mStore);
 		mPushDataService = new PushDataService(mService, mInstance, mDataBridge);
 		mFetchDataService = new FetchDataService(mDataBridge);
 		mService.registerFetchDataService(mFetchDataService);

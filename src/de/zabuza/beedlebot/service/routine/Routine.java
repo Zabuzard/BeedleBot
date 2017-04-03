@@ -9,7 +9,9 @@ import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
+import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
+import de.zabuza.sparkle.wait.TimedWait;
 
 public final class Routine {
 
@@ -21,13 +23,15 @@ public final class Routine {
 	private EPhase mPhase;
 	private final PushDataService mPushDataService;
 	private final Service mService;
+	private final Store mStore;
 
 	public Routine(final Service service, final IFreewarInstance instance, final WebDriver driver,
-			final PushDataService pushDataService) {
+			final PushDataService pushDataService, final Store store) {
 		mService = service;
 		mInstance = instance;
 		mDriver = driver;
 		mPushDataService = pushDataService;
+		mStore = store;
 		mPhase = EPhase.ANALYSE;
 		mCurrentCategory = null;
 		mCurrentAnalyseResult = null;
@@ -42,6 +46,12 @@ public final class Routine {
 
 	public EPhase getPhase() {
 		return mPhase;
+	}
+
+	public void reset() {
+		setPhase(EPhase.ANALYSE);
+		mCurrentCategory = null;
+		mCurrentAnalyseResult = null;
 	}
 
 	public void update() {
@@ -72,7 +82,8 @@ public final class Routine {
 			System.out.println("Analyse: Selected " + mCurrentCategory);
 
 			// Start analyse task
-			AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult, mCurrentCategory);
+			AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult, mCurrentCategory,
+					mStore);
 			analyseTask.start();
 
 			// Proceed to the next phase
@@ -110,6 +121,7 @@ public final class Routine {
 		// Wait phase
 		if (getPhase() == EPhase.WAIT) {
 			// TODO Implement and remove dummy
+			new TimedWait(mDriver, 2000).waitUntilCondition();
 			System.out.println("Waited");
 
 			// Proceed to the next phase
@@ -119,7 +131,12 @@ public final class Routine {
 
 		// Awaiting delivery phase
 		if (getPhase() == EPhase.AWAITING_DELIVERY) {
-			// TODO Implement
+			// TODO Implement and remove dummy
+			new TimedWait(mDriver, 5000).waitUntilCondition();
+			System.out.println("Waited for delivery.");
+
+			// Proceed to the next phase
+			setPhase(EPhase.ANALYSE);
 			return;
 		}
 	}

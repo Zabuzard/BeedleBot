@@ -5,6 +5,7 @@ import org.openqa.selenium.WebDriver;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.routine.Routine;
+import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.IFreewarAPI;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 
@@ -24,11 +25,13 @@ public final class Service extends Thread {
 	private PushDataService mPushDataService;
 	private Routine mRoutine;
 	private boolean mShouldStopService;
+	private final Store mStore;
 
-	public Service(final IFreewarAPI api, final IFreewarInstance instance, WebDriver driver) {
+	public Service(final IFreewarAPI api, final IFreewarInstance instance, final WebDriver driver, final Store store) {
 		mApi = api;
 		mInstance = instance;
 		mDriver = driver;
+		mStore = store;
 		mFetchDataService = null;
 		mPushDataService = null;
 		mRoutine = null;
@@ -69,7 +72,7 @@ public final class Service extends Thread {
 	@Override
 	public void run() {
 		// Create and link the routine
-		mRoutine = new Routine(this, mInstance, mDriver, mPushDataService);
+		mRoutine = new Routine(this, mInstance, mDriver, mPushDataService, mStore);
 		mPushDataService.linkRoutine(mRoutine);
 
 		// Enter the service loop
@@ -98,6 +101,7 @@ public final class Service extends Thread {
 			// Check signals
 			if (doUpdate) {
 				if (mPaused && mFetchDataService.isStartSignalSet()) {
+					// Continue from pause
 					mPaused = false;
 					mFetchDataService.clearStartSignal();
 					mPushDataService.updateActiveData();
@@ -105,8 +109,10 @@ public final class Service extends Thread {
 					System.out.println("Continued.");
 				}
 				if (!mPaused && mFetchDataService.isStopSignalSet()) {
+					// Pause
 					mPaused = true;
 					mFetchDataService.clearStopSignal();
+					mRoutine.reset();
 					mPushDataService.updateActiveData();
 					// TODO Remove debug
 					System.out.println("Paused.");
@@ -115,6 +121,7 @@ public final class Service extends Thread {
 			if (mShouldStopService) {
 				mDoRun = false;
 				mPaused = true;
+				mRoutine.reset();
 				mPushDataService.setBeedleBotServing(false);
 			}
 

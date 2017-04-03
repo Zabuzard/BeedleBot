@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import de.zabuza.beedlebot.service.routine.AnalyseResult;
 import de.zabuza.beedlebot.service.routine.EItemCategory;
 import de.zabuza.beedlebot.service.routine.Item;
+import de.zabuza.beedlebot.store.ItemPrice;
+import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.frames.EFrame;
 import de.zabuza.sparkle.wait.EventQueueEmptyWait;
@@ -36,14 +38,16 @@ public final class AnalyseTask implements ITask {
 	private final EItemCategory mItemCategory;
 	private final Map<EItemCategory, String> mItemCategoryToAnchorNeedle;
 	private final AnalyseResult mResult;
+	private final Store mStore;
 
 	public AnalyseTask(final IFreewarInstance instance, final WebDriver driver, final AnalyseResult result,
-			final EItemCategory itemCategory) {
+			final EItemCategory itemCategory, final Store store) {
 		mInterrupted = false;
 		mInstance = instance;
 		mDriver = driver;
 		mResult = result;
 		mItemCategory = itemCategory;
+		mStore = store;
 
 		mItemCategoryToAnchorNeedle = new HashMap<>();
 		mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
@@ -153,11 +157,21 @@ public final class AnalyseTask implements ITask {
 			final Integer itemCost = Integer.parseInt(itemCostText);
 
 			// Determine profit
-			// TODO Implement and replace dummy
-			final int itemProfit = itemCost;
+			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
+			// TODO Filtering and logic when to use playerPrice
+			final int shopPrice = itemPriceData.getShopPrice();
+			final int playerPrice = itemPriceData.getPlayerPrice().getPrice();
+			final int itemPrice = Math.max(shopPrice, playerPrice);
+			final int itemProfit = itemPrice - itemCost;
+
+			// Reject item if price is below cost
+			// TODO Use certain threshold
+			if (itemProfit <= 0) {
+				continue;
+			}
 
 			// Add the item to the analyse result
-			mResult.add(new Item(itemName, itemCost, itemProfit, mItemCategory));
+			mResult.add(new Item(itemName, itemCost, itemProfit, itemPriceData, mItemCategory));
 		}
 	}
 }

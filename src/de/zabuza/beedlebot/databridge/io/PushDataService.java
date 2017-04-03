@@ -90,7 +90,7 @@ public final class PushDataService {
 		// TODO Compute waiting time
 		mDataBridge.setWaitingTime(0);
 
-		// TODO Implement item-entry-push and totalCost, totalProfit
+		// Push item-entries
 		final Queue<Item> boughtItems = mRoutine.fetchBoughtItems();
 		for (final Item item : boughtItems) {
 			mDataBridge.pushItemEntry(new ItemEntry(item.getName(), item.getCost(), item.getProfit()));
