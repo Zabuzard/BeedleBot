@@ -5,6 +5,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.html5.SessionStorage;
 
 import de.zabuza.sparkle.webdriver.DelayedWebDriver;
+import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
 
 /**
  * 
@@ -20,13 +21,13 @@ public final class DataBridge {
 	public DataBridge(final WebDriver driver) {
 		// Get storage from chrome driver
 		ChromeDriver chromeDriver = null;
-		if (driver instanceof DelayedWebDriver) {
-			WebDriver rawDriver = ((DelayedWebDriver) driver).getRawDriver();
-			if (rawDriver instanceof ChromeDriver) {
-				chromeDriver = (ChromeDriver) rawDriver;
-			}
-		} else if (driver instanceof ChromeDriver) {
-			chromeDriver = (ChromeDriver) driver;
+		
+		WebDriver rawDriver = driver;
+		while (rawDriver instanceof IWrapsWebDriver) {
+			rawDriver = ((IWrapsWebDriver) rawDriver).getRawDriver();
+		}
+		if (rawDriver instanceof ChromeDriver) {
+			chromeDriver = (ChromeDriver) rawDriver;
 		}
 
 		if (chromeDriver == null) {
