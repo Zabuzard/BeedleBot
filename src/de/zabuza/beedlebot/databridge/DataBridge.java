@@ -4,7 +4,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.html5.SessionStorage;
 
-import de.zabuza.sparkle.webdriver.DelayedWebDriver;
 import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
 
 /**
@@ -21,7 +20,7 @@ public final class DataBridge {
 	public DataBridge(final WebDriver driver) {
 		// Get storage from chrome driver
 		ChromeDriver chromeDriver = null;
-		
+
 		WebDriver rawDriver = driver;
 		while (rawDriver instanceof IWrapsWebDriver) {
 			rawDriver = ((IWrapsWebDriver) rawDriver).getRawDriver();

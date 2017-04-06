@@ -8,16 +8,12 @@ import de.zabuza.sparkle.freewar.EWorld;
 
 public final class StoreCache {
 	private final HashMap<String, ItemPrice> mNameToPriceData;
-	private final PlayerPriceFinder mPlayerPriceFinder;
-	private final StandardShopPriceFinder mStandardShopPriceFinder;
 	private final EWorld mWorld;
 
 	public StoreCache(final EWorld world) {
 		// TODO Implement serialization
 		mNameToPriceData = new HashMap<>();
 		mWorld = world;
-		mStandardShopPriceFinder = new StandardShopPriceFinder();
-		mPlayerPriceFinder = new PlayerPriceFinder(world);
 	}
 
 	public void clear() {

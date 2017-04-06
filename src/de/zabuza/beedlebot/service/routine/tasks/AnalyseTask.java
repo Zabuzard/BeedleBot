@@ -159,9 +159,15 @@ public final class AnalyseTask implements ITask {
 			// Determine profit
 			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
 			// TODO Filtering and logic when to use playerPrice
-			final int shopPrice = itemPriceData.getShopPrice();
-			final int playerPrice = itemPriceData.getPlayerPrice().getPrice();
-			final int itemPrice = Math.max(shopPrice, playerPrice);
+			final int standardShopPrice = itemPriceData.getShopPrice();
+			final int shopPrice = Store.computeFullShopPrice(standardShopPrice);
+			final int itemPrice;
+			if (itemPriceData.hasPlayerPrice()) {
+				final int playerPrice = itemPriceData.getPlayerPrice().get().getPrice();
+				itemPrice = Math.max(shopPrice, playerPrice);
+			} else {
+				itemPrice = shopPrice;
+			}
 			final int itemProfit = itemPrice - itemCost;
 
 			// Reject item if price is below cost
