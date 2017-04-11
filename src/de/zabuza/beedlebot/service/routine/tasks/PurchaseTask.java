@@ -22,6 +22,7 @@ public final class PurchaseTask implements ITask {
 	private static final String CSS_PURCHASE_ANCHOR_SELECTOR_PRE = "a[href=\"";
 	private static final String CSS_PURCHASE_ANCHOR_SELECTOR_SUC = "\"]";
 	private static final String DEFENSE_WEAPON_CATEGORY_ANCHOR = "Kategorie: Verteidigungswaffen";
+	private static final String EXIT_MENU_ANCHOR = "Zur";
 	private static final String MISCELLANEOUS_CATEGORY_ANCHOR = "Kategorie: Sonstiges";
 	private static final String SPELL_CATEGORY_ANCHOR = "Kategorie: Anwendbare Items und Zauber";
 	private final WebDriver mDriver;
@@ -79,10 +80,13 @@ public final class PurchaseTask implements ITask {
 	public void start() {
 		// Open category
 		final String needle = mItemCategoryToAnchorNeedle.get(mItem.getItemCategory());
-		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, needle);
+		final boolean wasCategoryClicked = mInstance.clickAnchorByContent(EFrame.MAIN, needle);
 
 		// TODO Correct error handling and logging
-		if (!wasClicked) {
+		if (!wasCategoryClicked) {
+			// TODO Remove debug print
+			System.out.println("Category not clicked");
+			exitMenu();
 			return;
 		}
 
@@ -90,11 +94,15 @@ public final class PurchaseTask implements ITask {
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
 
 		// Click the purchase anchor
-		final List<WebElement> elements = mDriver.findElements(By.cssSelector(
-				CSS_PURCHASE_ANCHOR_SELECTOR_PRE + mItem.getPurchaseAnchor() + CSS_PURCHASE_ANCHOR_SELECTOR_SUC));
+		final String selector = CSS_PURCHASE_ANCHOR_SELECTOR_PRE + mItem.getPurchaseAnchor()
+				+ CSS_PURCHASE_ANCHOR_SELECTOR_SUC;
+		final List<WebElement> elements = mDriver.findElements(By.cssSelector(selector));
 		if (elements.isEmpty()) {
 			// Item is not present anymore
 			// TODO Correct error handling and logging
+			// TODO Remove debug print
+			System.out.println("Item not there anymore");
+			exitMenu();
 			return;
 		}
 
@@ -105,7 +113,15 @@ public final class PurchaseTask implements ITask {
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
 
 		// Click the continue anchor
-		mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
+		final boolean wasContinueClicked = mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
+
+		// TODO Correct error handling and logging
+		if (!wasContinueClicked) {
+			// TODO Remove debug print
+			System.out.println("Continue not clicked");
+			exitMenu();
+			return;
+		}
 
 		// Wait for click to get executed
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
@@ -114,5 +130,12 @@ public final class PurchaseTask implements ITask {
 
 	public boolean wasBought() {
 		return mWasBought;
+	}
+
+	private void exitMenu() {
+		mInstance.clickAnchorByContent(EFrame.MAIN, EXIT_MENU_ANCHOR);
+
+		// Wait for click to get executed
+		new EventQueueEmptyWait(mDriver).waitUntilCondition();
 	}
 }

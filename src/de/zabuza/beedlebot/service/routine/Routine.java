@@ -116,9 +116,12 @@ public final class Routine {
 
 			if (purchaseTask.wasBought()) {
 				mBoughtItemsBuffer.add(item);
+				// TODO Remove debug print and log bought items
+				System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
+			} else {
+				// TODO Remove debug print
+				System.out.println("Not bought, problem: " + item.getName());
 			}
-			// TODO Remove debug print and log bought items
-			System.out.println("Bought: " + item.getName());
 
 			// Proceed to the next phase
 			setPhase(EPhase.WAIT);

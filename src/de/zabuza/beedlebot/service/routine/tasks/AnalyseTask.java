@@ -26,7 +26,7 @@ public final class AnalyseTask implements ITask {
 	private static final String CONTENT_ITEM_COST_START = "für ";
 	private static final String CONTENT_ITEM_NAME_END = "</b>";
 	private static final String CONTENT_ITEM_NAME_START = "<b>";
-	private static final String CONTENT_LINE_SPLIT = "<br />";
+	private static final String CONTENT_LINE_SPLIT_PATTERN = "(<br\\s*/>|<br>)";
 	private static final String CONTENT_LINE_VALIDATOR = "<b>";
 	private static final String CONTENT_NEEDLE_END = "Zurück";
 	private static final String CONTENT_NEEDLE_START = "Zurück";
@@ -129,7 +129,7 @@ public final class AnalyseTask implements ITask {
 		}
 
 		final String itemContent = content.substring(startIndex, endIndex);
-		final String[] itemContentLines = itemContent.split(CONTENT_LINE_SPLIT);
+		final String[] itemContentLines = itemContent.split(CONTENT_LINE_SPLIT_PATTERN);
 		for (final String itemContentLine : itemContentLines) {
 			// Reject if line does not begin with validator
 			if (!itemContentLine.startsWith(CONTENT_LINE_VALIDATOR)) {
@@ -174,6 +174,7 @@ public final class AnalyseTask implements ITask {
 
 			final String purchaseAnchor = itemContentLine
 					.substring(purchaseAnchorStart + CONTENT_BUY_ANCHOR_START.length(), purchaseAnchorEnd);
+			final String purchaseAnchorDecoded = purchaseAnchor.replaceAll("&amp;", "&");
 
 			// Extract is magical state
 			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);
@@ -207,8 +208,8 @@ public final class AnalyseTask implements ITask {
 			}
 
 			// Add the item to the analyse result
-			mResult.add(
-					new Item(itemName, itemCost, itemProfit, purchaseAnchor, isMagical, itemPriceData, mItemCategory));
+			mResult.add(new Item(itemName, itemCost, itemProfit, purchaseAnchorDecoded, isMagical, itemPriceData,
+					mItemCategory));
 		}
 	}
 }

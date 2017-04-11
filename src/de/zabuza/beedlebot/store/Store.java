@@ -80,6 +80,8 @@ public final class Store {
 			final Optional<Integer> shopPrice = mStandardShopPriceFinder.findStandardShopPrice(itemName);
 
 			if (!shopPrice.isPresent()) {
+				// TODO Remove debug print
+				System.out.println(itemName);
 				// TODO Correct error handling and logging
 				throw new IllegalArgumentException();
 			}

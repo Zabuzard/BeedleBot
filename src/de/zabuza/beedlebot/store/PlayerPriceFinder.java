@@ -3,6 +3,8 @@ package de.zabuza.beedlebot.store;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import com.google.gson.JsonObject;
@@ -70,9 +72,10 @@ public final class PlayerPriceFinder {
 
 	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world) {
 		final int worldAsNumber = worldToNumber(world);
-		final String query = SERVER_URL + QUERY_BEGIN + QUERY_PARAMETER_WORLD + QUERY_ALLOCATION + worldAsNumber
-				+ QUERY_SEPARATOR + QUERY_PARAMETER_ITEM + QUERY_ALLOCATION + itemName;
 		try {
+			final String encodedItemName = URLEncoder.encode(itemName, StandardCharsets.UTF_8.toString());
+			final String query = SERVER_URL + QUERY_BEGIN + QUERY_PARAMETER_WORLD + QUERY_ALLOCATION + worldAsNumber
+					+ QUERY_SEPARATOR + QUERY_PARAMETER_ITEM + QUERY_ALLOCATION + encodedItemName;
 			final URL url = new URL(query);
 			final JsonStreamParser parser = new JsonStreamParser(new InputStreamReader(url.openStream()));
 
