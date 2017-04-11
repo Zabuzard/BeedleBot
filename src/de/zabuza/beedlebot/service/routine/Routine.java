@@ -9,6 +9,7 @@ import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
+import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
 import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.wait.TimedWait;
@@ -82,7 +83,7 @@ public final class Routine {
 			System.out.println("Analyse: Selected " + mCurrentCategory);
 
 			// Start analyse task
-			AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult, mCurrentCategory,
+			final AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult, mCurrentCategory,
 					mStore);
 			analyseTask.start();
 
@@ -109,8 +110,14 @@ public final class Routine {
 				return;
 			}
 
-			// TODO Implement and remove dummy
-			mBoughtItemsBuffer.add(item);
+			// Start the purchase task
+			final PurchaseTask purchaseTask = new PurchaseTask(mInstance, mDriver, item);
+			purchaseTask.start();
+
+			if (purchaseTask.wasBought()) {
+				mBoughtItemsBuffer.add(item);
+			}
+			// TODO Remove debug print and log bought items
 			System.out.println("Bought: " + item.getName());
 
 			// Proceed to the next phase
@@ -120,12 +127,14 @@ public final class Routine {
 
 		// Wait phase
 		if (getPhase() == EPhase.WAIT) {
-			// TODO Implement and remove dummy
-			new TimedWait(mDriver, 2000).waitUntilCondition();
-			System.out.println("Waited");
+			if (mInstance.getMovement().canMove()) {
+				// TODO Remove debug
+				System.out.println("Waited");
 
-			// Proceed to the next phase
-			setPhase(EPhase.PURCHASE);
+				// Proceed to the next phase
+				setPhase(EPhase.PURCHASE);
+			}
+
 			return;
 		}
 

@@ -18,6 +18,10 @@ public final class AnalyseTask implements ITask {
 	private static final String ABORT_ANCHOR = "Zur";
 	private static final String AMULET_CATEGORY_ANCHOR = "Kategorie: Halsschmuck";
 	private static final String ATTACK_WEAPON_CATEGORY_ANCHOR = "Kategorie: Angriffswaffen";
+	private static final int CONSIDER_PLAYER_PRICE_COST_ABS = 200;
+	private static final String CONTENT_BUY_ANCHOR_END = "\"> kaufen";
+	private static final String CONTENT_BUY_ANCHOR_START = "Gold <a href=\"";
+	private static final String CONTENT_IS_MAGICAL_PRESENCE = "class=\"itemmagic\"";
 	private static final String CONTENT_ITEM_COST_END = " Gold";
 	private static final String CONTENT_ITEM_COST_START = "für ";
 	private static final String CONTENT_ITEM_NAME_END = "</b>";
@@ -49,6 +53,7 @@ public final class AnalyseTask implements ITask {
 		mItemCategory = itemCategory;
 		mStore = store;
 
+		// TODO Remove code duplication with purchase task
 		mItemCategoryToAnchorNeedle = new HashMap<>();
 		mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
 		mItemCategoryToAnchorNeedle.put(EItemCategory.DEFENSE_WEAPON, DEFENSE_WEAPON_CATEGORY_ANCHOR);
@@ -98,6 +103,8 @@ public final class AnalyseTask implements ITask {
 
 		// Retrieve content
 		final String content = mDriver.getPageSource();
+
+		// Process content
 		processContent(content);
 
 		// Finish the task
@@ -156,28 +163,52 @@ public final class AnalyseTask implements ITask {
 			itemCostText = itemCostText.replaceAll("\\.", "");
 			final Integer itemCost = Integer.parseInt(itemCostText);
 
+			// Extract purchase anchor
+			final int purchaseAnchorStart = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_START);
+			final int purchaseAnchorEnd = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_END);
+
+			if (purchaseAnchorStart == -1 || purchaseAnchorEnd == -1) {
+				// TODO Correct error handling and logging
+				return;
+			}
+
+			final String purchaseAnchor = itemContentLine
+					.substring(purchaseAnchorStart + CONTENT_BUY_ANCHOR_START.length(), purchaseAnchorEnd);
+
+			// Extract is magical state
+			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);
+			// Reject item if magical
+			if (isMagical) {
+				continue;
+			}
+
 			// Determine profit
 			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
 			// TODO Filtering and logic when to use playerPrice
+			// TODO Out-source logic to better location
 			final int standardShopPrice = itemPriceData.getShopPrice();
 			final int shopPrice = Store.computeFullShopPrice(standardShopPrice);
 			final int itemPrice;
 			if (itemPriceData.hasPlayerPrice()) {
 				final int playerPrice = itemPriceData.getPlayerPrice().get().getPrice();
-				itemPrice = Math.max(shopPrice, playerPrice);
+				if (playerPrice - itemCost >= CONSIDER_PLAYER_PRICE_COST_ABS) {
+					itemPrice = Math.max(shopPrice, playerPrice);
+				} else {
+					itemPrice = shopPrice;
+				}
 			} else {
 				itemPrice = shopPrice;
 			}
 			final int itemProfit = itemPrice - itemCost;
 
 			// Reject item if price is below cost
-			// TODO Use certain threshold
 			if (itemProfit <= 0) {
 				continue;
 			}
 
 			// Add the item to the analyse result
-			mResult.add(new Item(itemName, itemCost, itemProfit, itemPriceData, mItemCategory));
+			mResult.add(
+					new Item(itemName, itemCost, itemProfit, purchaseAnchor, isMagical, itemPriceData, mItemCategory));
 		}
 	}
 }

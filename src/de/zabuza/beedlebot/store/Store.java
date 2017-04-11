@@ -45,10 +45,19 @@ public final class Store {
 
 	public Store(final EWorld world) {
 		mWorld = world;
-		// TODO Try to create the cache with deserialization
-		mStoreCache = new StoreCache(mWorld);
 		mStandardShopPriceFinder = new StandardShopPriceFinder();
 		mPlayerPriceFinder = new PlayerPriceFinder();
+
+		// Try to create cache from serialized content
+		if (StoreCache.hasSerializedCache(mWorld)) {
+			mStoreCache = StoreCache.deserialize(mWorld);
+		} else {
+			mStoreCache = new StoreCache(mWorld);
+		}
+	}
+
+	public void finalize() {
+		mStoreCache.serialize();
 	}
 
 	public ItemPrice getItemPrice(final String itemName) {
@@ -78,9 +87,18 @@ public final class Store {
 			// Lookup player to player price in MPLogger interface
 			final Optional<PlayerPrice> playerPrice = mPlayerPriceFinder.findPlayerPrice(itemName, mWorld);
 
-			// Create data and update the cache
-			itemPrice = new ItemPrice(itemName, shopPrice.get(), playerPrice, System.currentTimeMillis());
-			mStoreCache.putItemPrice(itemPrice);
+			// Create data
+			if (playerPrice.isPresent()) {
+				itemPrice = new ItemPrice(itemName, shopPrice.get(), playerPrice.get(), false,
+						System.currentTimeMillis());
+			} else {
+				itemPrice = new ItemPrice(itemName, shopPrice.get(), false, System.currentTimeMillis());
+			}
+
+			// Create a version for the cache and update it
+			final ItemPrice cacheItemPrice = itemPrice.clone();
+			cacheItemPrice.setIsCached(true);
+			mStoreCache.putItemPrice(cacheItemPrice);
 		}
 
 		return itemPrice;

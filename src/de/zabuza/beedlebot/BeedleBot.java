@@ -170,6 +170,7 @@ public final class BeedleBot {
 	private void stopService() {
 		if (mService != null && mService.isActive()) {
 			mService.stopService();
+			mStore.finalize();
 		}
 	}
 
