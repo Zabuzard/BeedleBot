@@ -8,8 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import de.zabuza.beedlebot.service.routine.EItemCategory;
-import de.zabuza.beedlebot.service.routine.Item;
+import de.zabuza.beedlebot.store.EItemCategory;
+import de.zabuza.beedlebot.store.Item;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.frames.EFrame;
 import de.zabuza.sparkle.wait.EventQueueEmptyWait;

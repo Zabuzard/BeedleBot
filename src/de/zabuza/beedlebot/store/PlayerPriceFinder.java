@@ -3,8 +3,6 @@ package de.zabuza.beedlebot.store;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import com.google.gson.JsonObject;
@@ -13,70 +11,30 @@ import com.google.gson.JsonStreamParser;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class PlayerPriceFinder {
-	private static final String QUERY_ALLOCATION = "=";
-	private static final String QUERY_BEGIN = "?";
 	private static final String QUERY_PARAMETER_ITEM = "item";
 	private static final String QUERY_PARAMETER_WORLD = "world";
-	private static final String QUERY_SEPARATOR = "&";
 	private static final String RESULT_KEY_PRICE = "price";
 	private static final String RESULT_KEY_TIMESTAMP = "ts";
-	private static final String SERVER_URL = "http://www.zabuza.square7.ch/freewar/mplogger/itemPrice.php";
-
-	private static int worldToNumber(final EWorld world) {
-		if (world == EWorld.ONE) {
-			return 1;
-		}
-		if (world == EWorld.TWO) {
-			return 2;
-		}
-		if (world == EWorld.THREE) {
-			return 3;
-		}
-		if (world == EWorld.FOUR) {
-			return 4;
-		}
-		if (world == EWorld.FIVE) {
-			return 5;
-		}
-		if (world == EWorld.SIX) {
-			return 6;
-		}
-		if (world == EWorld.SEVEN) {
-			return 7;
-		}
-		if (world == EWorld.EIGHT) {
-			return 8;
-		}
-		if (world == EWorld.NINE) {
-			return 9;
-		}
-		if (world == EWorld.TEN) {
-			return 10;
-		}
-		if (world == EWorld.ELEVEN) {
-			return 11;
-		}
-		if (world == EWorld.TWELVE) {
-			return 12;
-		}
-		if (world == EWorld.THIRTEEN) {
-			return 13;
-		}
-		if (world == EWorld.FOURTEEN) {
-			return 14;
-		}
-
-		// TODO Correct error handling and logging
-		throw new IllegalArgumentException();
-	}
+	private static final String SERVER_FILE = "itemPrice.php";
 
 	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world) {
-		final int worldAsNumber = worldToNumber(world);
+		final int worldAsNumber = StoreUtil.worldToNumber(world);
+		final String encodedItemName = StoreUtil.encodeUtf8(itemName);
 		try {
-			final String encodedItemName = URLEncoder.encode(itemName, StandardCharsets.UTF_8.toString());
-			final String query = SERVER_URL + QUERY_BEGIN + QUERY_PARAMETER_WORLD + QUERY_ALLOCATION + worldAsNumber
-					+ QUERY_SEPARATOR + QUERY_PARAMETER_ITEM + QUERY_ALLOCATION + encodedItemName;
-			final URL url = new URL(query);
+			final StringBuilder queryBuilder = new StringBuilder();
+			queryBuilder.append(StoreUtil.SERVER_URL);
+			queryBuilder.append(StoreUtil.PLAYER_PRICE_SERVICE);
+			queryBuilder.append(SERVER_FILE);
+			queryBuilder.append(StoreUtil.QUERY_BEGIN);
+			queryBuilder.append(QUERY_PARAMETER_WORLD);
+			queryBuilder.append(StoreUtil.QUERY_ALLOCATION);
+			queryBuilder.append(worldAsNumber);
+			queryBuilder.append(StoreUtil.QUERY_SEPARATOR);
+			queryBuilder.append(QUERY_PARAMETER_ITEM);
+			queryBuilder.append(StoreUtil.QUERY_ALLOCATION);
+			queryBuilder.append(encodedItemName);
+
+			final URL url = new URL(queryBuilder.toString());
 			final JsonStreamParser parser = new JsonStreamParser(new InputStreamReader(url.openStream()));
 
 			if (!parser.hasNext()) {
@@ -92,11 +50,11 @@ public final class PlayerPriceFinder {
 			}
 
 			final int price = element.get(RESULT_KEY_PRICE).getAsInt();
-			final long timestamp = element.get(RESULT_KEY_TIMESTAMP).getAsLong();
+			final long timestamp = StoreUtil.secondsToMillis(element.get(RESULT_KEY_TIMESTAMP).getAsLong());
 
 			final PlayerPrice playerPrice = new PlayerPrice(price, timestamp, world);
 			return Optional.of(playerPrice);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Correct error handling and logging
 			e.printStackTrace();
 			return Optional.empty();

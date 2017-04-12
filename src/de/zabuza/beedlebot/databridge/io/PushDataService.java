@@ -7,8 +7,8 @@ import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.EState;
 import de.zabuza.beedlebot.databridge.ItemEntry;
 import de.zabuza.beedlebot.service.Service;
-import de.zabuza.beedlebot.service.routine.Item;
 import de.zabuza.beedlebot.service.routine.Routine;
+import de.zabuza.beedlebot.store.Item;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.player.IPlayer;
 

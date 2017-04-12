@@ -37,16 +37,22 @@ public final class Store {
 
 	private final PlayerPriceFinder mPlayerPriceFinder;
 
+	private final PurchaseRegister mPurchaseRegister;
+
 	private final StandardShopPriceFinder mStandardShopPriceFinder;
 
 	private final StoreCache mStoreCache;
 
+	private final String mUser;
+
 	private final EWorld mWorld;
 
-	public Store(final EWorld world) {
+	public Store(final String user, final EWorld world) {
+		mUser = user;
 		mWorld = world;
 		mStandardShopPriceFinder = new StandardShopPriceFinder();
 		mPlayerPriceFinder = new PlayerPriceFinder();
+		mPurchaseRegister = new PurchaseRegister(user, world);
 
 		// Try to create cache from serialized content
 		if (StoreCache.hasSerializedCache(mWorld)) {
@@ -62,6 +68,10 @@ public final class Store {
 
 	public ItemPrice getItemPrice(final String itemName) {
 		return getItemPrice(itemName, false);
+	}
+
+	public void registerItemPurchase(final Item item) {
+		mPurchaseRegister.registerPurchase(item);
 	}
 
 	private ItemPrice getItemPrice(final String itemName, final boolean ignoreCache) {

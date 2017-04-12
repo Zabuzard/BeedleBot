@@ -107,13 +107,15 @@ public final class BeedleBot {
 		// TODO Remove debug
 		System.out.println("Starting Service");
 
+		final String username = userSettingsProvider.getUserName();
+		final String password = userSettingsProvider.getPassword();
 		final EWorld world = userSettingsProvider.getWorld();
-		if (world == null) {
+		if (username == null || username.equals("") || password == null || password.equals("") || world == null) {
 			// TODO Correct error handling and logging
 		}
 
 		// Create the store
-		mStore = new Store(world);
+		mStore = new Store(username, world);
 
 		// Create Freewar API
 		final EBrowser browser = browserSettingsProvider.getBrowser();
@@ -133,12 +135,6 @@ public final class BeedleBot {
 		mApi.setCapabilities(capabilities);
 
 		// Login and create an instance
-		final String username = userSettingsProvider.getUserName();
-		final String password = userSettingsProvider.getPassword();
-		if (username == null || username.equals("") || password == null || password.equals("")) {
-			// TODO Correct error handling and logging
-		}
-
 		mInstance = mApi.login(username, password, world);
 		mDriver = ((IHasWebDriver) mInstance).getWebDriver();
 

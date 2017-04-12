@@ -2,6 +2,8 @@ package de.zabuza.beedlebot.service.routine;
 
 import java.util.Comparator;
 
+import de.zabuza.beedlebot.store.Item;
+
 public final class ProfitComparator implements Comparator<Item> {
 
 	/*

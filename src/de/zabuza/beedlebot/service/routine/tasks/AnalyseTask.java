@@ -6,8 +6,8 @@ import java.util.Map;
 import org.openqa.selenium.WebDriver;
 
 import de.zabuza.beedlebot.service.routine.AnalyseResult;
-import de.zabuza.beedlebot.service.routine.EItemCategory;
-import de.zabuza.beedlebot.service.routine.Item;
+import de.zabuza.beedlebot.store.EItemCategory;
+import de.zabuza.beedlebot.store.Item;
 import de.zabuza.beedlebot.store.ItemPrice;
 import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
@@ -21,6 +21,7 @@ public final class AnalyseTask implements ITask {
 	private static final int CONSIDER_PLAYER_PRICE_COST_ABS = 200;
 	private static final String CONTENT_BUY_ANCHOR_END = "\"> kaufen";
 	private static final String CONTENT_BUY_ANCHOR_START = "Gold <a href=\"";
+	private static final String CONTENT_ID_START = "mit_item=";
 	private static final String CONTENT_IS_MAGICAL_PRESENCE = "class=\"itemmagic\"";
 	private static final String CONTENT_ITEM_COST_END = " Gold";
 	private static final String CONTENT_ITEM_COST_START = "für ";
@@ -176,6 +177,16 @@ public final class AnalyseTask implements ITask {
 					.substring(purchaseAnchorStart + CONTENT_BUY_ANCHOR_START.length(), purchaseAnchorEnd);
 			final String purchaseAnchorDecoded = purchaseAnchor.replaceAll("&amp;", "&");
 
+			// Extract id from purchase anchor
+			final int idStart = purchaseAnchor.indexOf(CONTENT_ID_START);
+
+			if (idStart == -1) {
+				// TODO Correct error handling and logging
+				return;
+			}
+
+			final int id = Integer.parseInt(purchaseAnchor.substring(idStart + CONTENT_ID_START.length()));
+
 			// Extract is magical state
 			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);
 			// Reject item if magical
@@ -208,7 +219,7 @@ public final class AnalyseTask implements ITask {
 			}
 
 			// Add the item to the analyse result
-			mResult.add(new Item(itemName, itemCost, itemProfit, purchaseAnchorDecoded, isMagical, itemPriceData,
+			mResult.add(new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical, itemPriceData,
 					mItemCategory));
 		}
 	}

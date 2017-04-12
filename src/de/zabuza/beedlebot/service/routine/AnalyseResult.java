@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import de.zabuza.beedlebot.store.Item;
+
 /**
  * 
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}

@@ -10,6 +10,8 @@ import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
 import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
+import de.zabuza.beedlebot.store.EItemCategory;
+import de.zabuza.beedlebot.store.Item;
 import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.wait.TimedWait;
@@ -115,8 +117,9 @@ public final class Routine {
 			purchaseTask.start();
 
 			if (purchaseTask.wasBought()) {
+				mStore.registerItemPurchase(item);
 				mBoughtItemsBuffer.add(item);
-				// TODO Remove debug print and log bought items
+				// TODO Remove debug print
 				System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
 			} else {
 				// TODO Remove debug print

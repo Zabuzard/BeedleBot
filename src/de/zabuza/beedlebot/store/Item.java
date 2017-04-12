@@ -1,10 +1,9 @@
-package de.zabuza.beedlebot.service.routine;
-
-import de.zabuza.beedlebot.store.ItemPrice;
+package de.zabuza.beedlebot.store;
 
 public final class Item {
 
 	private final int mCost;
+	private final int mId;
 	private final boolean mIsMagical;
 	private final EItemCategory mItemCategory;
 	private final String mName;
@@ -12,11 +11,12 @@ public final class Item {
 	private final String mPurchaseAnchor;
 	private final ItemPrice mStorePriceData;
 
-	public Item(final String name, final int cost, final int profit, final String purchaseAnchor, boolean isMagical,
-			final ItemPrice storePriceData, final EItemCategory itemCategory) {
+	public Item(final String name, final int cost, final int profit, final int id, final String purchaseAnchor,
+			boolean isMagical, final ItemPrice storePriceData, final EItemCategory itemCategory) {
 		mName = name;
 		mCost = cost;
 		mProfit = profit;
+		mId = id;
 		mItemCategory = itemCategory;
 		mStorePriceData = storePriceData;
 		mPurchaseAnchor = purchaseAnchor;
@@ -25,6 +25,10 @@ public final class Item {
 
 	public int getCost() {
 		return mCost;
+	}
+
+	public int getId() {
+		return mId;
 	}
 
 	public EItemCategory getItemCategory() {

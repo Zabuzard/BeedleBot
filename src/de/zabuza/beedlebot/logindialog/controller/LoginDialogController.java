@@ -95,5 +95,7 @@ public final class LoginDialogController {
 	private void linkListener() {
 		mView.addListenerToLoginAction(new LoginActionListener(this));
 		mView.addWindowListener(new ExitAtWindowCloseListener(this));
+
+		mOwner.getRootPane().setDefaultButton(mView.getLoginButton());
 	}
 }

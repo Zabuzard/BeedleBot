@@ -414,6 +414,7 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 */
 	private void linkListener() {
 		mView.addListenerToSettingsAction(new SettingsActionListener(this));
+
 	}
 
 	/**

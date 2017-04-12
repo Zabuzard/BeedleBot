@@ -143,6 +143,15 @@ public final class LoginDialogView {
 	}
 
 	/**
+	 * Gets the login button.
+	 * 
+	 * @return The login button to get
+	 */
+	public JButton getLoginButton() {
+		return mLoginBtn;
+	}
+
+	/**
 	 * Gets the input password.
 	 * 
 	 * @return The input password
