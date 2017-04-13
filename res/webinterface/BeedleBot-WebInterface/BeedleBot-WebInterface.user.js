@@ -38,8 +38,8 @@ function addCssRules() {
 				text-align: center;\
 			}\
 			\
-			.beedleTab, .statusRibbonText, .valueText, .beedleItemName,\
-			.beedleItemCost, .beedleItemProfit {\
+			.beedleTab, .statusRibbonText, .valueText, .valueText span,\
+			.beedleItemName, .beedleItemCost, .beedleItemProfit {\
 				font-family: Arial, helvetica, sans-serif;\
 				color: #222;\
 				font-size: 12px;\
@@ -277,6 +277,24 @@ function beedleBotServingMockup() {
 	setItem('itemEntries', itemEntries);
 
 	setItem('isBeedleBotServing', true);
+	beedleBotServingPurchaseMockup();
+}
+
+/*
+ * Part of the mockup which acts as Beedle Bot Server.
+ * It puts item purchase testing data in the session storage such
+ * that the interface has data to display. The method calls itself again.
+ * This method is for testing purpose only.
+ */
+function beedleBotServingPurchaseMockup() {
+	var valueSeparator = itemEntryFormat.valueSeparator;
+	var entrySeparator = itemEntryFormat.entrySeparator;
+	var itemEntries = getItem('itemEntries');
+	itemEntries += entrySeparator + Date.now() + valueSeparator +
+		'Silberfuchsfell' + valueSeparator + '12' + valueSeparator + '4';
+	setItem('itemEntries', itemEntries);
+
+	window.setTimeout(beedleBotServingPurchaseMockup, 2000);
 }
 
 /*
