@@ -27,6 +27,8 @@ public final class Routine {
 	private final PushDataService mPushDataService;
 	private final Service mService;
 	private final Store mStore;
+	private int mTotalCost;
+	private int mTotalProfit;
 
 	public Routine(final Service service, final IFreewarInstance instance, final WebDriver driver,
 			final PushDataService pushDataService, final Store store) {
@@ -39,6 +41,8 @@ public final class Routine {
 		mCurrentCategory = null;
 		mCurrentAnalyseResult = null;
 		mBoughtItemsBuffer = new LinkedList<>();
+		mTotalProfit = 0;
+		mTotalCost = 0;
 	}
 
 	public Queue<Item> fetchBoughtItems() {
@@ -49,6 +53,14 @@ public final class Routine {
 
 	public EPhase getPhase() {
 		return mPhase;
+	}
+
+	public int getTotalCost() {
+		return mTotalCost;
+	}
+
+	public int getTotalProfit() {
+		return mTotalProfit;
 	}
 
 	public void reset() {
@@ -119,6 +131,8 @@ public final class Routine {
 			if (purchaseTask.wasBought()) {
 				mStore.registerItemPurchase(item);
 				mBoughtItemsBuffer.add(item);
+				mTotalCost += item.getCost();
+				mTotalProfit += item.getProfit();
 				// TODO Remove debug print
 				System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
 			} else {

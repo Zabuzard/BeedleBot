@@ -95,5 +95,11 @@ public final class PushDataService {
 		for (final Item item : boughtItems) {
 			mDataBridge.pushItemEntry(new ItemEntry(item.getName(), item.getCost(), item.getProfit()));
 		}
+
+		// Get total cost
+		mDataBridge.setTotalCost(mRoutine.getTotalCost());
+
+		// Get total profit
+		mDataBridge.setTotalProfit(mRoutine.getTotalProfit());
 	}
 }
