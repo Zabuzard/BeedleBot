@@ -10,6 +10,7 @@ import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.Routine;
 import de.zabuza.beedlebot.store.Item;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
+import de.zabuza.sparkle.freewar.inventory.IInventory;
 import de.zabuza.sparkle.freewar.player.IPlayer;
 
 public final class PushDataService {
@@ -74,8 +75,10 @@ public final class PushDataService {
 			return;
 		}
 
-		// Get lifepoints
 		final IPlayer player = mInstance.getPlayer();
+		final IInventory inventory = mInstance.getInventory();
+
+		// Get lifepoints
 		mDataBridge.setCurrentLifepoints(player.getLifePoints());
 		mDataBridge.setMaxLifepoints(player.getMaxLifePoints());
 
@@ -84,11 +87,10 @@ public final class PushDataService {
 
 		// Get inventory size
 		mDataBridge.setMaxInventorySize(player.getSpeed());
-		// TODO Implement size of inventory in Sparkle
-		mDataBridge.setInventorySize(0);
+		mDataBridge.setInventorySize(inventory.getInventorySize());
 
 		// TODO Compute waiting time
-		mDataBridge.setWaitingTime(0);
+		mDataBridge.setWaitingTime(10);
 
 		// Push item-entries
 		final Queue<Item> boughtItems = mRoutine.fetchBoughtItems();

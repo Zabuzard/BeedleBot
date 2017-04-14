@@ -43,12 +43,9 @@ public final class Store {
 
 	private final StoreCache mStoreCache;
 
-	private final String mUser;
-
 	private final EWorld mWorld;
 
 	public Store(final String user, final EWorld world) {
-		mUser = user;
 		mWorld = world;
 		mStandardShopPriceFinder = new StandardShopPriceFinder();
 		mPlayerPriceFinder = new PlayerPriceFinder();

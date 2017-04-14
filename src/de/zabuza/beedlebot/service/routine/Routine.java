@@ -10,11 +10,11 @@ import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
 import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
+import de.zabuza.beedlebot.service.routine.tasks.WaitForDeliveryTask;
 import de.zabuza.beedlebot.store.EItemCategory;
 import de.zabuza.beedlebot.store.Item;
 import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
-import de.zabuza.sparkle.wait.TimedWait;
 
 public final class Routine {
 
@@ -29,6 +29,7 @@ public final class Routine {
 	private final Store mStore;
 	private int mTotalCost;
 	private int mTotalProfit;
+	private WaitForDeliveryTask mWaitForDeliveryTask;
 
 	public Routine(final Service service, final IFreewarInstance instance, final WebDriver driver,
 			final PushDataService pushDataService, final Store store) {
@@ -43,6 +44,7 @@ public final class Routine {
 		mBoughtItemsBuffer = new LinkedList<>();
 		mTotalProfit = 0;
 		mTotalCost = 0;
+		mWaitForDeliveryTask = new WaitForDeliveryTask(mInstance.getChat());
 	}
 
 	public Queue<Item> fetchBoughtItems() {
@@ -118,9 +120,9 @@ public final class Routine {
 		if (getPhase() == EPhase.PURCHASE) {
 			final Item item = mCurrentAnalyseResult.poll();
 
-			// Abort and start analysing again if there is no item
+			// Abort and start waiting for the next delivery if there is no item
 			if (item == null) {
-				setPhase(EPhase.ANALYSE);
+				setPhase(EPhase.AWAITING_DELIVERY);
 				return;
 			}
 
@@ -160,12 +162,14 @@ public final class Routine {
 
 		// Awaiting delivery phase
 		if (getPhase() == EPhase.AWAITING_DELIVERY) {
-			// TODO Implement and remove dummy
-			new TimedWait(mDriver, 5000).waitUntilCondition();
-			System.out.println("Waited for delivery.");
+			mWaitForDeliveryTask.start();
+			if (mWaitForDeliveryTask.wasThereADelivery()) {
+				// TODO Remove debug print
+				System.out.println("Waited for delivery.");
 
-			// Proceed to the next phase
-			setPhase(EPhase.ANALYSE);
+				// Proceed to the next phase
+				setPhase(EPhase.ANALYSE);
+			}
 			return;
 		}
 	}

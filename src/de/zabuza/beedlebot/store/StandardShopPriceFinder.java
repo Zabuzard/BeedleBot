@@ -100,6 +100,13 @@ public final class StandardShopPriceFinder {
 		Integer shopPrice = null;
 
 		final String parsedItemName = parseItem(itemName);
+
+		// Process exceptional items
+		final Optional<Integer> exceptionalPrice = processExceptionalItems(itemName);
+		if (exceptionalPrice.isPresent()) {
+			return exceptionalPrice;
+		}
+
 		BufferedReader br = null;
 		try {
 			final String itemToUrl = parsedItemName.replaceAll("\\s", "_");
@@ -172,5 +179,13 @@ public final class StandardShopPriceFinder {
 		}
 
 		return Optional.of(shopPrice);
+	}
+
+	private Optional<Integer> processExceptionalItems(final String itemName) {
+		if (itemName.matches("altes Relikt")) {
+			return Optional.of(0);
+		}
+
+		return Optional.empty();
 	}
 }
