@@ -196,7 +196,8 @@ public final class AnalyseTask implements ITask {
 
 			// Determine profit
 			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
-			// TODO Filtering and logic when to use playerPrice
+			// TODO Filtering and logic when to use playerPrice, add item
+			// exceptions
 			// TODO Out-source logic to better location
 			final int standardShopPrice = itemPriceData.getShopPrice();
 			final int shopPrice = Store.computeFullShopPrice(standardShopPrice);
@@ -211,6 +212,7 @@ public final class AnalyseTask implements ITask {
 			} else {
 				itemPrice = shopPrice;
 			}
+			final boolean isConsideredForShop = itemPrice == shopPrice;
 			final int itemProfit = itemPrice - itemCost;
 
 			// Reject item if price is below cost
@@ -219,8 +221,8 @@ public final class AnalyseTask implements ITask {
 			}
 
 			// Add the item to the analyse result
-			mResult.add(new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical, itemPriceData,
-					mItemCategory));
+			mResult.add(new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical,
+					isConsideredForShop, itemPriceData, mItemCategory));
 		}
 	}
 }

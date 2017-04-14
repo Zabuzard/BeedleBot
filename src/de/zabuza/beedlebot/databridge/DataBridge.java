@@ -60,7 +60,9 @@ public final class DataBridge {
 		entryValue.append(entry.getTimestamp()).append(ITEM_VALUE_SEPARATOR);
 		entryValue.append(entry.getItem()).append(ITEM_VALUE_SEPARATOR);
 		entryValue.append(entry.getCost()).append(ITEM_VALUE_SEPARATOR);
-		entryValue.append(entry.getProfit());
+		entryValue.append(entry.getProfit()).append(ITEM_VALUE_SEPARATOR);
+		entryValue.append(entry.wasCached()).append(ITEM_VALUE_SEPARATOR);
+		entryValue.append(entry.isConsideredForShop());
 
 		// Get current stored text
 		String value = mStorage.getItem(buildKey(StorageKeys.ITEM_ENTRIES));
@@ -123,6 +125,10 @@ public final class DataBridge {
 
 	public void setWaitingTime(final int waitingTime) {
 		mStorage.setItem(buildKey(StorageKeys.WAITING_TIME), waitingTime + "");
+	}
+
+	public void updateHeartBeat() {
+		mStorage.setItem(buildKey(StorageKeys.HEART_BEAT), System.currentTimeMillis() + "");
 	}
 
 	private String buildKey(final String key) {

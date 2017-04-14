@@ -4,6 +4,7 @@ public final class Item {
 
 	private final int mCost;
 	private final int mId;
+	private final boolean mIsConsideredForShop;
 	private final boolean mIsMagical;
 	private final EItemCategory mItemCategory;
 	private final String mName;
@@ -12,7 +13,8 @@ public final class Item {
 	private final ItemPrice mStorePriceData;
 
 	public Item(final String name, final int cost, final int profit, final int id, final String purchaseAnchor,
-			boolean isMagical, final ItemPrice storePriceData, final EItemCategory itemCategory) {
+			boolean isMagical, final boolean isConsideredForShop, final ItemPrice storePriceData,
+			final EItemCategory itemCategory) {
 		mName = name;
 		mCost = cost;
 		mProfit = profit;
@@ -21,6 +23,7 @@ public final class Item {
 		mStorePriceData = storePriceData;
 		mPurchaseAnchor = purchaseAnchor;
 		mIsMagical = isMagical;
+		mIsConsideredForShop = isConsideredForShop;
 	}
 
 	public int getCost() {
@@ -49,6 +52,10 @@ public final class Item {
 
 	public ItemPrice getStorePriceData() {
 		return mStorePriceData;
+	}
+
+	public boolean isConsideredForShop() {
+		return mIsConsideredForShop;
 	}
 
 	public boolean isMagical() {

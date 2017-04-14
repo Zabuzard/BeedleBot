@@ -9,6 +9,7 @@ public final class StorageKeys {
 
 	public final static String CUR_LIFEPOINTS = "curLife";
 	public final static String GOLD = "gold";
+	public final static String HEART_BEAT = "heartBeat";
 	public final static String INVENTORY_SIZE = "invSize";
 	public final static String IS_ACTIVE = "isActive";
 	public final static String IS_BEEDLE_BOT_SERVING = "isBeedleBotServing";

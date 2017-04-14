@@ -199,11 +199,11 @@ function addCssRules() {
 			}\
 			\
 			.valueMedium {\
-				color: #FFAA37;\
+				color: #FFAA37 !important;\
 			}\
 			\
 			.valueCritical {\
-				color: #D24444;\
+				color: #D24444 !important;\
 			}\
 			\
 			#beedleIconPanel {\
@@ -243,6 +243,20 @@ function addCssRules() {
 				color: #29AD4A;\
 				width: 25%;\
 			}\
+			\
+			.beedleItemNotCached {\
+				background-color: #CDE3F3;\
+			}\
+			\
+			.beedleItemConsideredForPlayer {\
+				background: repeating-linear-gradient(-45deg, #F1C5C5, \
+					#F1C5C5 5px, transparent 5px, transparent 10px);\
+			}\
+			\
+			.beedleItemNotCached.beedleItemConsideredForPlayer {\
+				background: repeating-linear-gradient(-45deg, #F1C5C5, \
+					#F1C5C5 5px, #CDE3F3 5px, #CDE3F3 10px);\
+			}\
 		</style>');
 }
 
@@ -253,6 +267,8 @@ function addCssRules() {
  * This method is for testing purpose only.
  */
 function beedleBotServingMockup() {
+	setItem('heartBeat', Date.now());
+
 	setItem('isActive', false);
 
 	setItem('state', states.inactive);
@@ -271,9 +287,14 @@ function beedleBotServingMockup() {
 	var valueSeparator = itemEntryFormat.valueSeparator;
 	var entrySeparator = itemEntryFormat.entrySeparator;
 	var itemEntries = '1490796899' + valueSeparator + 'Seelenkapsel' +
-		valueSeparator + '1326' + valueSeparator + '1837' + entrySeparator +
+		valueSeparator + '1326' + valueSeparator + '1837' + valueSeparator +
+		'false' + valueSeparator + 'false' + entrySeparator +
 		'1490796902' + valueSeparator + 'Wakrudpilz' +
-		valueSeparator + '40' + valueSeparator + '45';
+		valueSeparator + '40' + valueSeparator + '45' + valueSeparator +
+		'false' + valueSeparator + 'true' + entrySeparator +
+		'1490796952' + valueSeparator + 'bronzene Jerodar-Halskette' +
+		valueSeparator + '740' + valueSeparator + '545' + valueSeparator +
+		'true' + valueSeparator + 'false';
 	setItem('itemEntries', itemEntries);
 
 	setItem('isBeedleBotServing', true);
@@ -287,11 +308,14 @@ function beedleBotServingMockup() {
  * This method is for testing purpose only.
  */
 function beedleBotServingPurchaseMockup() {
+	setItem('heartBeat', Date.now());
+	
 	var valueSeparator = itemEntryFormat.valueSeparator;
 	var entrySeparator = itemEntryFormat.entrySeparator;
 	var itemEntries = getItem('itemEntries');
 	itemEntries += entrySeparator + Date.now() + valueSeparator +
-		'Silberfuchsfell' + valueSeparator + '12' + valueSeparator + '4';
+		'Silberfuchsfell' + valueSeparator + '12' + valueSeparator + '4' +
+		valueSeparator + 'true' + valueSeparator + 'true';
 	setItem('itemEntries', itemEntries);
 
 	window.setTimeout(beedleBotServingPurchaseMockup, 2000);
@@ -341,6 +365,36 @@ function getItem(key) {
 function setItem(key, value) {
 	sessionStorage.setItem(buildKey(key), value);
 }
+
+/*
+ * Converts and returns the given text into a boolean value.
+ * @param text The text to convert
+ * @returns The converted boolean value
+ */
+function toBoolean(text) {
+	return text == 'true';
+}
+
+function trunc(text, length, useWordBoundary ){
+    if (text.length <= length) {
+		return text;
+	}
+	
+    var subText = text.substr(0, length - 1);
+	if (useWordBoundary) {
+		var lastIndexOfSpace = subText.lastIndexOf(' ');
+		var lastIndexOfHyphen = subText.lastIndexOf('-');
+		var lastIndexOfComma = subText.lastIndexOf(',');
+		var lastIndexOfColon = subText.lastIndexOf(':');
+		var boundaryIndex = Math.max(lastIndexOfSpace, lastIndexOfHyphen,
+			lastIndexOfComma, lastIndexOfColon);
+		if (boundaryIndex != -1) {
+			subText = subText.substr(0, boundaryIndex);
+		}
+	}
+	
+    return subText + '&hellip;';
+};
 
 /*
  * Formats the given number by adding a dot as thousand
@@ -720,6 +774,13 @@ function update(preventLoop) {
 		window.setTimeout(loadInterface, 500);
 		return;
 	}
+	
+	// Check heart beat of server
+	var heartBeat = getItem('heartBeat');
+	if (Date.now() - heartBeat >= heartbeatDiff) {
+		// Fire a problem since server seems to be offline
+		setItem('state', states.problem);
+	}
 
 	// Update the correct tab
 	var currentInterfaceTab = getItem('currentInterfaceTab');
@@ -986,11 +1047,26 @@ function updateItemPanel() {
 		var itemName = itemData[1];
 		var itemCost = Number(itemData[2]);
 		var itemProfit = Number(itemData[3]);
+		var itemWasCached = toBoolean(itemData[4]);
+		var itemConsiderForShop = toBoolean(itemData[5]);
+		
+		var itemNameTruncated = trunc(itemName, itemNameTruncLength, true);
+		
+		var notCachedClass = '';
+		if (!itemWasCached) {
+			notCachedClass = ' beedleItemNotCached';
+		}
+		var consideredForPlayerClass = '';
+		if (!itemConsiderForShop) {
+			consideredForPlayerClass = ' beedleItemConsideredForPlayer';
+		}
 
 		// Append item
-		$('#beedleItemPanelLayout tbody').prepend('<tr class="beedleItemEntryRow">\
-				<td class="beedleItemName">' + itemName +
-					'<input type="hidden" value="' + itemTimestamp + '">\
+		$('#beedleItemPanelLayout tbody').prepend('<tr class="beedleItemEntryRow'
+			+ notCachedClass + consideredForPlayerClass + '">\
+				<td class="beedleItemName" title="' + itemName + '">' +
+					itemNameTruncated + '<input type="hidden" value="' +
+					itemTimestamp + '">\
 				</td>\
 				<td class="beedleItemCost">' + numberFormat(itemCost) + '</td>\
 				<td class="beedleItemProfit">' + numberFormat(itemProfit) + '</td>\
@@ -1006,7 +1082,7 @@ function updateItemPanel() {
  * Creates and loads the web user interface.
  */
 function loadInterface() {
-	//beedleBotServingMockup();
+	beedleBotServingMockup();
 
 	// Web storage is necessary for BeedleBots communication
 	if (!isSupportingWebStorage()) {
@@ -1092,6 +1168,7 @@ storageKeys.waitingTime = 'waitingTime';
 storageKeys.totalCost = 'totalCost';
 storageKeys.totalProfit = 'totalProfit';
 storageKeys.itemEntries = 'itemEntries';
+storageKeys.heartBeat = 'heartBeat';
 
 // BeedleBots states
 var states = {};
@@ -1172,6 +1249,10 @@ localization.inventory = 'aktuelle / maximale Inventargr&ouml;&szlig;e';
 localization.waitingTime = 'Wartezeit pro Itemkauf';
 localization.totalCost = 'gesamte Kosten';
 localization.totalProfit = 'gesamte Einnahmen';
+
+// Miscellaneous settings
+var heartbeatDiff = 10000;
+var itemNameTruncLength = 18;
 
 // Notification sound
 var notificationSound = document.createElement('audio');

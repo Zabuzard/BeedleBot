@@ -78,6 +78,9 @@ public final class PushDataService {
 		final IPlayer player = mInstance.getPlayer();
 		final IInventory inventory = mInstance.getInventory();
 
+		// Update heartbeat
+		mDataBridge.updateHeartBeat();
+
 		// Get lifepoints
 		mDataBridge.setCurrentLifepoints(player.getLifePoints());
 		mDataBridge.setMaxLifepoints(player.getMaxLifePoints());
@@ -95,7 +98,8 @@ public final class PushDataService {
 		// Push item-entries
 		final Queue<Item> boughtItems = mRoutine.fetchBoughtItems();
 		for (final Item item : boughtItems) {
-			mDataBridge.pushItemEntry(new ItemEntry(item.getName(), item.getCost(), item.getProfit()));
+			mDataBridge.pushItemEntry(new ItemEntry(item.getName(), item.getCost(), item.getProfit(),
+					item.getStorePriceData().isCached(), item.isConsideredForShop()));
 		}
 
 		// Get total cost

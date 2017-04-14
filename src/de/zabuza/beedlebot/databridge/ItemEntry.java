@@ -6,15 +6,19 @@ public final class ItemEntry {
 	}
 
 	private final int mCost;
+	private final boolean mIsConsideredForShop;
 	private final String mItem;
 	private final int mProfit;
-
 	private final long mTimestamp;
+	private final boolean mWasCached;
 
-	public ItemEntry(final String item, final int cost, final int profit) {
+	public ItemEntry(final String item, final int cost, final int profit, final boolean wasCached,
+			final boolean isConsideredForShop) {
 		mItem = item;
 		mCost = cost;
 		mProfit = profit;
+		mWasCached = wasCached;
+		mIsConsideredForShop = isConsideredForShop;
 		mTimestamp = createTimestamp();
 	}
 
@@ -32,5 +36,13 @@ public final class ItemEntry {
 
 	public long getTimestamp() {
 		return mTimestamp;
+	}
+
+	public boolean isConsideredForShop() {
+		return mIsConsideredForShop;
+	}
+
+	public boolean wasCached() {
+		return mWasCached;
 	}
 }
