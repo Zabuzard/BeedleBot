@@ -78,15 +78,21 @@ public final class LoginDialogController {
 	 * Starts the login.
 	 */
 	public void startLogin() {
-		// First save the current content of the view
-		mSettingsController.executeSaveAction();
+		try {
+			// First save the current content of the view
+			mSettingsController.executeSaveAction();
 
-		// Close the dialog
-		mOwner.setVisible(false);
-		mOwner.dispose();
+			// Close the dialog
+			mOwner.setVisible(false);
+			mOwner.dispose();
 
-		// Start the login
-		mBeedleBot.startService(mSettingsController, mSettingsController);
+			// Start the login
+			mBeedleBot.startService(mSettingsController, mSettingsController);
+		} catch (final Exception e) {
+			// TODO Error logging
+			// Try to shutdown
+			mBeedleBot.shutdown();
+		}
 	}
 
 	/**

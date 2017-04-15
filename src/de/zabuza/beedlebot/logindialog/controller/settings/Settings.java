@@ -59,8 +59,8 @@ public final class Settings {
 				provider.setSetting((String) entry.getKey(), (String) entry.getValue());
 			}
 		} catch (final IOException e) {
-			// TODO Correct error handling
-			e.printStackTrace();
+			// TODO Error logging
+			// Log the error but continue
 		}
 	}
 
@@ -82,15 +82,15 @@ public final class Settings {
 			target = new FileOutputStream(new File(FILEPATH));
 			mProperties.store(target, FILE_COMMENT);
 		} catch (final IOException e) {
-			// TODO Correct error handling
-			e.printStackTrace();
+			// TODO Error logging
+			// Log the error but continue
 		} finally {
 			if (target != null) {
 				try {
 					target.close();
-				} catch (IOException e) {
-					// TODO Correct error handling
-					e.printStackTrace();
+				} catch (final IOException e) {
+					// TODO Error logging
+					// Log the error but continue
 				}
 			}
 		}

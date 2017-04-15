@@ -35,6 +35,8 @@ import de.zabuza.sparkle.webdriver.IHasWebDriver;
 public final class BeedleBot {
 	private static final String CHROME_USER_PROFILE_KEY = "user-data-dir";
 
+	private static final String IMAGE_PATH_ICON = "res/img/icon.png";
+
 	/**
 	 * 
 	 * @param args
@@ -43,10 +45,18 @@ public final class BeedleBot {
 	 * @throws AWTException
 	 */
 	public static void main(final String[] args) throws IOException, AWTException {
-		// TODO Correct error handling, don't use throw
-		final BeedleBot beedleBot = new BeedleBot();
-		beedleBot.initialize();
-		beedleBot.start();
+		BeedleBot beedleBot = null;
+		try {
+			beedleBot = new BeedleBot();
+			beedleBot.initialize();
+			beedleBot.start();
+		} catch (final Exception e) {
+			// TODO Error logging
+			// Try to shutdown
+			if (beedleBot != null) {
+				beedleBot.shutdown();
+			}
+		}
 	}
 
 	private IFreewarAPI mApi;
@@ -58,6 +68,7 @@ public final class BeedleBot {
 	private LoginDialog mLoginDialog;
 	private PushDataService mPushDataService;
 	private Service mService;
+
 	private Store mStore;
 
 	private TrayManager mTrayManager;
@@ -77,20 +88,25 @@ public final class BeedleBot {
 	}
 
 	public void initialize() throws IOException, AWTException {
-		// TODO Correct error handling, don't use throw
-		mIconImage = ImageIO.read(new File("res/img/icon.png"));
+		mIconImage = ImageIO.read(new File(IMAGE_PATH_ICON));
 		mTrayManager = new TrayManager(this, mIconImage);
 		mTrayManager.addTrayIcon();
 	}
 
 	public void shutdown() {
-		stop();
 		try {
-			// TODO Correct error handling
-			mTrayManager.removeTrayIcon();
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			stop();
+		} catch (final Exception e) {
+			// TODO Error logging
+		}
+
+		if (mTrayManager != null) {
+			try {
+				mTrayManager.removeTrayIcon();
+			} catch (final Exception e) {
+				// TODO Error logging
+			}
+
 		}
 		System.out.println("Shutdown");
 	}
@@ -104,56 +120,83 @@ public final class BeedleBot {
 
 	public void startService(final IUserSettingsProvider userSettingsProvider,
 			final IBrowserSettingsProvider browserSettingsProvider) {
-		// TODO Remove debug
-		System.out.println("Starting Service");
+		try {
+			// TODO Remove debug
+			System.out.println("Starting Service");
 
-		final String username = userSettingsProvider.getUserName();
-		final String password = userSettingsProvider.getPassword();
-		final EWorld world = userSettingsProvider.getWorld();
-		if (username == null || username.equals("") || password == null || password.equals("") || world == null) {
-			// TODO Correct error handling and logging
+			final String username = userSettingsProvider.getUserName();
+			final String password = userSettingsProvider.getPassword();
+			final EWorld world = userSettingsProvider.getWorld();
+			final String emptyText = "";
+			if (username == null || username.equals(emptyText) || password == null || password.equals(emptyText)
+					|| world == null) {
+				throw new IllegalArgumentException();
+			}
+
+			// Create the store
+			mStore = new Store(username, world);
+
+			// Create Freewar API
+			final EBrowser browser = browserSettingsProvider.getBrowser();
+			mApi = new Sparkle(browser);
+
+			// Set options
+			final DesiredCapabilities capabilities = mApi.createCapabilities(browser,
+					browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary());
+			final String userProfile = browserSettingsProvider.getUserProfile();
+			// Try to set the profile if browser is chrome
+			if (browser == EBrowser.CHROME) {
+				// TODO Also support other browsers
+				final ChromeOptions options = new ChromeOptions();
+				options.addArguments(CHROME_USER_PROFILE_KEY + "=" + userProfile);
+				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+			}
+			mApi.setCapabilities(capabilities);
+
+			// Login and create an instance
+			mInstance = mApi.login(username, password, world);
+			mDriver = ((IHasWebDriver) mInstance).getWebDriver();
+
+			// Create and start all services
+			mDataBridge = new DataBridge(mDriver);
+			mService = new Service(mApi, mInstance, mDriver, mStore, this);
+			mPushDataService = new PushDataService(mService, mInstance, mDataBridge);
+			mFetchDataService = new FetchDataService(mDataBridge);
+			mService.registerFetchDataService(mFetchDataService);
+			mService.registerPushDataService(mPushDataService);
+			mService.start();
+		} catch (final Exception e) {
+			// TODO Error logging
+			// Try to shutdown and free all resources
+			if (mStore != null) {
+				mStore.finalize();
+			}
+			if (mInstance != null && mApi != null) {
+				mApi.logout(mInstance);
+			}
+			if (mApi != null) {
+				mApi.shutdown();
+			}
+
+			shutdown();
 		}
-
-		// Create the store
-		mStore = new Store(username, world);
-
-		// Create Freewar API
-		final EBrowser browser = browserSettingsProvider.getBrowser();
-		mApi = new Sparkle(browser);
-
-		// Set options
-		final DesiredCapabilities capabilities = mApi.createCapabilities(browser,
-				browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary());
-		final String userProfile = browserSettingsProvider.getUserProfile();
-		// Try to set the profile if browser is chrome
-		if (browser == EBrowser.CHROME) {
-			// TODO Also support other browsers
-			final ChromeOptions options = new ChromeOptions();
-			options.addArguments(CHROME_USER_PROFILE_KEY + "=" + userProfile);
-			capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-		}
-		mApi.setCapabilities(capabilities);
-
-		// Login and create an instance
-		mInstance = mApi.login(username, password, world);
-		mDriver = ((IHasWebDriver) mInstance).getWebDriver();
-
-		// Create and start all services
-		mDataBridge = new DataBridge(mDriver);
-		mService = new Service(mApi, mInstance, mDriver, mStore);
-		mPushDataService = new PushDataService(mService, mInstance, mDataBridge);
-		mFetchDataService = new FetchDataService(mDataBridge);
-		mService.registerFetchDataService(mFetchDataService);
-		mService.registerPushDataService(mPushDataService);
-		mService.start();
 	}
 
 	public void stop() {
 		// TODO Remove debug
 		System.out.println("Aus");
 
-		stopLoginDialog();
-		stopService();
+		try {
+			stopLoginDialog();
+		} catch (final Exception e) {
+			// TODO Error logging
+		}
+
+		try {
+			stopService();
+		} catch (final Exception e) {
+			// TODO Error logging
+		}
 	}
 
 	private void stopLoginDialog() {
@@ -165,8 +208,17 @@ public final class BeedleBot {
 
 	private void stopService() {
 		if (mService != null && mService.isActive()) {
-			mService.stopService();
-			mStore.finalize();
+			try {
+				mService.stopService();
+			} catch (final Exception e) {
+				// TODO Error logging
+			}
+
+			try {
+				mStore.finalize();
+			} catch (final Exception e) {
+				// TODO Error logging
+			}
 		}
 	}
 

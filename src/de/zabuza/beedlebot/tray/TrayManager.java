@@ -6,7 +6,6 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.io.IOException;
 
 import de.zabuza.beedlebot.BeedleBot;
 import de.zabuza.beedlebot.tray.listener.ExitListener;
@@ -18,44 +17,41 @@ import de.zabuza.beedlebot.tray.listener.RestartListener;
  *
  */
 public final class TrayManager {
+	private static final String NAME_EXIT = "Exit";
+	private static final String NAME_RESTART = "Restart";
+	private static final String NAME_TRAY = "Beedlebot";
 	private final BeedleBot mBeedleBot;
 	private SystemTray mSystemTray;
 	private TrayIcon mTrayIcon;
 	private final Image mTrayIconImage;
 
-	public TrayManager(final BeedleBot beedleBot, final Image trayIconImage) throws IOException {
-		// TODO Correct error handling, don't use throw
+	public TrayManager(final BeedleBot beedleBot, final Image trayIconImage) {
 		mBeedleBot = beedleBot;
 		mTrayIconImage = trayIconImage;
 		initialize();
 	}
 
 	public void addTrayIcon() throws AWTException {
-		// TODO Correct error handling, don't use throw
 		mSystemTray.add(mTrayIcon);
 	}
 
-	public void removeTrayIcon() throws AWTException {
-		// TODO Correct error handling, don't use throw
+	public void removeTrayIcon() {
 		mSystemTray.remove(mTrayIcon);
 	}
 
-	private void initialize() throws IOException {
+	private void initialize() throws IllegalStateException {
 		// If try is not supported, abort
 		if (!SystemTray.isSupported()) {
-			// TODO Logging
-			return;
+			throw new IllegalStateException();
 		}
 
 		mSystemTray = SystemTray.getSystemTray();
 
-		// TODO Correct error handling, don't use throw
-		// TODO Use constants for text
-		mTrayIcon = new TrayIcon(mTrayIconImage, "BeedleBot");
+		mTrayIcon = new TrayIcon(mTrayIconImage, NAME_TRAY);
 		mTrayIcon.setImageAutoSize(true);
 
-		final MenuItem restartItem = new MenuItem("Restart");
-		final MenuItem exitItem = new MenuItem("Exit");
+		final MenuItem restartItem = new MenuItem(NAME_RESTART);
+		final MenuItem exitItem = new MenuItem(NAME_EXIT);
 
 		final PopupMenu popup = new PopupMenu();
 		popup.add(restartItem);

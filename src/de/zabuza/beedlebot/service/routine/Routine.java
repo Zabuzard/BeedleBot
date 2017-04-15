@@ -1,5 +1,6 @@
 package de.zabuza.beedlebot.service.routine;
 
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -19,6 +20,7 @@ import de.zabuza.sparkle.freewar.IFreewarInstance;
 public final class Routine {
 
 	private Queue<Item> mBoughtItemsBuffer;
+	private final Point mCentralTradersDepot;
 	private AnalyseResult mCurrentAnalyseResult;
 	private EItemCategory mCurrentCategory;
 	private final WebDriver mDriver;
@@ -45,6 +47,7 @@ public final class Routine {
 		mTotalProfit = 0;
 		mTotalCost = 0;
 		mWaitForDeliveryTask = new WaitForDeliveryTask(mInstance.getChat());
+		mCentralTradersDepot = new Point(88, 89);
 	}
 
 	public Queue<Item> fetchBoughtItems() {
@@ -72,105 +75,115 @@ public final class Routine {
 	}
 
 	public void update() {
-		// TODO Error checking like correct place etc.
-
-		// Analyse phase
-		if (getPhase() == EPhase.ANALYSE) {
-			boolean finishedFullAnalyse = false;
-
-			// Determine the category for this round
-			if (mCurrentCategory == null || mCurrentCategory == EItemCategory.AMULET) {
-				// First analyse round
-				mCurrentCategory = EItemCategory.SPELL;
-				mCurrentAnalyseResult = new AnalyseResult();
-			} else if (mCurrentCategory == EItemCategory.SPELL) {
-				mCurrentCategory = EItemCategory.MISCELLANEOUS;
-			} else if (mCurrentCategory == EItemCategory.MISCELLANEOUS) {
-				mCurrentCategory = EItemCategory.ATTACK_WEAPON;
-			} else if (mCurrentCategory == EItemCategory.ATTACK_WEAPON) {
-				mCurrentCategory = EItemCategory.DEFENSE_WEAPON;
-			} else {
-				// Last analyse round
-				mCurrentCategory = EItemCategory.AMULET;
-				finishedFullAnalyse = true;
+		try {
+			// Check if the current location is the central traders depot
+			final Point currentLocation = mInstance.getLocation().getPosition();
+			if (!currentLocation.equals(mCentralTradersDepot)) {
+				// TODO Exchange with more specific exception
+				throw new IllegalStateException();
 			}
 
-			// TODO Remove debug
-			System.out.println("Analyse: Selected " + mCurrentCategory);
+			// Analyse phase
+			if (getPhase() == EPhase.ANALYSE) {
+				boolean finishedFullAnalyse = false;
 
-			// Start analyse task
-			final AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult, mCurrentCategory,
-					mStore);
-			analyseTask.start();
-
-			// Proceed to the next phase
-			if (finishedFullAnalyse) {
-				if (mCurrentAnalyseResult.isEmpty()) {
-					// There are no items, wait for next delivery
-					setPhase(EPhase.AWAITING_DELIVERY);
+				// Determine the category for this round
+				if (mCurrentCategory == null || mCurrentCategory == EItemCategory.AMULET) {
+					// First analyse round
+					mCurrentCategory = EItemCategory.SPELL;
+					mCurrentAnalyseResult = new AnalyseResult();
+				} else if (mCurrentCategory == EItemCategory.SPELL) {
+					mCurrentCategory = EItemCategory.MISCELLANEOUS;
+				} else if (mCurrentCategory == EItemCategory.MISCELLANEOUS) {
+					mCurrentCategory = EItemCategory.ATTACK_WEAPON;
+				} else if (mCurrentCategory == EItemCategory.ATTACK_WEAPON) {
+					mCurrentCategory = EItemCategory.DEFENSE_WEAPON;
 				} else {
-					// There are items, start buying
-					setPhase(EPhase.PURCHASE);
+					// Last analyse round
+					mCurrentCategory = EItemCategory.AMULET;
+					finishedFullAnalyse = true;
 				}
-			}
-			return;
-		}
 
-		// Purchase phase
-		if (getPhase() == EPhase.PURCHASE) {
-			final Item item = mCurrentAnalyseResult.poll();
+				// TODO Remove debug
+				System.out.println("Analyse: Selected " + mCurrentCategory);
 
-			// Abort and start waiting for the next delivery if there is no item
-			if (item == null) {
-				setPhase(EPhase.AWAITING_DELIVERY);
+				// Start analyse task
+				final AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult,
+						mCurrentCategory, mStore);
+				analyseTask.start();
+
+				// Proceed to the next phase
+				if (finishedFullAnalyse) {
+					if (mCurrentAnalyseResult.isEmpty()) {
+						// There are no items, wait for next delivery
+						setPhase(EPhase.AWAITING_DELIVERY);
+					} else {
+						// There are items, start buying
+						setPhase(EPhase.PURCHASE);
+					}
+				}
 				return;
 			}
 
-			// Start the purchase task
-			final PurchaseTask purchaseTask = new PurchaseTask(mInstance, mDriver, item);
-			purchaseTask.start();
+			// Purchase phase
+			if (getPhase() == EPhase.PURCHASE) {
+				final Item item = mCurrentAnalyseResult.poll();
 
-			if (purchaseTask.wasBought()) {
-				mStore.registerItemPurchase(item);
-				mBoughtItemsBuffer.add(item);
-				mTotalCost += item.getCost();
-				mTotalProfit += item.getProfit();
-				// TODO Remove debug print
-				System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
-			} else {
-				// TODO Remove debug print
-				System.out.println("Not bought, problem: " + item.getName());
-			}
+				// Abort and start waiting for the next delivery if there is no
+				// item
+				if (item == null) {
+					setPhase(EPhase.AWAITING_DELIVERY);
+					return;
+				}
 
-			// Proceed to the next phase
-			setPhase(EPhase.WAIT);
-			return;
-		}
+				// Start the purchase task
+				final PurchaseTask purchaseTask = new PurchaseTask(mInstance, mDriver, item);
+				purchaseTask.start();
 
-		// Wait phase
-		if (getPhase() == EPhase.WAIT) {
-			if (mInstance.getMovement().canMove()) {
-				// TODO Remove debug
-				System.out.println("Waited");
-
-				// Proceed to the next phase
-				setPhase(EPhase.PURCHASE);
-			}
-
-			return;
-		}
-
-		// Awaiting delivery phase
-		if (getPhase() == EPhase.AWAITING_DELIVERY) {
-			mWaitForDeliveryTask.start();
-			if (mWaitForDeliveryTask.wasThereADelivery()) {
-				// TODO Remove debug print
-				System.out.println("Waited for delivery.");
+				if (purchaseTask.wasBought()) {
+					mStore.registerItemPurchase(item);
+					mBoughtItemsBuffer.add(item);
+					mTotalCost += item.getCost();
+					mTotalProfit += item.getProfit();
+					// TODO Remove debug print
+					System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
+				} else {
+					// TODO Remove debug print
+					System.out.println("Not bought, problem: " + item.getName());
+				}
 
 				// Proceed to the next phase
-				setPhase(EPhase.ANALYSE);
+				setPhase(EPhase.WAIT);
+				return;
 			}
-			return;
+
+			// Wait phase
+			if (getPhase() == EPhase.WAIT) {
+				if (mInstance.getMovement().canMove()) {
+					// TODO Remove debug
+					System.out.println("Waited");
+
+					// Proceed to the next phase
+					setPhase(EPhase.PURCHASE);
+				}
+
+				return;
+			}
+
+			// Awaiting delivery phase
+			if (getPhase() == EPhase.AWAITING_DELIVERY) {
+				mWaitForDeliveryTask.start();
+				if (mWaitForDeliveryTask.wasThereADelivery()) {
+					// TODO Remove debug print
+					System.out.println("Waited for delivery.");
+
+					// Proceed to the next phase
+					setPhase(EPhase.ANALYSE);
+				}
+				return;
+			}
+		} catch (final Exception e) {
+			mService.setProblem(e);
 		}
 	}
 

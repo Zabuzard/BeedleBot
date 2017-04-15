@@ -116,70 +116,75 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 * settings and close the settings dialog, if opened.
 	 */
 	public void executeSaveAction() {
-		// Save dialog settings if dialog is opened
-		if (mSettingsDialog != null) {
-			// Driver settings
-			for (final EBrowser browser : EBrowser.values()) {
-				final JTextField field = mSettingsDialog.getBrowserDriverField(browser);
-				final String value = field.getText();
-				if (!value.equals(UNKNOWN_KEY_VALUE)) {
-					final String key = KEY_IDENTIFIER_DRIVER + KEY_INFO_SEPARATOR + browser;
-					setSetting(key, value);
+		try {
+			// Save dialog settings if dialog is opened
+			if (mSettingsDialog != null) {
+				// Driver settings
+				for (final EBrowser browser : EBrowser.values()) {
+					final JTextField field = mSettingsDialog.getBrowserDriverField(browser);
+					final String value = field.getText();
+					if (!value.equals(UNKNOWN_KEY_VALUE)) {
+						final String key = KEY_IDENTIFIER_DRIVER + KEY_INFO_SEPARATOR + browser;
+						setSetting(key, value);
+					}
+				}
+
+				// Binary setting
+				final JTextField binaryField = mSettingsDialog.getBinaryField();
+				final String binaryValue = binaryField.getText();
+				if (!binaryValue.equals(UNKNOWN_KEY_VALUE)) {
+					final String key = KEY_IDENTIFIER_BINARY;
+					setSetting(key, binaryValue);
+				}
+
+				// User profile setting
+				final JTextField userProfileField = mSettingsDialog.getUserProfileField();
+				final String userProfileValue = userProfileField.getText();
+				if (!userProfileValue.equals(UNKNOWN_KEY_VALUE)) {
+					final String key = KEY_IDENTIFIER_USER_PROFILE;
+					setSetting(key, userProfileValue);
 				}
 			}
 
-			// Binary setting
-			final JTextField binaryField = mSettingsDialog.getBinaryField();
-			final String binaryValue = binaryField.getText();
-			if (!binaryValue.equals(UNKNOWN_KEY_VALUE)) {
-				final String key = KEY_IDENTIFIER_BINARY;
-				setSetting(key, binaryValue);
+			// Save the current content of the main view
+			// Username
+			final String username = mView.getUsername();
+			if (!username.equals(UNKNOWN_KEY_VALUE)) {
+				final String key = KEY_IDENTIFIER_USERNAME;
+				setSetting(key, username);
 			}
 
-			// User profile setting
-			final JTextField userProfileField = mSettingsDialog.getUserProfileField();
-			final String userProfileValue = userProfileField.getText();
-			if (!userProfileValue.equals(UNKNOWN_KEY_VALUE)) {
-				final String key = KEY_IDENTIFIER_USER_PROFILE;
-				setSetting(key, userProfileValue);
+			// Password
+			final String password = mView.getPassword();
+			if (!password.equals(UNKNOWN_KEY_VALUE)) {
+				final String key = KEY_IDENTIFIER_PASSWORD;
+				setSetting(key, password);
 			}
-		}
 
-		// Save the current content of the main view
-		// Username
-		final String username = mView.getUsername();
-		if (!username.equals(UNKNOWN_KEY_VALUE)) {
-			final String key = KEY_IDENTIFIER_USERNAME;
-			setSetting(key, username);
-		}
+			// World
+			final EWorld world = mView.getWorld();
+			if (world != null) {
+				final String key = KEY_IDENTIFIER_WORLD;
+				setSetting(key, world.toString());
+			}
 
-		// Password
-		final String password = mView.getPassword();
-		if (!password.equals(UNKNOWN_KEY_VALUE)) {
-			final String key = KEY_IDENTIFIER_PASSWORD;
-			setSetting(key, password);
-		}
+			// Selected browser
+			final EBrowser browser = mView.getBrowser();
+			if (browser != null) {
+				final String key = KEY_IDENTIFIER_BROWSER;
+				setSetting(key, browser.toString());
+			}
 
-		// World
-		final EWorld world = mView.getWorld();
-		if (world != null) {
-			final String key = KEY_IDENTIFIER_WORLD;
-			setSetting(key, world.toString());
-		}
-
-		// Selected browser
-		final EBrowser browser = mView.getBrowser();
-		if (browser != null) {
-			final String key = KEY_IDENTIFIER_BROWSER;
-			setSetting(key, browser.toString());
-		}
-
-		// Save settings
-		mSettings.saveSettings(this);
-
-		// Close the settings dialog, if opened
-		if (mSettingsDialog != null) {
-			mSettingsDialog.dispatchEvent(new WindowEvent(mSettingsDialog, WindowEvent.WINDOW_CLOSING));
+			// Save settings
+			mSettings.saveSettings(this);
+		} catch (final Exception e) {
+			// TODO Error logging
+			// Log the error but continue
+		} finally {
+			// Close the settings dialog, if opened
+			if (mSettingsDialog != null) {
+				mSettingsDialog.dispatchEvent(new WindowEvent(mSettingsDialog, WindowEvent.WINDOW_CLOSING));
+			}
 		}
 	}
 
@@ -188,18 +193,26 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 * settings dialog.
 	 */
 	public void executeSettingsAction() {
-		// Deactivate all actions until the settings dialog has closed
-		mView.setAllInputEnabled(false);
-		mView.setLoginButtonEnabled(false);
-		mView.setSettingsButtonEnabled(false);
+		try {
+			// Deactivate all actions until the settings dialog has closed
+			mView.setAllInputEnabled(false);
+			mView.setLoginButtonEnabled(false);
+			mView.setSettingsButtonEnabled(false);
 
-		// Open the dialog
-		mSettingsDialog = new SettingsDialog(mOwner);
-		linkDialogListener();
+			// Open the dialog
+			mSettingsDialog = new SettingsDialog(mOwner);
+			linkDialogListener();
 
-		// Load settings to the store
-		passSettingsToSettingsDialogView();
-		mSettingsDialog.setVisible(true);
+			// Load settings to the store
+			passSettingsToSettingsDialogView();
+			mSettingsDialog.setVisible(true);
+		} catch (final Exception e) {
+			// TODO Error logging
+			// Try to close the dialog
+			if (mSettingsDialog != null) {
+				mSettingsDialog.dispatchEvent(new WindowEvent(mSettingsDialog, WindowEvent.WINDOW_CLOSING));
+			}
+		}
 	}
 
 	/*

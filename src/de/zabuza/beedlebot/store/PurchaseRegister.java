@@ -10,6 +10,7 @@ import de.zabuza.sparkle.freewar.EWorld;
 public final class PurchaseRegister {
 	private static final String ARG_COST = "cost";
 	private static final String ARG_ID = "id";
+	private static final String ARG_IS_CONSIDERED_FOR_SHOP = "isConsideredForShop";
 	private static final String ARG_ITEM = "item";
 	private static final String ARG_PLAYER_PRICE = "playerPrice";
 	private static final String ARG_PROFIT = "profit";
@@ -50,10 +51,9 @@ public final class PurchaseRegister {
 				arguments.put(ARG_PLAYER_PRICE, playerPrice.getPrice() + emptyText);
 				arguments.put(ARG_TS_PLAYER_PRICE, StoreUtil.millisToSeconds(playerPrice.getTimestamp()) + emptyText);
 			}
+			arguments.put(ARG_IS_CONSIDERED_FOR_SHOP, item.isConsideredForShop() + emptyText);
 			arguments.put(ARG_WAS_CACHED, itemPrice.isCached() + emptyText);
 			arguments.put(ARG_TS_CACHE, StoreUtil.millisToSeconds(itemPrice.getLookupTimestamp()) + emptyText);
-
-			arguments.put(ARG_ID, item.getId() + emptyText);
 
 			try {
 				StoreUtil.sendPostRequest(url, arguments);

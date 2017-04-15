@@ -18,6 +18,7 @@ import de.zabuza.beedlebot.logindialog.view.LoginDialogView;
  */
 public final class LoginDialog {
 
+	private static final String FRAME_TITLE = "BeedleBot Login";
 	private JFrame mFrame;
 
 	public LoginDialog(final BeedleBot beedleBot, final Image iconImage) {
@@ -34,8 +35,7 @@ public final class LoginDialog {
 				try {
 					mFrame = new JFrame();
 					mFrame.setResizable(false);
-					// TODO Use constants for text
-					mFrame.setTitle("BeedleBot Login");
+					mFrame.setTitle(FRAME_TITLE);
 					mFrame.setIconImage(iconImage);
 					mFrame.setBounds(0, 0, LoginDialogView.WIDTH, LoginDialogView.HEIGHT);
 					mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,8 +48,11 @@ public final class LoginDialog {
 					LoginDialogController controller = new LoginDialogController(mFrame, window, beedleBot);
 					controller.initialize();
 					controller.start();
-				} catch (Exception e) {
-					// TODO Correct error handling
+				} catch (final Exception e) {
+					// TODO Error logging
+					// Try to shutdown
+					dispose();
+					beedleBot.shutdown();
 				} finally {
 					if (mFrame != null) {
 						mFrame.setVisible(true);
@@ -63,6 +66,7 @@ public final class LoginDialog {
 		if (mFrame != null) {
 			mFrame.setVisible(false);
 			mFrame.dispose();
+			mFrame = null;
 		}
 	}
 

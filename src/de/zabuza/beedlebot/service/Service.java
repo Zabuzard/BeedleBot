@@ -2,6 +2,7 @@ package de.zabuza.beedlebot.service;
 
 import org.openqa.selenium.WebDriver;
 
+import de.zabuza.beedlebot.BeedleBot;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.service.routine.Routine;
@@ -19,19 +20,24 @@ public final class Service extends Thread {
 	private boolean mDoRun;
 	private final WebDriver mDriver;
 	private FetchDataService mFetchDataService;
-	private boolean mHasProblem;
 	private IFreewarInstance mInstance;
+	private final BeedleBot mParent;
 	private boolean mPaused;
+	private Exception mProblem;
 	private PushDataService mPushDataService;
 	private Routine mRoutine;
 	private boolean mShouldStopService;
+
 	private final Store mStore;
 
-	public Service(final IFreewarAPI api, final IFreewarInstance instance, final WebDriver driver, final Store store) {
+	public Service(final IFreewarAPI api, final IFreewarInstance instance, final WebDriver driver, final Store store,
+			final BeedleBot parent) {
 		mApi = api;
 		mInstance = instance;
 		mDriver = driver;
 		mStore = store;
+		mParent = parent;
+
 		mFetchDataService = null;
 		mPushDataService = null;
 		mRoutine = null;
@@ -39,13 +45,13 @@ public final class Service extends Thread {
 		mDoRun = true;
 		mShouldStopService = false;
 		mPaused = true;
-		mHasProblem = false;
+		mProblem = null;
 
 		lastUpdateMillis = 0;
 	}
 
 	public boolean hasProblem() {
-		return mHasProblem;
+		return mProblem != null;
 	}
 
 	public boolean isActive() {
@@ -71,80 +77,118 @@ public final class Service extends Thread {
 	 */
 	@Override
 	public void run() {
-		// Create and link the routine
-		mRoutine = new Routine(this, mInstance, mDriver, mPushDataService, mStore);
-		mPushDataService.linkRoutine(mRoutine);
+		boolean terminateParent = false;
+		try {
+			// Create and link the routine
+			mRoutine = new Routine(this, mInstance, mDriver, mPushDataService, mStore);
+			mPushDataService.linkRoutine(mRoutine);
+			mPushDataService.setBeedleBotServing(true);
+		} catch (final Exception e1) {
+			// TODO Error logging
+			// Do not enter the service loop
+			mDoRun = false;
+			try {
+				mPushDataService.setBeedleBotServing(false);
+			} catch (final Exception e2) {
+				// TODO Error logging
+			}
+			terminateParent = true;
+		}
 
 		// Enter the service loop
-		mPushDataService.setBeedleBotServing(true);
 		while (mDoRun) {
-			if (mFetchDataService == null || mPushDataService == null) {
-				waitIteration();
-				continue;
-			}
-
-			// Determine if to update services
-			final boolean doUpdate;
-			final long currentMillis = System.currentTimeMillis();
-			if (currentMillis - lastUpdateMillis >= UPDATE_INTERVAL) {
-				lastUpdateMillis = currentMillis;
-				doUpdate = true;
-			} else {
-				doUpdate = false;
-			}
-
-			// Fetch data
-			if (doUpdate) {
-				mFetchDataService.update();
-			}
-
-			// Check signals
-			if (doUpdate) {
-				if (mPaused && mFetchDataService.isStartSignalSet()) {
-					// Continue from pause
-					mPaused = false;
-					mFetchDataService.clearStartSignal();
-					mPushDataService.updateActiveData();
-					// TODO Remove debug
-					System.out.println("Continued.");
+			try {
+				if (mFetchDataService == null || mPushDataService == null) {
+					waitIteration();
+					continue;
 				}
-				if (!mPaused && mFetchDataService.isStopSignalSet()) {
-					// Pause
+
+				// Determine if to update services
+				final boolean doUpdate;
+				final long currentMillis = System.currentTimeMillis();
+				if (currentMillis - lastUpdateMillis >= UPDATE_INTERVAL) {
+					lastUpdateMillis = currentMillis;
+					doUpdate = true;
+				} else {
+					doUpdate = false;
+				}
+
+				// Fetch data
+				if (doUpdate) {
+					mFetchDataService.update();
+				}
+
+				// Check signals
+				if (doUpdate) {
+					if (mPaused && mFetchDataService.isStartSignalSet()) {
+						// Continue from pause
+						mPaused = false;
+						// Clear the problem flag
+						clearProblem();
+						mFetchDataService.clearStartSignal();
+						mPushDataService.updateActiveData();
+						// TODO Remove debug
+						System.out.println("Continued.");
+					}
+					if (!mPaused && (hasProblem() || mFetchDataService.isStopSignalSet())) {
+						// Pause
+						mPaused = true;
+						mFetchDataService.clearStopSignal();
+						mRoutine.reset();
+						mPushDataService.updateActiveData();
+						// TODO Remove debug
+						System.out.println("Paused.");
+					}
+				}
+				if (mShouldStopService) {
+					mDoRun = false;
 					mPaused = true;
-					mFetchDataService.clearStopSignal();
 					mRoutine.reset();
-					mPushDataService.updateActiveData();
-					// TODO Remove debug
-					System.out.println("Paused.");
+					mPushDataService.setBeedleBotServing(false);
 				}
-			}
-			if (mShouldStopService) {
+
+				// Continue routine
+				if (!mPaused) {
+					mRoutine.update();
+				}
+
+				// Push data
+				if (doUpdate) {
+					mPushDataService.update();
+				}
+
+				// Delay the next iteration
+				waitIteration();
+			} catch (final Exception e1) {
+				// TODO Correct error logging, do not use error console
+				e1.printStackTrace();
+				// Try to shutdown
 				mDoRun = false;
 				mPaused = true;
 				mRoutine.reset();
-				mPushDataService.setBeedleBotServing(false);
+				try {
+					mPushDataService.setBeedleBotServing(false);
+				} catch (final Exception e2) {
+					// TODO Error logging
+				}
+				terminateParent = true;
 			}
-
-			// Continue routine
-			if (!mPaused) {
-				mRoutine.update();
-			}
-
-			// Push data
-			if (doUpdate) {
-				mPushDataService.update();
-			}
-
-			// Delay the next iteration
-			waitIteration();
 		}
 
 		// If the service is leaved shut it down
 		shutdown();
+
+		// Request parent to terminate
+		if (terminateParent) {
+			mParent.shutdown();
+		}
 	}
 
-	public void setHasProblem(final boolean hasProblem) {
-		mHasProblem = hasProblem;
+	public void setProblem(final Exception problem) {
+		// TODO Error logging, push problem to data bridge
+		// TODO Remove debug print to error log
+		problem.printStackTrace(System.out);
+		mProblem = problem;
 	}
 
 	public void stopService() {
@@ -154,19 +198,34 @@ public final class Service extends Thread {
 	public void waitIteration() {
 		try {
 			sleep(SERVICE_INTERVAL);
-		} catch (InterruptedException e) {
-			// TODO Correct error handling and logging
-			e.printStackTrace();
+		} catch (final InterruptedException e) {
+			// TODO Error logging
+			// Log the error but continue
 		}
+	}
+
+	private void clearProblem() {
+		mProblem = null;
 	}
 
 	private void shutdown() {
 		if (mApi != null) {
 			if (mInstance != null) {
-				mApi.logout(mInstance);
+				try {
+					mApi.logout(mInstance);
+				} catch (final Exception e) {
+					// TODO Error logging
+					// Log the error but continue
+				}
 				mInstance = null;
 			}
-			mApi.shutdown();
+			try {
+				mApi.shutdown();
+			} catch (final Exception e) {
+				// TODO Error logging
+				// Log the error but continue
+			}
+
 		}
 		// TODO Remove debug
 		System.out.println("Service shut down");
