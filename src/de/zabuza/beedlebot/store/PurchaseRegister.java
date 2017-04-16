@@ -14,7 +14,7 @@ public final class PurchaseRegister {
 	private static final String ARG_ITEM = "item";
 	private static final String ARG_PLAYER_PRICE = "playerPrice";
 	private static final String ARG_PROFIT = "profit";
-	private static final String ARG_SHOP_PRICE = "shopPrice";
+	private static final String ARG_STANDARD_SHOP_PRICE = "standardShopPrice";
 	private static final String ARG_TS_CACHE = "ts_cache";
 	private static final String ARG_TS_PLAYER_PRICE = "ts_playerPrice";
 	private static final String ARG_USER = "user";
@@ -45,7 +45,7 @@ public final class PurchaseRegister {
 			arguments.put(ARG_ITEM, item.getName());
 			arguments.put(ARG_COST, item.getCost() + emptyText);
 			arguments.put(ARG_PROFIT, item.getProfit() + emptyText);
-			arguments.put(ARG_SHOP_PRICE, itemPrice.getShopPrice() + emptyText);
+			arguments.put(ARG_STANDARD_SHOP_PRICE, itemPrice.getStandardShopPrice() + emptyText);
 			if (itemPrice.hasPlayerPrice()) {
 				final PlayerPrice playerPrice = itemPrice.getPlayerPrice().get();
 				arguments.put(ARG_PLAYER_PRICE, playerPrice.getPrice() + emptyText);
@@ -58,12 +58,12 @@ public final class PurchaseRegister {
 			try {
 				StoreUtil.sendPostRequest(url, arguments);
 			} catch (final IOException e) {
-				// TODO Correct error handling and logging
-				e.printStackTrace();
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException(e);
 			}
 		} catch (final MalformedURLException e) {
-			// TODO Correct error handling and logging
-			e.printStackTrace();
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException(e);
 		}
 	}
 }

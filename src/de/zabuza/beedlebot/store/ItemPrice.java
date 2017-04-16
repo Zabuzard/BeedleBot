@@ -13,16 +13,17 @@ public final class ItemPrice implements Serializable, Cloneable {
 	private final long mLookupTimestamp;
 	private final String mName;
 	private final PlayerPrice mPlayerPrice;
-	private final int mShopPrice;
+	private final int mStandardShopPrice;
 
-	public ItemPrice(final String name, final int shopPrice, final boolean isCached, final long lookupTimestamp) {
-		this(name, shopPrice, null, isCached, lookupTimestamp);
+	public ItemPrice(final String name, final int standardShopPrice, final boolean isCached,
+			final long lookupTimestamp) {
+		this(name, standardShopPrice, null, isCached, lookupTimestamp);
 	}
 
-	public ItemPrice(final String name, final int shopPrice, final PlayerPrice playerPrice, final boolean isCached,
-			final long lookupTimestamp) {
+	public ItemPrice(final String name, final int standardShopPrice, final PlayerPrice playerPrice,
+			final boolean isCached, final long lookupTimestamp) {
 		mName = name;
-		mShopPrice = shopPrice;
+		mStandardShopPrice = standardShopPrice;
 		mPlayerPrice = playerPrice;
 		mLookupTimestamp = lookupTimestamp;
 		mIsCached = isCached;
@@ -38,9 +39,10 @@ public final class ItemPrice implements Serializable, Cloneable {
 		final Optional<PlayerPrice> playerPrice = getPlayerPrice();
 		if (playerPrice.isPresent()) {
 			final PlayerPrice clonedPlayerPrice = playerPrice.get().clone();
-			return new ItemPrice(getName(), getShopPrice(), clonedPlayerPrice, isCached(), getLookupTimestamp());
+			return new ItemPrice(getName(), getStandardShopPrice(), clonedPlayerPrice, isCached(),
+					getLookupTimestamp());
 		} else {
-			return new ItemPrice(getName(), getShopPrice(), isCached(), getLookupTimestamp());
+			return new ItemPrice(getName(), getStandardShopPrice(), isCached(), getLookupTimestamp());
 		}
 	}
 
@@ -60,8 +62,8 @@ public final class ItemPrice implements Serializable, Cloneable {
 		}
 	}
 
-	public int getShopPrice() {
-		return mShopPrice;
+	public int getStandardShopPrice() {
+		return mStandardShopPrice;
 	}
 
 	public boolean hasPlayerPrice() {

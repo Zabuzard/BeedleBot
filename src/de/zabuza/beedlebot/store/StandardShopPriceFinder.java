@@ -17,94 +17,20 @@ public final class StandardShopPriceFinder {
 	private static final String SERVER_URL = "http://www.fwwiki.de/index.php";
 	private static final String STRIP_INTEGER_PATTERN = "[\\s\\.,]";
 
-	private static String parseItem(final String itemName) {
-		if (itemName.matches(".*Gewebeprobe.*")) {
-			return "Gewebeprobe";
-		}
-		if (itemName.matches(".*Puppe.*")) {
-			return "Puppe von Beispieluser";
-		}
-		if (itemName.matches(".*personalisierter Hinzauber.*")) {
-			return "personalisierter Hinzauber";
-		}
-		if (itemName.matches(".*Zeichnung.*")) {
-			return "Zeichnung von Beispiel-NPC";
-		}
-		if (itemName.matches(".*Blutprobe.*")) {
-			return "Blutprobe";
-		}
-		if (itemName.matches(".*Seelenstein.*")) {
-			return "Seelenstein von Beispielopfer";
-		}
-		if (itemName.matches(".*Wein.*")) {
-			return "Wein von Beispielsponsor";
-		}
-		if (itemName.matches(".*Geschenk.*")) {
-			return "Geschenk von Beispielsponsor";
-		}
-		if (itemName.matches(".*Schnaps.*")) {
-			return "Schnaps von Beispielsponsor";
-		}
-		if (itemName.matches(".*Kaktussaft.*")) {
-			return "Kaktussaft von Beispielsponsor";
-		}
-		if (itemName.matches(".*Largudsaft.*")) {
-			return "Largudsaft von Beispielsponsor";
-		}
-		if (itemName.matches(".*Cocktail.*")) {
-			return "Cocktail von Beispielsponsor";
-		}
-		if (itemName.matches(".*Tee.*")) {
-			return "Tee von Beispielsponsor";
-		}
-		if (itemName.matches(".*Zaubertruhe von.*")) {
-			return "Zaubertruhe von Beispieluser";
-		}
-		if (itemName.matches(".*Rückangriff.*")) {
-			return "starker Rückangriffszauber";
-		}
-		if (itemName.matches(".*Tagebuch.*")) {
-			return "Tagebuch Tag 125";
-		}
-		if (itemName.matches(".*Notizblock.*")) {
-			return "Notizblock";
-		}
-		if (itemName.matches(".*Freundschaftsring.*")) {
-			return "Freundschaftsring";
-		}
-		if (itemName.matches(".*Ehering.*")) {
-			return "Ehering";
-		}
-		if (itemName.matches(".*Foliant.*")) {
-			return "Foliant der Blutprobenwesen";
-		}
-		if (itemName.matches(".*Hirtenstab.*")) {
-			return "Hirtenstab";
-		}
-		if (itemName.matches(".*Knorpel-Monster aus Draht.*")) {
-			return "Knorpel-Monster aus Draht (Item)";
-		}
-		if (itemName.matches(".*Schatztruhe.*")) {
-			return "Zaubertruhe";
-		}
-		if (itemName.matches(".*Sprengkapsel.*")) {
-			return "Sumpfgasbombe";
-		}
-		if (itemName.matches(".*Knorpel-Monster aus Draht.*")) {
-			return "Knorpel-Monster aus Draht (Item)";
-		}
-		return itemName;
+	private final ItemDictionary mItemDictionary;
+
+	public StandardShopPriceFinder(final ItemDictionary itemDictionary) {
+		mItemDictionary = itemDictionary;
 	}
 
 	public Optional<Integer> findStandardShopPrice(final String itemName) {
 		Integer shopPrice = null;
 
-		final String parsedItemName = parseItem(itemName);
+		final String parsedItemName = mItemDictionary.applyItemNamePatterns(itemName);
 
 		// Process exceptional items
-		final Optional<Integer> exceptionalPrice = processExceptionalItems(itemName);
-		if (exceptionalPrice.isPresent()) {
-			return exceptionalPrice;
+		if (mItemDictionary.containsStandardShopPrice(parsedItemName)) {
+			return mItemDictionary.getStandardShopPrice(parsedItemName);
 		}
 
 		BufferedReader br = null;
@@ -163,29 +89,19 @@ public final class StandardShopPriceFinder {
 			final String shopPriceText = shopPriceContent.toString();
 			shopPrice = Integer.parseInt(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
 		} catch (final IOException e) {
-			// TODO Correct error handling and logging
-			e.printStackTrace();
-			return Optional.empty();
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException(e);
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (final IOException e) {
-					// TODO Correct error handling and logging
-					e.printStackTrace();
-					return Optional.empty();
+					// TODO Exchange with a more specific exception
+					throw new IllegalStateException(e);
 				}
 			}
 		}
 
 		return Optional.of(shopPrice);
-	}
-
-	private Optional<Integer> processExceptionalItems(final String itemName) {
-		if (itemName.matches("altes Relikt")) {
-			return Optional.of(0);
-		}
-
-		return Optional.empty();
 	}
 }

@@ -30,18 +30,16 @@ public final class StoreCache implements Serializable {
 			ois = new ObjectInputStream(fis);
 			cache = (StoreCache) ois.readObject();
 		} catch (final IOException | ClassNotFoundException e) {
-			// TODO Correct error handling and logging
-			System.err.println("Error while deserializing store cache.");
-			System.err.println(e);
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException(e);
 		} finally {
 			try {
 				if (ois != null) {
 					ois.close();
 				}
 			} catch (final IOException e) {
-				// TODO Correct error handling and logging
-				System.err.println("Error while closing deserialization stream of store cache.");
-				System.err.println(e);
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException(e);
 			}
 		}
 		return cache;
@@ -61,7 +59,6 @@ public final class StoreCache implements Serializable {
 	private final EWorld mWorld;
 
 	public StoreCache(final EWorld world) {
-		// TODO Implement serialization
 		mNameToPriceData = new HashMap<>();
 		mWorld = world;
 	}
@@ -93,18 +90,16 @@ public final class StoreCache implements Serializable {
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(this);
 		} catch (final IOException e) {
-			// TODO Correct error handling and logging
-			System.err.println("Error while serializing store cache.");
-			System.err.println(e);
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException(e);
 		} finally {
 			try {
 				if (oos != null) {
 					oos.close();
 				}
 			} catch (final IOException e) {
-				// TODO Correct error handling and logging
-				System.err.println("Error while closing serialization stream of store cache.");
-				System.err.println(e);
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException(e);
 			}
 		}
 	}

@@ -31,9 +31,8 @@ public final class StoreUtil {
 		try {
 			return URLEncoder.encode(text, StandardCharsets.UTF_8.toString());
 		} catch (final UnsupportedEncodingException e) {
-			// TODO Correct error handling and logging
-			e.printStackTrace();
-			return null;
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -112,7 +111,7 @@ public final class StoreUtil {
 			return 14;
 		}
 
-		// TODO Correct error handling and logging
+		// TODO Exchange with a more specific exception
 		throw new IllegalArgumentException();
 	}
 

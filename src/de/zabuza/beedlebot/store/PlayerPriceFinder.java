@@ -17,7 +17,20 @@ public final class PlayerPriceFinder {
 	private static final String RESULT_KEY_TIMESTAMP = "ts";
 	private static final String SERVER_FILE = "itemPrice.php";
 
+	private final ItemDictionary mItemDictionary;
+
+	public PlayerPriceFinder(final ItemDictionary itemDictionary) {
+		mItemDictionary = itemDictionary;
+	}
+
 	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world) {
+		// Process exceptional items
+		if (mItemDictionary.containsPlayerPrice(itemName)) {
+			final int price = mItemDictionary.getPlayerPrice(itemName).get();
+			final long timestampNow = System.currentTimeMillis();
+			return Optional.of(new PlayerPrice(price, timestampNow, world));
+		}
+
 		final int worldAsNumber = StoreUtil.worldToNumber(world);
 		final String encodedItemName = StoreUtil.encodeUtf8(itemName);
 		try {
@@ -38,8 +51,8 @@ public final class PlayerPriceFinder {
 			final JsonStreamParser parser = new JsonStreamParser(new InputStreamReader(url.openStream()));
 
 			if (!parser.hasNext()) {
-				// TODO Correct error handling and logging
-				return Optional.empty();
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException();
 			}
 
 			final JsonObject element = parser.next().getAsJsonObject();
@@ -55,9 +68,8 @@ public final class PlayerPriceFinder {
 			final PlayerPrice playerPrice = new PlayerPrice(price, timestamp, world);
 			return Optional.of(playerPrice);
 		} catch (final IOException e) {
-			// TODO Correct error handling and logging
-			e.printStackTrace();
-			return Optional.empty();
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException(e);
 		}
 	}
 }

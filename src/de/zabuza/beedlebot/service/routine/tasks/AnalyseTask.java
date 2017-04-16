@@ -1,24 +1,18 @@
 package de.zabuza.beedlebot.service.routine.tasks;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 import org.openqa.selenium.WebDriver;
 
 import de.zabuza.beedlebot.service.routine.AnalyseResult;
+import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.EItemCategory;
 import de.zabuza.beedlebot.store.Item;
 import de.zabuza.beedlebot.store.ItemPrice;
+import de.zabuza.beedlebot.store.PlayerPrice;
 import de.zabuza.beedlebot.store.Store;
-import de.zabuza.sparkle.freewar.IFreewarInstance;
-import de.zabuza.sparkle.freewar.frames.EFrame;
-import de.zabuza.sparkle.wait.EventQueueEmptyWait;
 
 public final class AnalyseTask implements ITask {
-	private static final String ABORT_ANCHOR = "Zur";
-	private static final String AMULET_CATEGORY_ANCHOR = "Kategorie: Halsschmuck";
-	private static final String ATTACK_WEAPON_CATEGORY_ANCHOR = "Kategorie: Angriffswaffen";
-	private static final int CONSIDER_PLAYER_PRICE_COST_ABS = 200;
 	private static final String CONTENT_BUY_ANCHOR_END = "\"> kaufen";
 	private static final String CONTENT_BUY_ANCHOR_START = "Gold <a href=\"";
 	private static final String CONTENT_ID_START = "mit_item=";
@@ -31,36 +25,24 @@ public final class AnalyseTask implements ITask {
 	private static final String CONTENT_LINE_VALIDATOR = "<b>";
 	private static final String CONTENT_NEEDLE_END = "Zurück";
 	private static final String CONTENT_NEEDLE_START = "Zurück";
-	private static final String DEFENSE_WEAPON_CATEGORY_ANCHOR = "Kategorie: Verteidigungswaffen";
-	private static final String MISCELLANEOUS_CATEGORY_ANCHOR = "Kategorie: Sonstiges";
-	private static final String SPELL_CATEGORY_ANCHOR = "Kategorie: Anwendbare Items und Zauber";
 	private final WebDriver mDriver;
-	private final IFreewarInstance mInstance;
 	/**
 	 * Whether interrupted flag of the task is set.
 	 */
 	private boolean mInterrupted;
 	private final EItemCategory mItemCategory;
-	private final Map<EItemCategory, String> mItemCategoryToAnchorNeedle;
+	private final CentralTradersDepotNavigator mNavigator;
 	private final AnalyseResult mResult;
 	private final Store mStore;
 
-	public AnalyseTask(final IFreewarInstance instance, final WebDriver driver, final AnalyseResult result,
-			final EItemCategory itemCategory, final Store store) {
+	public AnalyseTask(final WebDriver driver, final AnalyseResult result, final EItemCategory itemCategory,
+			final Store store, final CentralTradersDepotNavigator navigator) {
 		mInterrupted = false;
-		mInstance = instance;
 		mDriver = driver;
 		mResult = result;
 		mItemCategory = itemCategory;
 		mStore = store;
-
-		// TODO Remove code duplication with purchase task
-		mItemCategoryToAnchorNeedle = new HashMap<>();
-		mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.DEFENSE_WEAPON, DEFENSE_WEAPON_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.AMULET, AMULET_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.SPELL, SPELL_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.MISCELLANEOUS, MISCELLANEOUS_CATEGORY_ANCHOR);
+		mNavigator = navigator;
 	}
 
 	/*
@@ -91,16 +73,13 @@ public final class AnalyseTask implements ITask {
 	@Override
 	public void start() {
 		// Open category
-		final String needle = mItemCategoryToAnchorNeedle.get(mItemCategory);
-		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, needle);
+		final boolean wasClicked = mNavigator.openItemCategory(mItemCategory);
 
-		// TODO Correct error handling and logging
 		if (!wasClicked) {
-			return;
+			mNavigator.exitMenu();
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException();
 		}
-
-		// Wait for click to get executed
-		new EventQueueEmptyWait(mDriver).waitUntilCondition();
 
 		// Retrieve content
 		final String content = mDriver.getPageSource();
@@ -109,13 +88,7 @@ public final class AnalyseTask implements ITask {
 		processContent(content);
 
 		// Finish the task
-		if (!mInstance.clickAnchorByContent(EFrame.MAIN, ABORT_ANCHOR)) {
-			// TODO Correct error handling and logging
-			return;
-		}
-
-		// Wait for click to get executed
-		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+		mNavigator.exitMenu();
 	}
 
 	private void processContent(final String content) {
@@ -125,8 +98,8 @@ public final class AnalyseTask implements ITask {
 		final int endIndex = content.indexOf(CONTENT_NEEDLE_END, startIndex);
 
 		if (startIndexRaw == -1 || endIndex == -1) {
-			// TODO Correct error handling and logging
-			return;
+			// TODO Exchange with a more specific exception
+			throw new IllegalStateException();
 		}
 
 		final String itemContent = content.substring(startIndex, endIndex);
@@ -142,8 +115,8 @@ public final class AnalyseTask implements ITask {
 			final int itemNameEnd = itemContentLine.indexOf(CONTENT_ITEM_NAME_END);
 
 			if (itemNameStart == -1 || itemNameEnd == -1) {
-				// TODO Correct error handling and logging
-				return;
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException();
 			}
 
 			final String itemName = itemContentLine.substring(itemNameStart + CONTENT_ITEM_NAME_START.length(),
@@ -154,8 +127,8 @@ public final class AnalyseTask implements ITask {
 			final int itemCostEnd = itemContentLine.indexOf(CONTENT_ITEM_COST_END);
 
 			if (itemCostStart == -1 || itemCostEnd == -1) {
-				// TODO Correct error handling and logging
-				return;
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException();
 			}
 
 			String itemCostText = itemContentLine.substring(itemCostStart + CONTENT_ITEM_COST_START.length(),
@@ -169,8 +142,8 @@ public final class AnalyseTask implements ITask {
 			final int purchaseAnchorEnd = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_END);
 
 			if (purchaseAnchorStart == -1 || purchaseAnchorEnd == -1) {
-				// TODO Correct error handling and logging
-				return;
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException();
 			}
 
 			final String purchaseAnchor = itemContentLine
@@ -181,48 +154,39 @@ public final class AnalyseTask implements ITask {
 			final int idStart = purchaseAnchor.indexOf(CONTENT_ID_START);
 
 			if (idStart == -1) {
-				// TODO Correct error handling and logging
-				return;
+				// TODO Exchange with a more specific exception
+				throw new IllegalStateException();
 			}
 
 			final int id = Integer.parseInt(purchaseAnchor.substring(idStart + CONTENT_ID_START.length()));
 
 			// Extract is magical state
 			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);
-			// Reject item if magical
-			if (isMagical) {
-				continue;
-			}
 
 			// Determine profit
 			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
-			// TODO Filtering and logic when to use playerPrice, add item
-			// exceptions
-			// TODO Out-source logic to better location
-			final int standardShopPrice = itemPriceData.getShopPrice();
-			final int shopPrice = Store.computeFullShopPrice(standardShopPrice);
-			final int itemPrice;
-			if (itemPriceData.hasPlayerPrice()) {
-				final int playerPrice = itemPriceData.getPlayerPrice().get().getPrice();
-				if (playerPrice - itemCost >= CONSIDER_PLAYER_PRICE_COST_ABS) {
-					itemPrice = Math.max(shopPrice, playerPrice);
-				} else {
-					itemPrice = shopPrice;
-				}
+			final boolean isConsideredForShop = mStore.isItemConsideredForShop(itemName, itemCost, itemPriceData);
+			final int itemProfit;
+			if (isConsideredForShop) {
+				final int standardShopPrice = itemPriceData.getStandardShopPrice();
+				itemProfit = Store.computeFullShopPrice(standardShopPrice) - itemCost;
 			} else {
-				itemPrice = shopPrice;
+				final Optional<PlayerPrice> playerPrice = itemPriceData.getPlayerPrice();
+				if (playerPrice.isPresent()) {
+					itemProfit = playerPrice.get().getPrice() - itemCost;
+				} else {
+					// TODO Exchange with a more specific exception
+					throw new IllegalStateException();
+				}
 			}
-			final boolean isConsideredForShop = itemPrice == shopPrice;
-			final int itemProfit = itemPrice - itemCost;
 
-			// Reject item if price is below cost
-			if (itemProfit <= 0) {
-				continue;
+			final Item item = new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical,
+					isConsideredForShop, itemPriceData, mItemCategory);
+
+			// Add the item to the analyse result if accepted
+			if (mStore.isItemAccepted(item)) {
+				mResult.add(item);
 			}
-
-			// Add the item to the analyse result
-			mResult.add(new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical,
-					isConsideredForShop, itemPriceData, mItemCategory));
 		}
 	}
 }

@@ -61,7 +61,7 @@ public final class WaitForDeliveryTask implements ITask {
 		boolean reachedLastMessages = mLastMessage == null;
 		boolean reachedNextToLastMessage = mNextToLastMessage == null;
 		for (final Message message : messages) {
-			// Skip already known messages by using a challenge
+			// Skip already known messages by using a two message challenge
 			if (!reachedLastMessages) {
 				if (reachedNextToLastMessage) {
 					if (message.equals(mLastMessage)) {

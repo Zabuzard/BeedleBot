@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class Store {
-
+	private static final int CONSIDER_PLAYER_PRICE_COST_ABS = 200;
 	private static final double FULL_SHOP_DISCOUNT_FACTOR = 1.15;
 	private static final int STORED_ITEM_LOOKUP_VALIDITY_DAYS = 10;
 	private static final int STORED_ITEM_PLAYER_PRICE_VALIDITY_DAYS = 30;
@@ -35,20 +35,18 @@ public final class Store {
 		return TimeUnit.MILLISECONDS.toDays(playerDiff) <= STORED_ITEM_PLAYER_PRICE_VALIDITY_DAYS;
 	}
 
+	private final ItemDictionary mItemDictionary;
 	private final PlayerPriceFinder mPlayerPriceFinder;
-
 	private final PurchaseRegister mPurchaseRegister;
-
 	private final StandardShopPriceFinder mStandardShopPriceFinder;
-
 	private final StoreCache mStoreCache;
-
 	private final EWorld mWorld;
 
 	public Store(final String user, final EWorld world) {
 		mWorld = world;
-		mStandardShopPriceFinder = new StandardShopPriceFinder();
-		mPlayerPriceFinder = new PlayerPriceFinder();
+		mItemDictionary = new ItemDictionary();
+		mStandardShopPriceFinder = new StandardShopPriceFinder(mItemDictionary);
+		mPlayerPriceFinder = new PlayerPriceFinder(mItemDictionary);
 		mPurchaseRegister = new PurchaseRegister(user, world);
 
 		// Try to create cache from serialized content
@@ -65,6 +63,40 @@ public final class Store {
 
 	public ItemPrice getItemPrice(final String itemName) {
 		return getItemPrice(itemName, false);
+	}
+
+	public boolean isItemAccepted(final Item item) {
+		if (item.isMagical()) {
+			return false;
+		}
+
+		return item.getProfit() > 0;
+	}
+
+	public boolean isItemConsideredForShop(final String itemName, final int cost, final ItemPrice itemPrice) {
+		// First check the dictionary for exceptions
+		if (mItemDictionary.isItemRegisteredForShop(itemName)) {
+			return true;
+		}
+		if (mItemDictionary.isItemRegisteredForPlayer(itemName)) {
+			return false;
+		}
+
+		final int standardShopPrice = itemPrice.getStandardShopPrice();
+		final int shopPrice = Store.computeFullShopPrice(standardShopPrice);
+		if (itemPrice.hasPlayerPrice()) {
+			final int playerPrice = itemPrice.getPlayerPrice().get().getPrice();
+			if (playerPrice - cost >= CONSIDER_PLAYER_PRICE_COST_ABS) {
+				// Decide for the bigger one
+				return shopPrice >= playerPrice;
+			} else {
+				// Decide for shop
+				return true;
+			}
+		} else {
+			// Decide for shop
+			return true;
+		}
 	}
 
 	public void registerItemPurchase(final Item item) {
@@ -84,12 +116,10 @@ public final class Store {
 		// Lookup the price if item is not cached or not valid
 		if (itemPrice == null) {
 			// Lookup standard price in FwWiki
-			final Optional<Integer> shopPrice = mStandardShopPriceFinder.findStandardShopPrice(itemName);
+			final Optional<Integer> standardShopPrice = mStandardShopPriceFinder.findStandardShopPrice(itemName);
 
-			if (!shopPrice.isPresent()) {
-				// TODO Remove debug print
-				System.out.println(itemName);
-				// TODO Correct error handling and logging
+			if (!standardShopPrice.isPresent()) {
+				// TODO Exchange with a more specific exception
 				throw new IllegalArgumentException();
 			}
 
@@ -98,10 +128,10 @@ public final class Store {
 
 			// Create data
 			if (playerPrice.isPresent()) {
-				itemPrice = new ItemPrice(itemName, shopPrice.get(), playerPrice.get(), false,
+				itemPrice = new ItemPrice(itemName, standardShopPrice.get(), playerPrice.get(), false,
 						System.currentTimeMillis());
 			} else {
-				itemPrice = new ItemPrice(itemName, shopPrice.get(), false, System.currentTimeMillis());
+				itemPrice = new ItemPrice(itemName, standardShopPrice.get(), false, System.currentTimeMillis());
 			}
 
 			// Create a version for the cache and update it

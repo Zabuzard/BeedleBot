@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 
 import de.zabuza.beedlebot.databridge.EPhase;
@@ -25,6 +26,7 @@ public final class Routine {
 	private EItemCategory mCurrentCategory;
 	private final WebDriver mDriver;
 	private final IFreewarInstance mInstance;
+	private final CentralTradersDepotNavigator mNavigator;
 	private EPhase mPhase;
 	private final PushDataService mPushDataService;
 	private final Service mService;
@@ -48,6 +50,7 @@ public final class Routine {
 		mTotalCost = 0;
 		mWaitForDeliveryTask = new WaitForDeliveryTask(mInstance.getChat());
 		mCentralTradersDepot = new Point(88, 89);
+		mNavigator = new CentralTradersDepotNavigator(mInstance, mDriver);
 	}
 
 	public Queue<Item> fetchBoughtItems() {
@@ -108,8 +111,8 @@ public final class Routine {
 				System.out.println("Analyse: Selected " + mCurrentCategory);
 
 				// Start analyse task
-				final AnalyseTask analyseTask = new AnalyseTask(mInstance, mDriver, mCurrentAnalyseResult,
-						mCurrentCategory, mStore);
+				final AnalyseTask analyseTask = new AnalyseTask(mDriver, mCurrentAnalyseResult, mCurrentCategory,
+						mStore, mNavigator);
 				analyseTask.start();
 
 				// Proceed to the next phase
@@ -137,7 +140,7 @@ public final class Routine {
 				}
 
 				// Start the purchase task
-				final PurchaseTask purchaseTask = new PurchaseTask(mInstance, mDriver, item);
+				final PurchaseTask purchaseTask = new PurchaseTask(mNavigator, item);
 				purchaseTask.start();
 
 				if (purchaseTask.wasBought()) {
@@ -148,7 +151,8 @@ public final class Routine {
 					// TODO Remove debug print
 					System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
 				} else {
-					// TODO Remove debug print
+					// TODO Error logging
+					// Log the problem but continue
 					System.out.println("Not bought, problem: " + item.getName());
 				}
 
@@ -182,6 +186,9 @@ public final class Routine {
 				}
 				return;
 			}
+		} catch (final StaleElementReferenceException e) {
+			// TODO Error logging
+			// Log the problem but continue
 		} catch (final Exception e) {
 			mService.setProblem(e);
 		}
