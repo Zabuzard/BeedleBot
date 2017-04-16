@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 
 import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
+import de.zabuza.beedlebot.exceptions.NotAtCentralTradersDepotException;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
 import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
@@ -82,8 +83,7 @@ public final class Routine {
 			// Check if the current location is the central traders depot
 			final Point currentLocation = mInstance.getLocation().getPosition();
 			if (!currentLocation.equals(mCentralTradersDepot)) {
-				// TODO Exchange with more specific exception
-				throw new IllegalStateException();
+				throw new NotAtCentralTradersDepotException(currentLocation);
 			}
 
 			// Analyse phase

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import de.zabuza.beedlebot.exceptions.PurchaseRegisterServiceUnavailableException;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class PurchaseRegister {
@@ -30,7 +31,7 @@ public final class PurchaseRegister {
 		mWorld = world;
 	}
 
-	public void registerPurchase(final Item item) {
+	public void registerPurchase(final Item item) throws PurchaseRegisterServiceUnavailableException {
 		try {
 			final URL url = new URL(StoreUtil.SERVER_URL + StoreUtil.BEEDLE_BOT_SERVICE + SERVER_FILE);
 			final HashMap<String, String> arguments = new HashMap<>();
@@ -58,12 +59,10 @@ public final class PurchaseRegister {
 			try {
 				StoreUtil.sendPostRequest(url, arguments);
 			} catch (final IOException e) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException(e);
+				throw new PurchaseRegisterServiceUnavailableException(e);
 			}
 		} catch (final MalformedURLException e) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException(e);
+			throw new PurchaseRegisterServiceUnavailableException(e);
 		}
 	}
 }

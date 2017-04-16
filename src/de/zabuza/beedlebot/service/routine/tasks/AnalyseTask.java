@@ -4,6 +4,10 @@ import java.util.Optional;
 
 import org.openqa.selenium.WebDriver;
 
+import de.zabuza.beedlebot.exceptions.ItemCategoryNotOpenedException;
+import de.zabuza.beedlebot.exceptions.ItemLineWrongFormatException;
+import de.zabuza.beedlebot.exceptions.NoPlayerPriceThoughConsideredException;
+import de.zabuza.beedlebot.exceptions.PageContentWrongFormatException;
 import de.zabuza.beedlebot.service.routine.AnalyseResult;
 import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.EItemCategory;
@@ -71,14 +75,13 @@ public final class AnalyseTask implements ITask {
 	 * @see de.zabuza.beedlebot.service.routine.tasks.ITask#start()
 	 */
 	@Override
-	public void start() {
+	public void start() throws ItemCategoryNotOpenedException {
 		// Open category
 		final boolean wasClicked = mNavigator.openItemCategory(mItemCategory);
 
 		if (!wasClicked) {
 			mNavigator.exitMenu();
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException();
+			throw new ItemCategoryNotOpenedException();
 		}
 
 		// Retrieve content
@@ -91,15 +94,15 @@ public final class AnalyseTask implements ITask {
 		mNavigator.exitMenu();
 	}
 
-	private void processContent(final String content) {
+	private void processContent(final String content) throws PageContentWrongFormatException,
+			ItemLineWrongFormatException, NoPlayerPriceThoughConsideredException {
 		// Strip everything between start and end needle
 		final int startIndexRaw = content.indexOf(CONTENT_NEEDLE_START);
 		final int startIndex = startIndexRaw + CONTENT_NEEDLE_START.length();
 		final int endIndex = content.indexOf(CONTENT_NEEDLE_END, startIndex);
 
 		if (startIndexRaw == -1 || endIndex == -1) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException();
+			throw new PageContentWrongFormatException(content);
 		}
 
 		final String itemContent = content.substring(startIndex, endIndex);
@@ -115,8 +118,7 @@ public final class AnalyseTask implements ITask {
 			final int itemNameEnd = itemContentLine.indexOf(CONTENT_ITEM_NAME_END);
 
 			if (itemNameStart == -1 || itemNameEnd == -1) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException();
+				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
 			final String itemName = itemContentLine.substring(itemNameStart + CONTENT_ITEM_NAME_START.length(),
@@ -127,8 +129,7 @@ public final class AnalyseTask implements ITask {
 			final int itemCostEnd = itemContentLine.indexOf(CONTENT_ITEM_COST_END);
 
 			if (itemCostStart == -1 || itemCostEnd == -1) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException();
+				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
 			String itemCostText = itemContentLine.substring(itemCostStart + CONTENT_ITEM_COST_START.length(),
@@ -142,8 +143,7 @@ public final class AnalyseTask implements ITask {
 			final int purchaseAnchorEnd = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_END);
 
 			if (purchaseAnchorStart == -1 || purchaseAnchorEnd == -1) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException();
+				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
 			final String purchaseAnchor = itemContentLine
@@ -154,8 +154,7 @@ public final class AnalyseTask implements ITask {
 			final int idStart = purchaseAnchor.indexOf(CONTENT_ID_START);
 
 			if (idStart == -1) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException();
+				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
 			final int id = Integer.parseInt(purchaseAnchor.substring(idStart + CONTENT_ID_START.length()));
@@ -175,8 +174,7 @@ public final class AnalyseTask implements ITask {
 				if (playerPrice.isPresent()) {
 					itemProfit = playerPrice.get().getPrice() - itemCost;
 				} else {
-					// TODO Exchange with a more specific exception
-					throw new IllegalStateException();
+					throw new NoPlayerPriceThoughConsideredException(itemName);
 				}
 			}
 

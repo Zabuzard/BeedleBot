@@ -3,6 +3,7 @@ package de.zabuza.beedlebot.store;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import de.zabuza.beedlebot.exceptions.NoStandardShopPriceException;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class Store {
@@ -103,7 +104,8 @@ public final class Store {
 		mPurchaseRegister.registerPurchase(item);
 	}
 
-	private ItemPrice getItemPrice(final String itemName, final boolean ignoreCache) {
+	private ItemPrice getItemPrice(final String itemName, final boolean ignoreCache)
+			throws NoStandardShopPriceException {
 		ItemPrice itemPrice = null;
 		// Try to use the cache first
 		if (!ignoreCache && mStoreCache.hasItemPrice(itemName)) {
@@ -119,8 +121,7 @@ public final class Store {
 			final Optional<Integer> standardShopPrice = mStandardShopPriceFinder.findStandardShopPrice(itemName);
 
 			if (!standardShopPrice.isPresent()) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalArgumentException();
+				throw new NoStandardShopPriceException(itemName);
 			}
 
 			// Lookup player to player price in MPLogger interface

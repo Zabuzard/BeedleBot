@@ -104,6 +104,16 @@ public final class ItemDictionary {
 		mItemsRegisteredForPlayer.add("Kuhkopf");
 		mItemsRegisteredForPlayer.add("Seelenkapsel");
 		mItemsRegisteredForPlayer.add("Seelenkugel");
+		mItemsRegisteredForPlayer.add("toter Blutwurm");
+		mItemsRegisteredForPlayer.add("Onlo-Knochen");
+		mItemsRegisteredForPlayer.add("tote Wüstenmaus");
+		mItemsRegisteredForPlayer.add("Pfeil");
+		mItemsRegisteredForPlayer.add("Phasenkugel");
+		mItemsRegisteredForPlayer.add("Zauberbrötchen");
+		mItemsRegisteredForPlayer.add("Holz");
+		mItemsRegisteredForPlayer.add("Ölfass");
+		mItemsRegisteredForPlayer.add("Artefakt von Dranar");
+		mItemsRegisteredForPlayer.add("blauer Kristall");
 	}
 
 	private void initializeItemsRegisteredForShop() {

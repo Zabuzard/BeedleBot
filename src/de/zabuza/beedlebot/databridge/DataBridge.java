@@ -4,6 +4,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.html5.SessionStorage;
 
+import de.zabuza.beedlebot.exceptions.DriverStorageUnsupportedException;
 import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
 
 /**
@@ -17,7 +18,7 @@ public final class DataBridge {
 	private static final String ITEM_VALUE_SEPARATOR = "?";
 	private final SessionStorage mStorage;
 
-	public DataBridge(final WebDriver driver) {
+	public DataBridge(final WebDriver driver) throws DriverStorageUnsupportedException {
 		// Get storage from chrome driver
 		ChromeDriver chromeDriver = null;
 
@@ -30,7 +31,7 @@ public final class DataBridge {
 		}
 
 		if (chromeDriver == null) {
-			// TODO Correct error handling and logging
+			throw new DriverStorageUnsupportedException(driver);
 		}
 
 		mStorage = chromeDriver.getSessionStorage();

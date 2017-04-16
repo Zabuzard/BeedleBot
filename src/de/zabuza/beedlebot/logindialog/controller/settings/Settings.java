@@ -49,7 +49,7 @@ public final class Settings {
 		try {
 			try {
 				mProperties.load(new FileInputStream(FILEPATH));
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				saveSettings(provider);
 				mProperties.load(new FileInputStream(FILEPATH));
 			}

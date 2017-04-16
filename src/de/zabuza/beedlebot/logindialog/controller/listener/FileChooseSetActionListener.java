@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 
+import de.zabuza.beedlebot.exceptions.IllegalFileSelectionException;
 import de.zabuza.beedlebot.logindialog.view.SettingsDialog;
 
 /**
@@ -73,7 +74,7 @@ public final class FileChooseSetActionListener implements ActionListener {
 	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(final ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) throws IllegalFileSelectionException {
 		String filePath = null;
 
 		// Open file chooser dialog
@@ -83,7 +84,7 @@ public final class FileChooseSetActionListener implements ActionListener {
 		} else if (option == JFileChooser.CANCEL_OPTION) {
 			// Do nothing, just let filePath stay null
 		} else {
-			throw new IllegalStateException("An unknown error occurred during file selection.");
+			throw new IllegalFileSelectionException();
 		}
 
 		// Put the path to the file in the text field

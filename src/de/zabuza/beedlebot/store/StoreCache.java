@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
+import de.zabuza.beedlebot.exceptions.StoreCacheDeserializationUnsuccessfulException;
+import de.zabuza.beedlebot.exceptions.StoreCacheSerializationUnsuccessfulException;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class StoreCache implements Serializable {
@@ -22,7 +24,7 @@ public final class StoreCache implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static StoreCache deserialize(final EWorld world) {
+	public static StoreCache deserialize(final EWorld world) throws StoreCacheDeserializationUnsuccessfulException {
 		StoreCache cache = null;
 		ObjectInputStream ois = null;
 		try {
@@ -30,16 +32,14 @@ public final class StoreCache implements Serializable {
 			ois = new ObjectInputStream(fis);
 			cache = (StoreCache) ois.readObject();
 		} catch (final IOException | ClassNotFoundException e) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException(e);
+			throw new StoreCacheDeserializationUnsuccessfulException(e);
 		} finally {
 			try {
 				if (ois != null) {
 					ois.close();
 				}
 			} catch (final IOException e) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException(e);
+				throw new StoreCacheDeserializationUnsuccessfulException(e);
 			}
 		}
 		return cache;
@@ -83,23 +83,21 @@ public final class StoreCache implements Serializable {
 		mNameToPriceData.put(itemPrice.getName(), itemPrice);
 	}
 
-	public void serialize() {
+	public void serialize() throws StoreCacheSerializationUnsuccessfulException {
 		ObjectOutputStream oos = null;
 		try {
 			final FileOutputStream fos = new FileOutputStream(buildSerializationPath(mWorld));
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(this);
 		} catch (final IOException e) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException(e);
+			throw new StoreCacheSerializationUnsuccessfulException(e);
 		} finally {
 			try {
 				if (oos != null) {
 					oos.close();
 				}
 			} catch (final IOException e) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException(e);
+				throw new StoreCacheSerializationUnsuccessfulException(e);
 			}
 		}
 	}

@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 
+import de.zabuza.beedlebot.exceptions.StoreUnsupportedWorldException;
+import de.zabuza.beedlebot.exceptions.UnexpectedUnsupportedEncodingException;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class StoreUtil {
@@ -27,12 +29,11 @@ public final class StoreUtil {
 
 	private static final int SECOND_TO_MILLI_FACTOR = 1000;
 
-	public static String encodeUtf8(final String text) {
+	public static String encodeUtf8(final String text) throws UnexpectedUnsupportedEncodingException {
 		try {
 			return URLEncoder.encode(text, StandardCharsets.UTF_8.toString());
 		} catch (final UnsupportedEncodingException e) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException(e);
+			throw new UnexpectedUnsupportedEncodingException(e);
 		}
 	}
 
@@ -67,7 +68,7 @@ public final class StoreUtil {
 		http.disconnect();
 	}
 
-	public static int worldToNumber(final EWorld world) {
+	public static int worldToNumber(final EWorld world) throws StoreUnsupportedWorldException {
 		if (world == EWorld.ONE) {
 			return 1;
 		}
@@ -111,8 +112,7 @@ public final class StoreUtil {
 			return 14;
 		}
 
-		// TODO Exchange with a more specific exception
-		throw new IllegalArgumentException();
+		throw new StoreUnsupportedWorldException(world);
 	}
 
 	/**

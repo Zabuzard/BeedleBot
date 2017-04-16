@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import de.zabuza.beedlebot.exceptions.UnsupportedBrowserException;
 import de.zabuza.sparkle.webdriver.EBrowser;
 
 /**
@@ -194,8 +195,11 @@ public final class SettingsDialog extends JDialog {
 	 *            action
 	 * @param listener
 	 *            Listener to add
+	 * @throws UnsupportedBrowserException
+	 *             If the given browser is not supported
 	 */
-	public void addListenerToBrowserDriverSelectionAction(final EBrowser browser, final ActionListener listener) {
+	public void addListenerToBrowserDriverSelectionAction(final EBrowser browser, final ActionListener listener)
+			throws UnsupportedBrowserException {
 		if (browser == EBrowser.CHROME) {
 			mChromeBtn.addActionListener(listener);
 		} else if (browser == EBrowser.FIREFOX) {
@@ -209,7 +213,7 @@ public final class SettingsDialog extends JDialog {
 		} else if (browser == EBrowser.SAFARI) {
 			mSafariBtn.addActionListener(listener);
 		} else {
-			throw new IllegalArgumentException("The given browser is not supported by this operation: " + browser);
+			throw new UnsupportedBrowserException(browser);
 		}
 	}
 
@@ -259,8 +263,10 @@ public final class SettingsDialog extends JDialog {
 	 * @param browser
 	 *            Browser to get its driver field
 	 * @return The driver field corresponding to the given browser
+	 * @throws UnsupportedBrowserException
+	 *             If the given browser is not supported
 	 */
-	public JTextField getBrowserDriverField(final EBrowser browser) {
+	public JTextField getBrowserDriverField(final EBrowser browser) throws UnsupportedBrowserException {
 		if (browser == EBrowser.CHROME) {
 			return mChromeDriverField;
 		} else if (browser == EBrowser.FIREFOX) {
@@ -274,7 +280,7 @@ public final class SettingsDialog extends JDialog {
 		} else if (browser == EBrowser.SAFARI) {
 			return mSafariDriverField;
 		} else {
-			throw new IllegalArgumentException("The given browser is not supported by this operation: " + browser);
+			throw new UnsupportedBrowserException(browser);
 		}
 	}
 
@@ -294,7 +300,7 @@ public final class SettingsDialog extends JDialog {
 	 *            Whether the elements should be enabled or disabled
 	 */
 	public void setAllElementsEnabled(final boolean enabled) {
-		for (JComponent element : mElements) {
+		for (final JComponent element : mElements) {
 			element.setEnabled(enabled);
 		}
 	}

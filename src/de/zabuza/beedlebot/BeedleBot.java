@@ -14,6 +14,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import de.zabuza.beedlebot.databridge.DataBridge;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
+import de.zabuza.beedlebot.exceptions.EmptyUserCredentialsException;
 import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
 import de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider;
@@ -41,10 +42,8 @@ public final class BeedleBot {
 	 * 
 	 * @param args
 	 *            Not supported
-	 * @throws IOException
-	 * @throws AWTException
 	 */
-	public static void main(final String[] args) throws IOException, AWTException {
+	public static void main(final String[] args) {
 		BeedleBot beedleBot = null;
 		try {
 			beedleBot = new BeedleBot();
@@ -119,7 +118,7 @@ public final class BeedleBot {
 	}
 
 	public void startService(final IUserSettingsProvider userSettingsProvider,
-			final IBrowserSettingsProvider browserSettingsProvider) {
+			final IBrowserSettingsProvider browserSettingsProvider) throws EmptyUserCredentialsException {
 		try {
 			// TODO Remove debug
 			System.out.println("Starting Service");
@@ -130,7 +129,7 @@ public final class BeedleBot {
 			final String emptyText = "";
 			if (username == null || username.equals(emptyText) || password == null || password.equals(emptyText)
 					|| world == null) {
-				throw new IllegalArgumentException();
+				throw new EmptyUserCredentialsException();
 			}
 
 			// Create the store

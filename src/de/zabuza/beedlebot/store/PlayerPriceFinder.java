@@ -8,6 +8,8 @@ import java.util.Optional;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonStreamParser;
 
+import de.zabuza.beedlebot.exceptions.PlayerPriceServiceAnswerWrongFormatException;
+import de.zabuza.beedlebot.exceptions.PlayerPriceServiceUnavailableException;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class PlayerPriceFinder {
@@ -23,7 +25,8 @@ public final class PlayerPriceFinder {
 		mItemDictionary = itemDictionary;
 	}
 
-	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world) {
+	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world)
+			throws PlayerPriceServiceAnswerWrongFormatException, PlayerPriceServiceUnavailableException {
 		// Process exceptional items
 		if (mItemDictionary.containsPlayerPrice(itemName)) {
 			final int price = mItemDictionary.getPlayerPrice(itemName).get();
@@ -51,8 +54,7 @@ public final class PlayerPriceFinder {
 			final JsonStreamParser parser = new JsonStreamParser(new InputStreamReader(url.openStream()));
 
 			if (!parser.hasNext()) {
-				// TODO Exchange with a more specific exception
-				throw new IllegalStateException();
+				throw new PlayerPriceServiceAnswerWrongFormatException(itemName, world);
 			}
 
 			final JsonObject element = parser.next().getAsJsonObject();
@@ -68,8 +70,7 @@ public final class PlayerPriceFinder {
 			final PlayerPrice playerPrice = new PlayerPrice(price, timestamp, world);
 			return Optional.of(playerPrice);
 		} catch (final IOException e) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException(e);
+			throw new PlayerPriceServiceUnavailableException(e);
 		}
 	}
 }

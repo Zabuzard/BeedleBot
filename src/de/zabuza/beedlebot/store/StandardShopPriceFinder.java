@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Optional;
 
+import de.zabuza.beedlebot.exceptions.StandardShopPriceServiceUnavailableException;
+
 public final class StandardShopPriceFinder {
 
 	public static final int NO_PRICE = -1;
@@ -23,7 +25,8 @@ public final class StandardShopPriceFinder {
 		mItemDictionary = itemDictionary;
 	}
 
-	public Optional<Integer> findStandardShopPrice(final String itemName) {
+	public Optional<Integer> findStandardShopPrice(final String itemName)
+			throws StandardShopPriceServiceUnavailableException {
 		Integer shopPrice = null;
 
 		final String parsedItemName = mItemDictionary.applyItemNamePatterns(itemName);
@@ -89,15 +92,13 @@ public final class StandardShopPriceFinder {
 			final String shopPriceText = shopPriceContent.toString();
 			shopPrice = Integer.parseInt(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
 		} catch (final IOException e) {
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException(e);
+			throw new StandardShopPriceServiceUnavailableException(e);
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (final IOException e) {
-					// TODO Exchange with a more specific exception
-					throw new IllegalStateException(e);
+					throw new StandardShopPriceServiceUnavailableException(e);
 				}
 			}
 		}

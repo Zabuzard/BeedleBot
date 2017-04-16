@@ -1,5 +1,7 @@
 package de.zabuza.beedlebot.service.routine.tasks;
 
+import de.zabuza.beedlebot.exceptions.ItemCategoryNotOpenedException;
+import de.zabuza.beedlebot.exceptions.PurchaseDialogNotClosedException;
 import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.Item;
 
@@ -45,13 +47,11 @@ public final class PurchaseTask implements ITask {
 	 * @see de.zabuza.beedlebot.service.routine.tasks.ITask#start()
 	 */
 	@Override
-	public void start() {
+	public void start() throws ItemCategoryNotOpenedException, PurchaseDialogNotClosedException {
 		final boolean wasCategoryClicked = mNavigator.openItemCategory(mItem.getItemCategory());
-		// TODO Correct error handling and logging
 		if (!wasCategoryClicked) {
 			mNavigator.exitMenu();
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException();
+			throw new ItemCategoryNotOpenedException();
 		}
 
 		// Click the purchase anchor
@@ -69,8 +69,7 @@ public final class PurchaseTask implements ITask {
 		// TODO Correct error handling and logging
 		if (!wasContinueClicked) {
 			mNavigator.exitMenu();
-			// TODO Exchange with a more specific exception
-			throw new IllegalStateException();
+			throw new PurchaseDialogNotClosedException();
 		}
 
 		mWasBought = true;

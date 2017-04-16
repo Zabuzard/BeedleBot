@@ -8,6 +8,7 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 
 import de.zabuza.beedlebot.BeedleBot;
+import de.zabuza.beedlebot.exceptions.UnsupportedSystemTrayException;
 import de.zabuza.beedlebot.tray.listener.ExitListener;
 import de.zabuza.beedlebot.tray.listener.RestartListener;
 
@@ -39,10 +40,10 @@ public final class TrayManager {
 		mSystemTray.remove(mTrayIcon);
 	}
 
-	private void initialize() throws IllegalStateException {
+	private void initialize() throws UnsupportedSystemTrayException {
 		// If try is not supported, abort
 		if (!SystemTray.isSupported()) {
-			throw new IllegalStateException();
+			throw new UnsupportedSystemTrayException();
 		}
 
 		mSystemTray = SystemTray.getSystemTray();
