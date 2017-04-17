@@ -8,6 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.store.EItemCategory;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.frames.EFrame;
@@ -27,10 +29,12 @@ public final class CentralTradersDepotNavigator {
 	private final WebDriver mDriver;
 	private final IFreewarInstance mInstance;
 	private final Map<EItemCategory, String> mItemCategoryToAnchorNeedle;
+	private final ILogger mLogger;
 
 	public CentralTradersDepotNavigator(final IFreewarInstance instance, final WebDriver driver) {
 		mInstance = instance;
 		mDriver = driver;
+		mLogger = LoggerFactory.getLogger();
 
 		mItemCategoryToAnchorNeedle = new HashMap<>();
 		mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
@@ -41,6 +45,10 @@ public final class CentralTradersDepotNavigator {
 	}
 
 	public boolean exitMenu() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Exiting central traders depot menu");
+		}
+
 		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, EXIT_MENU_ANCHOR);
 
 		// Wait for click to get executed
@@ -50,6 +58,10 @@ public final class CentralTradersDepotNavigator {
 	}
 
 	public boolean exitPurchasedDialog() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Exiting central traders depot purchased dialog");
+		}
+
 		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
 
 		// Wait for click to get executed
@@ -59,6 +71,10 @@ public final class CentralTradersDepotNavigator {
 	}
 
 	public boolean openItemCategory(final EItemCategory category) {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Opening central traders depot item category: " + category);
+		}
+
 		final String needle = mItemCategoryToAnchorNeedle.get(category);
 		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, needle);
 
@@ -69,6 +85,10 @@ public final class CentralTradersDepotNavigator {
 	}
 
 	public boolean purchaseItem(final String purchaseAnchor) {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Purchasing central traders depot item: " + purchaseAnchor);
+		}
+
 		final String selector = CSS_PURCHASE_ANCHOR_SELECTOR_PRE + purchaseAnchor + CSS_PURCHASE_ANCHOR_SELECTOR_SUC;
 		final List<WebElement> elements = mDriver.findElements(By.cssSelector(selector));
 		if (elements.isEmpty()) {

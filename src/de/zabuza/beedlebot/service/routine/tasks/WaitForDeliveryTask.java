@@ -2,6 +2,8 @@ package de.zabuza.beedlebot.service.routine.tasks;
 
 import java.util.ArrayList;
 
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.freewar.chat.EChatType;
 import de.zabuza.sparkle.freewar.chat.IChat;
 import de.zabuza.sparkle.freewar.chat.Message;
@@ -16,6 +18,7 @@ public final class WaitForDeliveryTask implements ITask {
 	 */
 	private boolean mInterrupted;
 	private Message mLastMessage;
+	private ILogger mLogger;
 	private Message mNextToLastMessage;
 	private boolean mWasThereADelivery;
 
@@ -25,6 +28,7 @@ public final class WaitForDeliveryTask implements ITask {
 		mLastMessage = null;
 		mNextToLastMessage = null;
 		mDeliveryMessage = new Message(MESSAGE_DELIVERY_CONTENT, EChatType.DIRECT);
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -54,6 +58,10 @@ public final class WaitForDeliveryTask implements ITask {
 	 */
 	@Override
 	public void start() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Starting WaitForDeliveryTask");
+		}
+
 		mWasThereADelivery = false;
 		final ArrayList<Message> messages = mChat.getMessages(EChatType.DIRECT);
 

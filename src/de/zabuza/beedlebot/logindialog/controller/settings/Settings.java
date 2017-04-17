@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
+
 /**
  * Class for the tool settings.
  * 
@@ -24,6 +27,10 @@ public final class Settings {
 	 */
 	private static final String FILEPATH = "config.ini";
 	/**
+	 * Logger to use for logging.
+	 */
+	private final ILogger mLogger;
+	/**
 	 * Properties object which holds the saved settings.
 	 */
 	private final Properties mProperties;
@@ -36,6 +43,7 @@ public final class Settings {
 	 */
 	public Settings() {
 		mProperties = new Properties();
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/**
@@ -46,10 +54,12 @@ public final class Settings {
 	 *            Provider which settings will be affected
 	 */
 	public final void loadSettings(final ISettingsProvider provider) {
+		mLogger.logInfo("Loading settings");
 		try {
 			try {
 				mProperties.load(new FileInputStream(FILEPATH));
 			} catch (final FileNotFoundException e) {
+				mLogger.logInfo("Creating settings file");
 				saveSettings(provider);
 				mProperties.load(new FileInputStream(FILEPATH));
 			}
@@ -59,8 +69,8 @@ public final class Settings {
 				provider.setSetting((String) entry.getKey(), (String) entry.getValue());
 			}
 		} catch (final IOException e) {
-			// TODO Error logging
 			// Log the error but continue
+			mLogger.logError("Error while loading settings: " + e);
 		}
 	}
 
@@ -71,6 +81,8 @@ public final class Settings {
 	 *            Provider which settings will be affected
 	 */
 	public final void saveSettings(final ISettingsProvider provider) {
+		mLogger.logInfo("Saving settings");
+
 		FileOutputStream target = null;
 		try {
 			// Fetch and put every setting
@@ -82,15 +94,15 @@ public final class Settings {
 			target = new FileOutputStream(new File(FILEPATH));
 			mProperties.store(target, FILE_COMMENT);
 		} catch (final IOException e) {
-			// TODO Error logging
 			// Log the error but continue
+			mLogger.logError("Error while saving settings: " + e);
 		} finally {
 			if (target != null) {
 				try {
 					target.close();
 				} catch (final IOException e) {
-					// TODO Error logging
 					// Log the error but continue
+					mLogger.logError("Error while closing settings file for saving: " + e);
 				}
 			}
 		}

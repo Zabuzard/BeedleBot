@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.logindialog.controller.listener.CloseAtCancelActionListener;
 import de.zabuza.beedlebot.logindialog.controller.listener.ClosingCallbackWindowListener;
 import de.zabuza.beedlebot.logindialog.controller.listener.FileChooseSetActionListener;
@@ -63,6 +65,10 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 */
 	private static final String KEY_INFO_SEPARATOR = "@";
 	/**
+	 * The logger to use for logging.
+	 */
+	private final ILogger mLogger;
+	/**
 	 * The owning frame of this controller.
 	 */
 	private final JFrame mOwner;
@@ -94,6 +100,7 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	public SettingsController(final JFrame owner, final LoginDialogView view) {
 		mView = view;
 		mOwner = owner;
+		mLogger = LoggerFactory.getLogger();
 
 		mSettingsStore = new HashMap<>();
 		mSettings = new Settings();
@@ -178,8 +185,8 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			// Save settings
 			mSettings.saveSettings(this);
 		} catch (final Exception e) {
-			// TODO Error logging
 			// Log the error but continue
+			mLogger.logError("Error while executing save action: " + e);
 		} finally {
 			// Close the settings dialog, if opened
 			if (mSettingsDialog != null) {
@@ -207,7 +214,7 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			passSettingsToSettingsDialogView();
 			mSettingsDialog.setVisible(true);
 		} catch (final Exception e) {
-			// TODO Error logging
+			mLogger.logError("Error while executing settings action: " + e);
 			// Try to close the dialog
 			if (mSettingsDialog != null) {
 				mSettingsDialog.dispatchEvent(new WindowEvent(mSettingsDialog, WindowEvent.WINDOW_CLOSING));
@@ -353,6 +360,10 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 	 * Initializes the controller.
 	 */
 	public void initialize() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Initializing SettingsController");
+		}
+
 		linkListener();
 		mSettings.loadSettings(this);
 	}

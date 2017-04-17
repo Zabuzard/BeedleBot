@@ -2,6 +2,8 @@ package de.zabuza.beedlebot.service.routine.tasks;
 
 import de.zabuza.beedlebot.exceptions.ItemCategoryNotOpenedException;
 import de.zabuza.beedlebot.exceptions.PurchaseDialogNotClosedException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.Item;
 
@@ -11,6 +13,7 @@ public final class PurchaseTask implements ITask {
 	 */
 	private boolean mInterrupted;
 	private final Item mItem;
+	private final ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
 	private boolean mWasBought;
 
@@ -19,6 +22,7 @@ public final class PurchaseTask implements ITask {
 		mItem = item;
 		mInterrupted = false;
 		mWasBought = false;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -48,6 +52,10 @@ public final class PurchaseTask implements ITask {
 	 */
 	@Override
 	public void start() throws ItemCategoryNotOpenedException, PurchaseDialogNotClosedException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Starting PurchaseTask");
+		}
+
 		final boolean wasCategoryClicked = mNavigator.openItemCategory(mItem.getItemCategory());
 		if (!wasCategoryClicked) {
 			mNavigator.exitMenu();
@@ -66,7 +74,6 @@ public final class PurchaseTask implements ITask {
 		// Click the continue anchor
 		final boolean wasContinueClicked = mNavigator.exitPurchasedDialog();
 
-		// TODO Correct error handling and logging
 		if (!wasContinueClicked) {
 			mNavigator.exitMenu();
 			throw new PurchaseDialogNotClosedException();

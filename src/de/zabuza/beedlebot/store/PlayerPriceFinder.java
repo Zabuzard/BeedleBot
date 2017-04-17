@@ -10,6 +10,8 @@ import com.google.gson.JsonStreamParser;
 
 import de.zabuza.beedlebot.exceptions.PlayerPriceServiceAnswerWrongFormatException;
 import de.zabuza.beedlebot.exceptions.PlayerPriceServiceUnavailableException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class PlayerPriceFinder {
@@ -20,13 +22,19 @@ public final class PlayerPriceFinder {
 	private static final String SERVER_FILE = "itemPrice.php";
 
 	private final ItemDictionary mItemDictionary;
+	private final ILogger mLogger;
 
 	public PlayerPriceFinder(final ItemDictionary itemDictionary) {
 		mItemDictionary = itemDictionary;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world)
 			throws PlayerPriceServiceAnswerWrongFormatException, PlayerPriceServiceUnavailableException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Finding player price: " + itemName + ", " + world);
+		}
+
 		// Process exceptional items
 		if (mItemDictionary.containsPlayerPrice(itemName)) {
 			final int price = mItemDictionary.getPlayerPrice(itemName).get();

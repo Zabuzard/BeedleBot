@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import de.zabuza.beedlebot.BeedleBot;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.service.routine.Routine;
 import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.IFreewarAPI;
@@ -21,13 +23,14 @@ public final class Service extends Thread {
 	private final WebDriver mDriver;
 	private FetchDataService mFetchDataService;
 	private IFreewarInstance mInstance;
+	private final ILogger mLogger;
 	private final BeedleBot mParent;
 	private boolean mPaused;
 	private Exception mProblem;
 	private PushDataService mPushDataService;
 	private Routine mRoutine;
-	private boolean mShouldStopService;
 
+	private boolean mShouldStopService;
 	private final Store mStore;
 
 	public Service(final IFreewarAPI api, final IFreewarInstance instance, final WebDriver driver, final Store store,
@@ -37,6 +40,7 @@ public final class Service extends Thread {
 		mDriver = driver;
 		mStore = store;
 		mParent = parent;
+		mLogger = LoggerFactory.getLogger();
 
 		mFetchDataService = null;
 		mPushDataService = null;
@@ -84,13 +88,13 @@ public final class Service extends Thread {
 			mPushDataService.linkRoutine(mRoutine);
 			mPushDataService.setBeedleBotServing(true);
 		} catch (final Exception e1) {
-			// TODO Error logging
 			// Do not enter the service loop
+			mLogger.logError("Error while starting service, not entering: " + e1);
 			mDoRun = false;
 			try {
 				mPushDataService.setBeedleBotServing(false);
 			} catch (final Exception e2) {
-				// TODO Error logging
+				mLogger.logError("Error while starting service, not entering: " + e2);
 			}
 			terminateParent = true;
 		}
@@ -127,8 +131,8 @@ public final class Service extends Thread {
 						clearProblem();
 						mFetchDataService.clearStartSignal();
 						mPushDataService.updateActiveData();
-						// TODO Remove debug
-						System.out.println("Continued.");
+
+						mLogger.logInfo("Continuing service");
 					}
 					if (!mPaused && (hasProblem() || mFetchDataService.isStopSignalSet())) {
 						// Pause
@@ -136,8 +140,8 @@ public final class Service extends Thread {
 						mFetchDataService.clearStopSignal();
 						mRoutine.reset();
 						mPushDataService.updateActiveData();
-						// TODO Remove debug
-						System.out.println("Paused.");
+
+						mLogger.logInfo("Pause service");
 					}
 				}
 				if (mShouldStopService) {
@@ -160,8 +164,7 @@ public final class Service extends Thread {
 				// Delay the next iteration
 				waitIteration();
 			} catch (final Exception e1) {
-				// TODO Correct error logging, do not use error console
-				e1.printStackTrace();
+				mLogger.logError("Error while running service, shutting down: " + e1);
 				// Try to shutdown
 				mDoRun = false;
 				mPaused = true;
@@ -169,7 +172,7 @@ public final class Service extends Thread {
 				try {
 					mPushDataService.setBeedleBotServing(false);
 				} catch (final Exception e2) {
-					// TODO Error logging
+					mLogger.logError("Error while trying to shutdown service: " + e2);
 				}
 				terminateParent = true;
 			}
@@ -185,10 +188,11 @@ public final class Service extends Thread {
 	}
 
 	public void setProblem(final Exception problem) {
-		// TODO Error logging, push problem to data bridge
-		// TODO Remove debug print to error log
-		problem.printStackTrace(System.out);
+		// TODO Push problem to data bridge
 		mProblem = problem;
+
+		mLogger.logError("Problem registered: " + problem);
+		mLogger.flush();
 	}
 
 	public void stopService() {
@@ -199,8 +203,8 @@ public final class Service extends Thread {
 		try {
 			sleep(SERVICE_INTERVAL);
 		} catch (final InterruptedException e) {
-			// TODO Error logging
 			// Log the error but continue
+			mLogger.logError("Service wait got interrupted: " + e);
 		}
 	}
 
@@ -209,25 +213,24 @@ public final class Service extends Thread {
 	}
 
 	private void shutdown() {
+		mLogger.logInfo("Shutting down service");
 		if (mApi != null) {
 			if (mInstance != null) {
 				try {
 					mApi.logout(mInstance);
 				} catch (final Exception e) {
-					// TODO Error logging
 					// Log the error but continue
+					mLogger.logError("Error while loging out from API: " + e);
 				}
 				mInstance = null;
 			}
 			try {
 				mApi.shutdown();
 			} catch (final Exception e) {
-				// TODO Error logging
 				// Log the error but continue
+				mLogger.logError("Error while shutting down API: " + e);
 			}
 
 		}
-		// TODO Remove debug
-		System.out.println("Service shut down");
 	}
 }

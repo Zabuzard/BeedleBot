@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.Optional;
 
 import de.zabuza.beedlebot.exceptions.StandardShopPriceServiceUnavailableException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 
 public final class StandardShopPriceFinder {
 
@@ -20,13 +22,19 @@ public final class StandardShopPriceFinder {
 	private static final String STRIP_INTEGER_PATTERN = "[\\s\\.,]";
 
 	private final ItemDictionary mItemDictionary;
+	private final ILogger mLogger;
 
 	public StandardShopPriceFinder(final ItemDictionary itemDictionary) {
 		mItemDictionary = itemDictionary;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	public Optional<Integer> findStandardShopPrice(final String itemName)
 			throws StandardShopPriceServiceUnavailableException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Finding standard shop price: " + itemName);
+		}
+
 		Integer shopPrice = null;
 
 		final String parsedItemName = mItemDictionary.applyItemNamePatterns(itemName);

@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import de.zabuza.beedlebot.BeedleBot;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 
 /**
  * 
@@ -12,9 +14,11 @@ import de.zabuza.beedlebot.BeedleBot;
  */
 public final class ExitListener implements ActionListener {
 	private final BeedleBot mBeedleBot;
+	private final ILogger mLogger;
 
 	public ExitListener(BeedleBot beedleBot) {
 		mBeedleBot = beedleBot;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -25,6 +29,7 @@ public final class ExitListener implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(final ActionEvent e) {
+		mLogger.logInfo("Executing exit action");
 		mBeedleBot.shutdown();
 	}
 

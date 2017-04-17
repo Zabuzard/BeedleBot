@@ -15,6 +15,8 @@ import de.zabuza.beedlebot.databridge.DataBridge;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.exceptions.EmptyUserCredentialsException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
 import de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider;
@@ -50,7 +52,7 @@ public final class BeedleBot {
 			beedleBot.initialize();
 			beedleBot.start();
 		} catch (final Exception e) {
-			// TODO Error logging
+			LoggerFactory.getLogger().logError("Error, shutting down: " + e);
 			// Try to shutdown
 			if (beedleBot != null) {
 				beedleBot.shutdown();
@@ -64,6 +66,7 @@ public final class BeedleBot {
 	private FetchDataService mFetchDataService;
 	private Image mIconImage;
 	private IFreewarInstance mInstance;
+	private ILogger mLogger;
 	private LoginDialog mLoginDialog;
 	private PushDataService mPushDataService;
 	private Service mService;
@@ -84,35 +87,44 @@ public final class BeedleBot {
 		mPushDataService = null;
 		mFetchDataService = null;
 		mStore = null;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	public void initialize() throws IOException, AWTException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Initializing BeedleBot");
+		}
 		mIconImage = ImageIO.read(new File(IMAGE_PATH_ICON));
 		mTrayManager = new TrayManager(this, mIconImage);
 		mTrayManager.addTrayIcon();
 	}
 
 	public void shutdown() {
+		mLogger.flush();
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Shutting down BeedleBot");
+		}
 		try {
 			stop();
 		} catch (final Exception e) {
-			// TODO Error logging
+			mLogger.logError("Error while stopping: " + e);
 		}
 
 		if (mTrayManager != null) {
 			try {
 				mTrayManager.removeTrayIcon();
 			} catch (final Exception e) {
-				// TODO Error logging
+				mLogger.logError("Error while removing tray icon: " + e);
 			}
 
 		}
-		System.out.println("Shutdown");
+
+		mLogger.logInfo("BeedleBot shutdown");
+		mLogger.close();
 	}
 
 	public void start() {
-		// TODO Remove debug
-		System.out.println("An");
+		mLogger.logInfo("BeedleBot start");
 
 		mLoginDialog = new LoginDialog(this, mIconImage);
 	}
@@ -120,8 +132,7 @@ public final class BeedleBot {
 	public void startService(final IUserSettingsProvider userSettingsProvider,
 			final IBrowserSettingsProvider browserSettingsProvider) throws EmptyUserCredentialsException {
 		try {
-			// TODO Remove debug
-			System.out.println("Starting Service");
+			mLogger.logInfo("Starting service");
 
 			final String username = userSettingsProvider.getUserName();
 			final String password = userSettingsProvider.getPassword();
@@ -145,7 +156,7 @@ public final class BeedleBot {
 			final String userProfile = browserSettingsProvider.getUserProfile();
 			// Try to set the profile if browser is chrome
 			if (browser == EBrowser.CHROME) {
-				// TODO Also support other browsers
+				// At the moment only Chrome supports local storage technology
 				final ChromeOptions options = new ChromeOptions();
 				options.addArguments(CHROME_USER_PROFILE_KEY + "=" + userProfile);
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
@@ -165,7 +176,7 @@ public final class BeedleBot {
 			mService.registerPushDataService(mPushDataService);
 			mService.start();
 		} catch (final Exception e) {
-			// TODO Error logging
+			mLogger.logError("Error while starting service, shutting down: " + e);
 			// Try to shutdown and free all resources
 			if (mStore != null) {
 				mStore.finalize();
@@ -182,19 +193,16 @@ public final class BeedleBot {
 	}
 
 	public void stop() {
-		// TODO Remove debug
-		System.out.println("Aus");
-
 		try {
 			stopLoginDialog();
 		} catch (final Exception e) {
-			// TODO Error logging
+			mLogger.logError("Error while stopping login dialog: " + e);
 		}
 
 		try {
 			stopService();
 		} catch (final Exception e) {
-			// TODO Error logging
+			mLogger.logError("Error while stopping service: " + e);
 		}
 	}
 
@@ -210,13 +218,13 @@ public final class BeedleBot {
 			try {
 				mService.stopService();
 			} catch (final Exception e) {
-				// TODO Error logging
+				mLogger.logError("Error while stopping service: " + e);
 			}
 
 			try {
 				mStore.finalize();
 			} catch (final Exception e) {
-				// TODO Error logging
+				mLogger.logError("Error while finalizing store: " + e);
 			}
 		}
 	}

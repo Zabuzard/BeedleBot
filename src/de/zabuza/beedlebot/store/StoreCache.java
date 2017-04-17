@@ -13,6 +13,8 @@ import java.util.HashMap;
 
 import de.zabuza.beedlebot.exceptions.StoreCacheDeserializationUnsuccessfulException;
 import de.zabuza.beedlebot.exceptions.StoreCacheSerializationUnsuccessfulException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class StoreCache implements Serializable {
@@ -25,12 +27,15 @@ public final class StoreCache implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static StoreCache deserialize(final EWorld world) throws StoreCacheDeserializationUnsuccessfulException {
+		LoggerFactory.getLogger().logInfo("Deserializing StoreCache");
+
 		StoreCache cache = null;
 		ObjectInputStream ois = null;
 		try {
 			final FileInputStream fis = new FileInputStream(buildSerializationPath(world));
 			ois = new ObjectInputStream(fis);
 			cache = (StoreCache) ois.readObject();
+			cache.refreshLogger();
 		} catch (final IOException | ClassNotFoundException e) {
 			throw new StoreCacheDeserializationUnsuccessfulException(e);
 		} finally {
@@ -54,13 +59,15 @@ public final class StoreCache implements Serializable {
 		return FILEPATH_SERIALIZATION_PRE + world + FILEPATH_SERIALIZATION_SUC;
 	}
 
-	private final HashMap<String, ItemPrice> mNameToPriceData;
+	private transient ILogger mLogger;
 
+	private final HashMap<String, ItemPrice> mNameToPriceData;
 	private final EWorld mWorld;
 
 	public StoreCache(final EWorld world) {
 		mNameToPriceData = new HashMap<>();
 		mWorld = world;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	public void clear() {
@@ -72,6 +79,9 @@ public final class StoreCache implements Serializable {
 	}
 
 	public ItemPrice getItemPrice(final String itemName) {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Get item price from cache: " + itemName);
+		}
 		return mNameToPriceData.get(itemName);
 	}
 
@@ -84,6 +94,8 @@ public final class StoreCache implements Serializable {
 	}
 
 	public void serialize() throws StoreCacheSerializationUnsuccessfulException {
+		mLogger.logInfo("Serializing StoreCache");
+
 		ObjectOutputStream oos = null;
 		try {
 			final FileOutputStream fos = new FileOutputStream(buildSerializationPath(mWorld));
@@ -100,5 +112,9 @@ public final class StoreCache implements Serializable {
 				throw new StoreCacheSerializationUnsuccessfulException(e);
 			}
 		}
+	}
+
+	private void refreshLogger() {
+		mLogger = LoggerFactory.getLogger();
 	}
 }

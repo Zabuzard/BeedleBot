@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 import de.zabuza.beedlebot.BeedleBot;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.logindialog.controller.LoginDialogController;
 import de.zabuza.beedlebot.logindialog.view.LoginDialogView;
 
@@ -20,8 +22,11 @@ public final class LoginDialog {
 
 	private static final String FRAME_TITLE = "BeedleBot Login";
 	private JFrame mFrame;
+	private ILogger mLogger;
 
 	public LoginDialog(final BeedleBot beedleBot, final Image iconImage) {
+		mLogger = LoggerFactory.getLogger();
+
 		EventQueue.invokeLater(new Runnable() {
 			/*
 			 * (non-Javadoc)
@@ -30,6 +35,7 @@ public final class LoginDialog {
 			 */
 			@Override
 			public void run() {
+				mLogger.logInfo("Starting LoginDialog");
 				mFrame = null;
 				LoginDialogView window = null;
 				try {
@@ -49,7 +55,7 @@ public final class LoginDialog {
 					controller.initialize();
 					controller.start();
 				} catch (final Exception e) {
-					// TODO Error logging
+					mLogger.logError("Error while starting login service, shutting down: " + e);
 					// Try to shutdown
 					dispose();
 					beedleBot.shutdown();
@@ -63,6 +69,10 @@ public final class LoginDialog {
 	}
 
 	public void dispose() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Disposing LoginDialog");
+		}
+
 		if (mFrame != null) {
 			mFrame.setVisible(false);
 			mFrame.dispose();

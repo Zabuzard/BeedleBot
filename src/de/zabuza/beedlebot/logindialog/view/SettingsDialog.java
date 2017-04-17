@@ -18,6 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import de.zabuza.beedlebot.exceptions.UnsupportedBrowserException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.webdriver.EBrowser;
 
 /**
@@ -124,6 +126,10 @@ public final class SettingsDialog extends JDialog {
 	 */
 	private JTextField mInternetExplorerDriverField;
 	/**
+	 * The logger to use for logging.
+	 */
+	private ILogger mLogger;
+	/**
 	 * Select driver button of the dialog for Microsoft Edge.
 	 */
 	private JButton mMsEdgeBtn;
@@ -174,6 +180,7 @@ public final class SettingsDialog extends JDialog {
 		super(owner, DIALOG_TITLE);
 		mContainer = getContentPane();
 		mElements = new LinkedList<>();
+		mLogger = LoggerFactory.getLogger();
 		initialize(owner);
 	}
 
@@ -312,6 +319,10 @@ public final class SettingsDialog extends JDialog {
 	 *            The owning frame of this dialog
 	 */
 	private void initialize(final JFrame owner) {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Initializing SettingsDialog");
+		}
+
 		setIconImage(owner.getIconImage());
 		setBounds(owner.getX() + OWNER_OFFSET, owner.getY() + OWNER_OFFSET, WIDTH, HEIGHT);
 		setResizable(false);

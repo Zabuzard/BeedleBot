@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.HashMap;
 
 import de.zabuza.beedlebot.exceptions.PurchaseRegisterServiceUnavailableException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class PurchaseRegister {
@@ -23,15 +25,21 @@ public final class PurchaseRegister {
 	private static final String ARG_WORLD = "world";
 	private static final String SERVER_FILE = "registerPurchase.php";
 
+	private final ILogger mLogger;
 	private final String mUser;
 	private final EWorld mWorld;
 
 	public PurchaseRegister(final String user, final EWorld world) {
 		mUser = user;
 		mWorld = world;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	public void registerPurchase(final Item item) throws PurchaseRegisterServiceUnavailableException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Register purchase: " + item);
+		}
+
 		try {
 			final URL url = new URL(StoreUtil.SERVER_URL + StoreUtil.BEEDLE_BOT_SERVICE + SERVER_FILE);
 			final HashMap<String, String> arguments = new HashMap<>();

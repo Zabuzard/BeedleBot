@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import de.zabuza.beedlebot.exceptions.NoStandardShopPriceException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.freewar.EWorld;
 
 public final class Store {
@@ -37,6 +39,7 @@ public final class Store {
 	}
 
 	private final ItemDictionary mItemDictionary;
+	private final ILogger mLogger;
 	private final PlayerPriceFinder mPlayerPriceFinder;
 	private final PurchaseRegister mPurchaseRegister;
 	private final StandardShopPriceFinder mStandardShopPriceFinder;
@@ -44,6 +47,7 @@ public final class Store {
 	private final EWorld mWorld;
 
 	public Store(final String user, final EWorld world) {
+		mLogger = LoggerFactory.getLogger();
 		mWorld = world;
 		mItemDictionary = new ItemDictionary();
 		mStandardShopPriceFinder = new StandardShopPriceFinder(mItemDictionary);
@@ -106,6 +110,10 @@ public final class Store {
 
 	private ItemPrice getItemPrice(final String itemName, final boolean ignoreCache)
 			throws NoStandardShopPriceException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Getting item price: " + itemName + ", " + ignoreCache);
+		}
+
 		ItemPrice itemPrice = null;
 		// Try to use the cache first
 		if (!ignoreCache && mStoreCache.hasItemPrice(itemName)) {

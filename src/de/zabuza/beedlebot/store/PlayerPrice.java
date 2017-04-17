@@ -41,4 +41,25 @@ public final class PlayerPrice implements Serializable, Cloneable {
 	public EWorld getWorld() {
 		return mWorld;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("PlayerPrice [price=");
+		builder.append(mPrice);
+		builder.append(", timestamp=");
+		builder.append(mTimestamp);
+		builder.append(", ");
+		if (mWorld != null) {
+			builder.append("world=");
+			builder.append(mWorld);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 }

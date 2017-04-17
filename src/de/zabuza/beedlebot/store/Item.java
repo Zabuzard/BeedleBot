@@ -61,4 +61,47 @@ public final class Item {
 	public boolean isMagical() {
 		return mIsMagical;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Item [cost=");
+		builder.append(mCost);
+		builder.append(", id=");
+		builder.append(mId);
+		builder.append(", isConsideredForShop=");
+		builder.append(mIsConsideredForShop);
+		builder.append(", isMagical=");
+		builder.append(mIsMagical);
+		builder.append(", ");
+		if (mItemCategory != null) {
+			builder.append("itemCategory=");
+			builder.append(mItemCategory);
+			builder.append(", ");
+		}
+		if (mName != null) {
+			builder.append("name=");
+			builder.append(mName);
+			builder.append(", ");
+		}
+		builder.append("profit=");
+		builder.append(mProfit);
+		builder.append(", ");
+		if (mPurchaseAnchor != null) {
+			builder.append("purchaseAnchor=");
+			builder.append(mPurchaseAnchor);
+			builder.append(", ");
+		}
+		if (mStorePriceData != null) {
+			builder.append("storePriceData=");
+			builder.append(mStorePriceData);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 }

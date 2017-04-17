@@ -3,6 +3,8 @@ package de.zabuza.beedlebot.logindialog.controller;
 import javax.swing.JFrame;
 
 import de.zabuza.beedlebot.BeedleBot;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.logindialog.controller.listener.ExitAtWindowCloseListener;
 import de.zabuza.beedlebot.logindialog.controller.listener.LoginActionListener;
 import de.zabuza.beedlebot.logindialog.controller.settings.SettingsController;
@@ -19,6 +21,7 @@ public final class LoginDialogController {
 	 * The beedle bot tool.
 	 */
 	private final BeedleBot mBeedleBot;
+	private final ILogger mLogger;
 	/**
 	 * The owning frame of this controller.
 	 */
@@ -48,12 +51,17 @@ public final class LoginDialogController {
 		mView = view;
 		mBeedleBot = beedleBot;
 		mSettingsController = new SettingsController(owner, view);
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/**
 	 * Initializes the controller.
 	 */
 	public void initialize() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Initializing LoginDialogController");
+		}
+
 		linkListener();
 		mSettingsController.initialize();
 		// Pass the saved settings to the view
@@ -89,7 +97,7 @@ public final class LoginDialogController {
 			// Start the login
 			mBeedleBot.startService(mSettingsController, mSettingsController);
 		} catch (final Exception e) {
-			// TODO Error logging
+			mLogger.logError("Error while starting login, shutting down: " + e);
 			// Try to shutdown
 			mBeedleBot.shutdown();
 		}

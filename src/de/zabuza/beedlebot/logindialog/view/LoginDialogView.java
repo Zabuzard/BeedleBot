@@ -15,6 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.sparkle.freewar.EWorld;
 import de.zabuza.sparkle.webdriver.EBrowser;
 
@@ -62,6 +65,10 @@ public final class LoginDialogView {
 	 */
 	private final List<JComponent> mInputElements;
 	/**
+	 * The logger to use for logging.
+	 */
+	private ILogger mLogger;
+	/**
 	 * Login button of the view.
 	 */
 	private JButton mLoginBtn;
@@ -100,6 +107,7 @@ public final class LoginDialogView {
 		mFrame = frame;
 		mContainer = frame.getContentPane();
 		mInputElements = new LinkedList<>();
+		mLogger = LoggerFactory.getLogger();
 		initialize();
 	}
 
@@ -254,6 +262,10 @@ public final class LoginDialogView {
 	 * Initialize the contents of the view.
 	 */
 	private void initialize() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Initializing LoginDialogView");
+		}
+
 		initializePanels();
 		initializeLabels();
 		initializeButtons();

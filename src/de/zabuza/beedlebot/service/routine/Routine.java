@@ -10,6 +10,8 @@ import org.openqa.selenium.WebDriver;
 import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.exceptions.NotAtCentralTradersDepotException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
 import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
@@ -27,6 +29,7 @@ public final class Routine {
 	private EItemCategory mCurrentCategory;
 	private final WebDriver mDriver;
 	private final IFreewarInstance mInstance;
+	private ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
 	private EPhase mPhase;
 	private final PushDataService mPushDataService;
@@ -38,6 +41,7 @@ public final class Routine {
 
 	public Routine(final Service service, final IFreewarInstance instance, final WebDriver driver,
 			final PushDataService pushDataService, final Store store) {
+		mLogger = LoggerFactory.getLogger();
 		mService = service;
 		mInstance = instance;
 		mDriver = driver;
@@ -95,6 +99,7 @@ public final class Routine {
 					// First analyse round
 					mCurrentCategory = EItemCategory.SPELL;
 					mCurrentAnalyseResult = new AnalyseResult();
+					mLogger.logInfo("Starting analyse");
 				} else if (mCurrentCategory == EItemCategory.SPELL) {
 					mCurrentCategory = EItemCategory.MISCELLANEOUS;
 				} else if (mCurrentCategory == EItemCategory.MISCELLANEOUS) {
@@ -107,8 +112,9 @@ public final class Routine {
 					finishedFullAnalyse = true;
 				}
 
-				// TODO Remove debug
-				System.out.println("Analyse: Selected " + mCurrentCategory);
+				if (mLogger.isDebugEnabled()) {
+					mLogger.logDebug("Starting analyse, selected category: " + mCurrentCategory);
+				}
 
 				// Start analyse task
 				final AnalyseTask analyseTask = new AnalyseTask(mDriver, mCurrentAnalyseResult, mCurrentCategory,
@@ -148,12 +154,11 @@ public final class Routine {
 					mBoughtItemsBuffer.add(item);
 					mTotalCost += item.getCost();
 					mTotalProfit += item.getProfit();
-					// TODO Remove debug print
-					System.out.println("Bought: " + item.getName() + ", Profit: " + item.getProfit());
+
+					mLogger.logInfo("Bought item: " + item);
 				} else {
-					// TODO Error logging
 					// Log the problem but continue
-					System.out.println("Not bought, problem: " + item.getName());
+					mLogger.logInfo("Item not bought: " + item);
 				}
 
 				// Proceed to the next phase
@@ -164,8 +169,7 @@ public final class Routine {
 			// Wait phase
 			if (getPhase() == EPhase.WAIT) {
 				if (mInstance.getMovement().canMove()) {
-					// TODO Remove debug
-					System.out.println("Waited");
+					mLogger.logInfo("Waited for can move");
 
 					// Proceed to the next phase
 					setPhase(EPhase.PURCHASE);
@@ -178,8 +182,7 @@ public final class Routine {
 			if (getPhase() == EPhase.AWAITING_DELIVERY) {
 				mWaitForDeliveryTask.start();
 				if (mWaitForDeliveryTask.wasThereADelivery()) {
-					// TODO Remove debug print
-					System.out.println("Waited for delivery.");
+					mLogger.logInfo("Waited for item delivery");
 
 					// Proceed to the next phase
 					setPhase(EPhase.ANALYSE);
@@ -187,8 +190,8 @@ public final class Routine {
 				return;
 			}
 		} catch (final StaleElementReferenceException e) {
-			// TODO Error logging
 			// Log the problem but continue
+			mLogger.logError("Error while routine: " + e);
 		} catch (final Exception e) {
 			mService.setProblem(e);
 		}

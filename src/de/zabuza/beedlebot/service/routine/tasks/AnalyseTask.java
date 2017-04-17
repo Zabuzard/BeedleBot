@@ -8,6 +8,8 @@ import de.zabuza.beedlebot.exceptions.ItemCategoryNotOpenedException;
 import de.zabuza.beedlebot.exceptions.ItemLineWrongFormatException;
 import de.zabuza.beedlebot.exceptions.NoPlayerPriceThoughConsideredException;
 import de.zabuza.beedlebot.exceptions.PageContentWrongFormatException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.service.routine.AnalyseResult;
 import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.EItemCategory;
@@ -35,6 +37,7 @@ public final class AnalyseTask implements ITask {
 	 */
 	private boolean mInterrupted;
 	private final EItemCategory mItemCategory;
+	private final ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
 	private final AnalyseResult mResult;
 	private final Store mStore;
@@ -47,6 +50,7 @@ public final class AnalyseTask implements ITask {
 		mItemCategory = itemCategory;
 		mStore = store;
 		mNavigator = navigator;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -76,6 +80,10 @@ public final class AnalyseTask implements ITask {
 	 */
 	@Override
 	public void start() throws ItemCategoryNotOpenedException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Starting AnalyseTask");
+		}
+
 		// Open category
 		final boolean wasClicked = mNavigator.openItemCategory(mItemCategory);
 

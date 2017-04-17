@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import de.zabuza.beedlebot.BeedleBot;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 
 /**
  * 
@@ -12,9 +14,11 @@ import de.zabuza.beedlebot.BeedleBot;
  */
 public final class RestartListener implements ActionListener {
 	private final BeedleBot mBeedleBot;
+	private final ILogger mLogger;
 
 	public RestartListener(BeedleBot beedleBot) {
 		mBeedleBot = beedleBot;
+		mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -25,6 +29,7 @@ public final class RestartListener implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(final ActionEvent e) {
+		mLogger.logInfo("Executing restart action");
 		mBeedleBot.stop();
 		mBeedleBot.start();
 	}

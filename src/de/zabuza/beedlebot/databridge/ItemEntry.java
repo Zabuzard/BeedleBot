@@ -42,6 +42,34 @@ public final class ItemEntry {
 		return mIsConsideredForShop;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("ItemEntry [cost=");
+		builder.append(mCost);
+		builder.append(", isConsideredForShop=");
+		builder.append(mIsConsideredForShop);
+		builder.append(", ");
+		if (mItem != null) {
+			builder.append("item=");
+			builder.append(mItem);
+			builder.append(", ");
+		}
+		builder.append("profit=");
+		builder.append(mProfit);
+		builder.append(", timestamp=");
+		builder.append(mTimestamp);
+		builder.append(", wasCached=");
+		builder.append(mWasCached);
+		builder.append("]");
+		return builder.toString();
+	}
+
 	public boolean wasCached() {
 		return mWasCached;
 	}

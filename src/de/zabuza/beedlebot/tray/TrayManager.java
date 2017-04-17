@@ -9,6 +9,8 @@ import java.awt.TrayIcon;
 
 import de.zabuza.beedlebot.BeedleBot;
 import de.zabuza.beedlebot.exceptions.UnsupportedSystemTrayException;
+import de.zabuza.beedlebot.logging.ILogger;
+import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.tray.listener.ExitListener;
 import de.zabuza.beedlebot.tray.listener.RestartListener;
 
@@ -22,6 +24,7 @@ public final class TrayManager {
 	private static final String NAME_RESTART = "Restart";
 	private static final String NAME_TRAY = "Beedlebot";
 	private final BeedleBot mBeedleBot;
+	private final ILogger mLogger;
 	private SystemTray mSystemTray;
 	private TrayIcon mTrayIcon;
 	private final Image mTrayIconImage;
@@ -29,18 +32,29 @@ public final class TrayManager {
 	public TrayManager(final BeedleBot beedleBot, final Image trayIconImage) {
 		mBeedleBot = beedleBot;
 		mTrayIconImage = trayIconImage;
+		mLogger = LoggerFactory.getLogger();
 		initialize();
 	}
 
 	public void addTrayIcon() throws AWTException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Adding tray icon");
+		}
 		mSystemTray.add(mTrayIcon);
 	}
 
 	public void removeTrayIcon() {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Removing tray icon");
+		}
 		mSystemTray.remove(mTrayIcon);
 	}
 
 	private void initialize() throws UnsupportedSystemTrayException {
+		if (mLogger.isDebugEnabled()) {
+			mLogger.logDebug("Initializing TrayManager");
+		}
+
 		// If try is not supported, abort
 		if (!SystemTray.isSupported()) {
 			throw new UnsupportedSystemTrayException();

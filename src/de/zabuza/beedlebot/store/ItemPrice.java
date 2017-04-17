@@ -77,4 +77,33 @@ public final class ItemPrice implements Serializable, Cloneable {
 	public void setIsCached(final boolean isCached) {
 		mIsCached = isCached;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("ItemPrice [isCached=");
+		builder.append(mIsCached);
+		builder.append(", lookupTimestamp=");
+		builder.append(mLookupTimestamp);
+		builder.append(", ");
+		if (mName != null) {
+			builder.append("name=");
+			builder.append(mName);
+			builder.append(", ");
+		}
+		if (mPlayerPrice != null) {
+			builder.append("playerPrice=");
+			builder.append(mPlayerPrice);
+			builder.append(", ");
+		}
+		builder.append("standardShopPrice=");
+		builder.append(mStandardShopPrice);
+		builder.append("]");
+		return builder.toString();
+	}
 }
