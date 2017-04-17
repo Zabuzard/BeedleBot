@@ -11,14 +11,4 @@ public final class LoggerFactory {
 
 		return loggerInstance;
 	}
-
-	public static void main(final String[] args) {
-		final ILogger logger = LoggerFactory.getLogger();
-
-		for (int i = 1; i <= 250; i++) {
-			logger.logInfo("Nachricht #" + i);
-		}
-
-		logger.close();
-	}
 }
