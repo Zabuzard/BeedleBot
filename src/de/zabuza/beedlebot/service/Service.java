@@ -146,6 +146,7 @@ public final class Service extends Thread {
 						mPushDataService.updateActiveData();
 
 						mLogger.logInfo("Pause service");
+						mLogger.flush();
 					}
 				}
 				if (mShouldStopService) {

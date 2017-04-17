@@ -223,6 +223,7 @@ public final class BeedleBot {
 
 			try {
 				mStore.finalize();
+				mLogger.flush();
 			} catch (final Exception e) {
 				mLogger.logError("Error while finalizing store: " + e);
 			}
