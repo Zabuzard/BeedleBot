@@ -61,18 +61,22 @@ public final class PushDataService {
 
 		// Determine state
 		final EState state;
-		if (!isActive) {
-			if (mService.hasProblem()) {
-				state = EState.PROBLEM;
-			} else {
-				state = EState.INACTIVE;
-			}
+		if (mService.hasProblem()) {
+			state = EState.PROBLEM;
 			phase = EPhase.AWAITING_DELIVERY;
-		} else if (phase == EPhase.AWAITING_DELIVERY) {
-			state = EState.STANDBY;
+			mDataBridge.setProblem(mService.getProblem(), System.currentTimeMillis());
 		} else {
-			state = EState.ACTIVE;
+			mDataBridge.clearProblem();
+			if (!isActive) {
+				state = EState.INACTIVE;
+				phase = EPhase.AWAITING_DELIVERY;
+			} else if (phase == EPhase.AWAITING_DELIVERY) {
+				state = EState.STANDBY;
+			} else {
+				state = EState.ACTIVE;
+			}
 		}
+
 		mDataBridge.setState(state);
 		mDataBridge.setPhase(phase);
 	}

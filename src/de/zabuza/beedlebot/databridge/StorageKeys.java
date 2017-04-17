@@ -18,6 +18,7 @@ public final class StorageKeys {
 	public final static String MAX_INVENTORY_SIZE = "maxInvSize";
 	public final static String MAX_LIFEPOINTS = "maxLife";
 	public final static String PHASE = "phase";
+	public final static String PROBLEM = "problem";
 	public final static String START_SIGNAL = "startSignal";
 	public final static String STATE = "state";
 	public final static String STOP_SIGNAL = "stopSignal";

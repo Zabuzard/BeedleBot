@@ -54,6 +54,10 @@ public final class Service extends Thread {
 		lastUpdateMillis = 0;
 	}
 
+	public Exception getProblem() {
+		return mProblem;
+	}
+
 	public boolean hasProblem() {
 		return mProblem != null;
 	}
@@ -188,11 +192,11 @@ public final class Service extends Thread {
 	}
 
 	public void setProblem(final Exception problem) {
-		// TODO Push problem to data bridge
 		mProblem = problem;
-
 		mLogger.logError("Problem registered: " + problem);
 		mLogger.flush();
+
+		mPushDataService.updateActiveData();
 	}
 
 	public void stopService() {

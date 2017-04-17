@@ -1,5 +1,8 @@
 package de.zabuza.beedlebot.databridge;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.html5.SessionStorage;
@@ -37,6 +40,10 @@ public final class DataBridge {
 		mStorage = chromeDriver.getSessionStorage();
 	}
 
+	public void clearProblem() {
+		mStorage.setItem(buildKey(StorageKeys.PROBLEM), "");
+	}
+
 	public void clearStartSignal() {
 		mStorage.removeItem(buildKey(StorageKeys.START_SIGNAL));
 	}
@@ -57,7 +64,7 @@ public final class DataBridge {
 
 	public void pushItemEntry(final ItemEntry entry) {
 		// Build entry text
-		StringBuilder entryValue = new StringBuilder();
+		final StringBuilder entryValue = new StringBuilder();
 		entryValue.append(entry.getTimestamp()).append(ITEM_VALUE_SEPARATOR);
 		entryValue.append(entry.getItem()).append(ITEM_VALUE_SEPARATOR);
 		entryValue.append(entry.getCost()).append(ITEM_VALUE_SEPARATOR);
@@ -110,6 +117,18 @@ public final class DataBridge {
 
 	public void setPhase(final EPhase phase) {
 		mStorage.setItem(buildKey(StorageKeys.PHASE), phase.toString());
+	}
+
+	public void setProblem(final Exception problem, final long timestamp) {
+		final StringBuilder problemText = new StringBuilder();
+		final Date date = new Date(timestamp);
+		final String timestampFormat = DateFormat.getDateTimeInstance().format(date);
+
+		problemText.append(timestampFormat);
+		problemText.append(": ");
+		problemText.append(problem.toString());
+
+		mStorage.setItem(buildKey(StorageKeys.PROBLEM), problemText.toString());
 	}
 
 	public void setState(final EState state) {

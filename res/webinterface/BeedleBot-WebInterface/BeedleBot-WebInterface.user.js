@@ -1082,7 +1082,7 @@ function updateItemPanel() {
  * Creates and loads the web user interface.
  */
 function loadInterface() {
-	beedleBotServingMockup();
+	//beedleBotServingMockup();
 
 	// Web storage is necessary for BeedleBots communication
 	if (!isSupportingWebStorage()) {
