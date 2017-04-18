@@ -12,7 +12,9 @@ import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.store.EItemCategory;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
+import de.zabuza.sparkle.freewar.chat.IChat;
 import de.zabuza.sparkle.freewar.frames.EFrame;
+import de.zabuza.sparkle.freewar.frames.IFrameManager;
 import de.zabuza.sparkle.wait.EventQueueEmptyWait;
 import de.zabuza.sparkle.wait.LinkTextPresenceWait;
 
@@ -27,13 +29,17 @@ public final class CentralTradersDepotNavigator {
 	private static final String MISCELLANEOUS_CATEGORY_ANCHOR = "Kategorie: Sonstiges";
 	private static final String SPELL_CATEGORY_ANCHOR = "Kategorie: Anwendbare Items und Zauber";
 
+	private final IChat mChat;
 	private final WebDriver mDriver;
+	private final IFrameManager mFrameManager;
 	private final IFreewarInstance mInstance;
 	private final Map<EItemCategory, String> mItemCategoryToAnchorNeedle;
 	private final ILogger mLogger;
 
 	public CentralTradersDepotNavigator(final IFreewarInstance instance, final WebDriver driver) {
 		mInstance = instance;
+		mChat = instance.getChat();
+		mFrameManager = instance.getFrameManager();
 		mDriver = driver;
 		mLogger = LoggerFactory.getLogger();
 
@@ -55,6 +61,9 @@ public final class CentralTradersDepotNavigator {
 		// Wait for click to get executed
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
 
+		// Focus chat input in case user was typing before
+		mChat.focusChatInput();
+
 		return wasClicked;
 	}
 
@@ -64,11 +73,15 @@ public final class CentralTradersDepotNavigator {
 		}
 
 		// Wait for dialog to appear
+		mFrameManager.switchToFrame(EFrame.MAIN);
 		new LinkTextPresenceWait(mDriver, CONTINUE_ANCHOR);
 		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
 
 		// Wait for click to get executed
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+
+		// Focus chat input in case user was typing before
+		mChat.focusChatInput();
 
 		return wasClicked;
 	}
@@ -84,6 +97,9 @@ public final class CentralTradersDepotNavigator {
 		// Wait for click to get executed
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
 
+		// Focus chat input in case user was typing before
+		mChat.focusChatInput();
+
 		return wasClicked;
 	}
 
@@ -92,6 +108,7 @@ public final class CentralTradersDepotNavigator {
 			mLogger.logDebug("Purchasing central traders depot item: " + purchaseAnchor);
 		}
 
+		mFrameManager.switchToFrame(EFrame.MAIN);
 		final String selector = CSS_PURCHASE_ANCHOR_SELECTOR_PRE + purchaseAnchor + CSS_PURCHASE_ANCHOR_SELECTOR_SUC;
 		final List<WebElement> elements = mDriver.findElements(By.cssSelector(selector));
 		if (elements.isEmpty()) {
@@ -103,6 +120,9 @@ public final class CentralTradersDepotNavigator {
 
 		// Wait for click to get executed
 		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+
+		// Focus chat input in case user was typing before
+		mChat.focusChatInput();
 
 		return true;
 	}

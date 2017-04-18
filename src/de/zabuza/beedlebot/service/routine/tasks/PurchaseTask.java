@@ -2,10 +2,12 @@ package de.zabuza.beedlebot.service.routine.tasks;
 
 import de.zabuza.beedlebot.exceptions.ItemCategoryNotOpenedException;
 import de.zabuza.beedlebot.exceptions.PurchaseDialogNotClosedException;
+import de.zabuza.beedlebot.exceptions.PurchaseNoGoldException;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.Item;
+import de.zabuza.sparkle.freewar.player.IPlayer;
 
 public final class PurchaseTask implements ITask {
 	/**
@@ -15,10 +17,12 @@ public final class PurchaseTask implements ITask {
 	private final Item mItem;
 	private final ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
+	private final IPlayer mPlayer;
 	private boolean mWasBought;
 
-	public PurchaseTask(final CentralTradersDepotNavigator nagivator, final Item item) {
+	public PurchaseTask(final CentralTradersDepotNavigator nagivator, final IPlayer player, final Item item) {
 		mNavigator = nagivator;
+		mPlayer = player;
 		mItem = item;
 		mInterrupted = false;
 		mWasBought = false;
@@ -54,6 +58,12 @@ public final class PurchaseTask implements ITask {
 	public void start() throws ItemCategoryNotOpenedException, PurchaseDialogNotClosedException {
 		if (mLogger.isDebugEnabled()) {
 			mLogger.logDebug("Starting PurchaseTask");
+		}
+
+		// Check if player has enough gold to buy the item
+		final int currentGold = mPlayer.getGold();
+		if (currentGold < mItem.getCost()) {
+			throw new PurchaseNoGoldException();
 		}
 
 		final boolean wasCategoryClicked = mNavigator.openItemCategory(mItem.getItemCategory());

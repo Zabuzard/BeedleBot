@@ -17,6 +17,8 @@ import de.zabuza.beedlebot.store.Item;
 import de.zabuza.beedlebot.store.ItemPrice;
 import de.zabuza.beedlebot.store.PlayerPrice;
 import de.zabuza.beedlebot.store.Store;
+import de.zabuza.sparkle.freewar.frames.EFrame;
+import de.zabuza.sparkle.freewar.frames.IFrameManager;
 
 public final class AnalyseTask implements ITask {
 	private static final String CONTENT_BUY_ANCHOR_END = "\"> kaufen";
@@ -32,6 +34,7 @@ public final class AnalyseTask implements ITask {
 	private static final String CONTENT_NEEDLE_END = "Zurück";
 	private static final String CONTENT_NEEDLE_START = "Zurück";
 	private final WebDriver mDriver;
+	private final IFrameManager mFrameManager;
 	/**
 	 * Whether interrupted flag of the task is set.
 	 */
@@ -42,10 +45,11 @@ public final class AnalyseTask implements ITask {
 	private final AnalyseResult mResult;
 	private final Store mStore;
 
-	public AnalyseTask(final WebDriver driver, final AnalyseResult result, final EItemCategory itemCategory,
-			final Store store, final CentralTradersDepotNavigator navigator) {
+	public AnalyseTask(final WebDriver driver, final IFrameManager frameManager, final AnalyseResult result,
+			final EItemCategory itemCategory, final Store store, final CentralTradersDepotNavigator navigator) {
 		mInterrupted = false;
 		mDriver = driver;
+		mFrameManager = frameManager;
 		mResult = result;
 		mItemCategory = itemCategory;
 		mStore = store;
@@ -93,6 +97,9 @@ public final class AnalyseTask implements ITask {
 		}
 
 		// Retrieve content
+		// Ensure that we extract from the correct frame in case that another
+		// thread might have changed the focus
+		mFrameManager.switchToFrame(EFrame.MAIN);
 		final String content = mDriver.getPageSource();
 
 		// Process content

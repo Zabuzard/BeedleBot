@@ -24,12 +24,14 @@ import de.zabuza.sparkle.freewar.IFreewarInstance;
 
 public final class Routine {
 
+	private final static long AWAITING_DELIVERY_YIELD_UNTIL = 2000;
 	private Queue<Item> mBoughtItemsBuffer;
 	private final Point mCentralTradersDepot;
 	private AnalyseResult mCurrentAnalyseResult;
 	private EItemCategory mCurrentCategory;
 	private final WebDriver mDriver;
 	private final IFreewarInstance mInstance;
+	private long mLastAwaitingDeliveryTimestamp;
 	private ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
 	private EPhase mPhase;
@@ -57,6 +59,7 @@ public final class Routine {
 		mWaitForDeliveryTask = new WaitForDeliveryTask(mInstance.getChat());
 		mCentralTradersDepot = new Point(88, 89);
 		mNavigator = new CentralTradersDepotNavigator(mInstance, mDriver);
+		mLastAwaitingDeliveryTimestamp = System.currentTimeMillis();
 	}
 
 	public Queue<Item> fetchBoughtItems() {
@@ -118,8 +121,8 @@ public final class Routine {
 				}
 
 				// Start analyse task
-				final AnalyseTask analyseTask = new AnalyseTask(mDriver, mCurrentAnalyseResult, mCurrentCategory,
-						mStore, mNavigator);
+				final AnalyseTask analyseTask = new AnalyseTask(mDriver, mInstance.getFrameManager(),
+						mCurrentAnalyseResult, mCurrentCategory, mStore, mNavigator);
 				analyseTask.start();
 
 				// Proceed to the next phase
@@ -128,8 +131,9 @@ public final class Routine {
 						// There are no items, wait for next delivery
 						setPhase(EPhase.AWAITING_DELIVERY);
 					} else {
-						// There are items, start buying
-						setPhase(EPhase.PURCHASE);
+						// There are items, start buying but first ensure that
+						// player is able to buy items
+						setPhase(EPhase.WAIT);
 					}
 				}
 				return;
@@ -147,7 +151,7 @@ public final class Routine {
 				}
 
 				// Start the purchase task
-				final PurchaseTask purchaseTask = new PurchaseTask(mNavigator, item);
+				final PurchaseTask purchaseTask = new PurchaseTask(mNavigator, mInstance.getPlayer(), item);
 				purchaseTask.start();
 
 				if (purchaseTask.wasBought()) {
@@ -181,6 +185,13 @@ public final class Routine {
 
 			// Awaiting delivery phase
 			if (getPhase() == EPhase.AWAITING_DELIVERY) {
+				final long currentTimestamp = System.currentTimeMillis();
+				if (currentTimestamp - mLastAwaitingDeliveryTimestamp < AWAITING_DELIVERY_YIELD_UNTIL) {
+					// Yield this iteration to not over-stress the chat method
+					return;
+				}
+
+				mLastAwaitingDeliveryTimestamp = currentTimestamp;
 				mWaitForDeliveryTask.start();
 				if (mWaitForDeliveryTask.wasThereADelivery()) {
 					mLogger.logInfo("Waited for item delivery");

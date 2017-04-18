@@ -1,6 +1,8 @@
 package de.zabuza.beedlebot.service.routine.tasks;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
@@ -10,6 +12,7 @@ import de.zabuza.sparkle.freewar.chat.Message;
 
 public final class WaitForDeliveryTask implements ITask {
 
+	private static final int LAST_MESSAGES_CHALLENGE_SIZE = 3;
 	private static final String MESSAGE_DELIVERY_CONTENT = "Eine Händler-Karawane kommt aus dem Süden und liefert neue Waren an.";
 	private IChat mChat;
 	private Message mDeliveryMessage;
@@ -17,16 +20,14 @@ public final class WaitForDeliveryTask implements ITask {
 	 * Whether interrupted flag of the task is set.
 	 */
 	private boolean mInterrupted;
-	private Message mLastMessage;
+	private final Queue<Message> mLastMessagesChallenge;
 	private ILogger mLogger;
-	private Message mNextToLastMessage;
 	private boolean mWasThereADelivery;
 
 	public WaitForDeliveryTask(final IChat chat) {
 		mChat = chat;
 		mWasThereADelivery = false;
-		mLastMessage = null;
-		mNextToLastMessage = null;
+		mLastMessagesChallenge = new LinkedList<>();
 		mDeliveryMessage = new Message(MESSAGE_DELIVERY_CONTENT, EChatType.DIRECT);
 		mLogger = LoggerFactory.getLogger();
 	}
@@ -65,49 +66,42 @@ public final class WaitForDeliveryTask implements ITask {
 		mWasThereADelivery = false;
 		final ArrayList<Message> messages = mChat.getMessages();
 
-		// All messages are unknown if there is no last message
-		boolean reachedLastMessages = mLastMessage == null;
-		boolean reachedNextToLastMessage = mNextToLastMessage == null;
+		boolean succeededLastMessagesChallenge = false;
+		boolean reachedMessageFromChallenge = true;
+		Message messageFromChallenge = null;
 		for (final Message message : messages) {
-			// Skip already known messages by using a two message challenge
-			if (!reachedLastMessages) {
-				if (reachedNextToLastMessage) {
-					if (message.equals(mLastMessage)) {
-						// Challenge succeeded
-						reachedLastMessages = true;
-						continue;
-					} else if (mNextToLastMessage != null) {
-						// Only use challenge if a next to last message is known
-						reachedNextToLastMessage = false;
-					}
-				}
-				if (!reachedNextToLastMessage) {
-					if (message.equals(mNextToLastMessage)) {
-						reachedNextToLastMessage = true;
-						continue;
-					}
+			if (!succeededLastMessagesChallenge && reachedMessageFromChallenge) {
+				if (mLastMessagesChallenge.isEmpty()) {
+					// Challenge succeeded
+					succeededLastMessagesChallenge = true;
+				} else {
+					// Poll the next challenge
+					messageFromChallenge = mLastMessagesChallenge.poll();
+					reachedMessageFromChallenge = false;
 				}
 			}
 
-			// Check message against the delivery message
-			if (reachedLastMessages && message.equals(mDeliveryMessage)) {
-				mWasThereADelivery = true;
-				break;
+			if (!succeededLastMessagesChallenge) {
+				if (messageFromChallenge == null) {
+					throw new AssertionError();
+				}
+
+				// Try to match the challenge
+				reachedMessageFromChallenge = message.equals(messageFromChallenge);
+			} else {
+				// Try to match the delivery message
+				if (message.equals(mDeliveryMessage)) {
+					mWasThereADelivery = true;
+					break;
+				}
 			}
 		}
 
-		// Update the last known messages
-		final int nextToLastIndex = messages.size() - 2;
-		final int lastIndex = nextToLastIndex + 1;
-		if (nextToLastIndex >= 0) {
-			mNextToLastMessage = messages.get(nextToLastIndex);
-		} else {
-			mNextToLastMessage = null;
-		}
-		if (lastIndex >= 0) {
-			mLastMessage = messages.get(lastIndex);
-		} else {
-			mLastMessage = null;
+		// Update the last messages challenge
+		final int lastIndex = messages.size() - 1;
+		final int challengeSize = Math.min(lastIndex + 1, LAST_MESSAGES_CHALLENGE_SIZE);
+		for (int i = challengeSize - 1; i >= 0; i--) {
+			mLastMessagesChallenge.add(messages.get(lastIndex - i));
 		}
 	}
 

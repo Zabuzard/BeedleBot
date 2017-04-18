@@ -97,6 +97,7 @@ public final class ItemDictionary {
 		mItemNamePatterns.put(".*Knorpel-Monster aus Draht.*", "Knorpel-Monster aus Draht (Item)");
 		mItemNamePatterns.put(".*Schatztruhe.*", "Zaubertruhe");
 		mItemNamePatterns.put(".*Sprengkapsel.*", "Sumpfgasbombe");
+		mItemNamePatterns.put(".*Wissenszauber von .*", "Wissenszauber von Beispieluser");
 	}
 
 	private void initializeItemsRegisteredForPlayer() {
