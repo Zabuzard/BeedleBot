@@ -292,7 +292,7 @@ public final class SettingsDialog extends JDialog {
 	}
 
 	/**
-	 * GEts the user profile field.
+	 * Gets the user profile field.
 	 * 
 	 * @return The user profile field
 	 */

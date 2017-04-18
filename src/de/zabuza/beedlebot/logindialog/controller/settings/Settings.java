@@ -37,9 +37,6 @@ public final class Settings {
 
 	/**
 	 * Create a new settings object.
-	 * 
-	 * @param logger
-	 *            The logger to use
 	 */
 	public Settings() {
 		mProperties = new Properties();
