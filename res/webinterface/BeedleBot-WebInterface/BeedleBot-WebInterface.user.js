@@ -89,7 +89,7 @@ function addCssRules() {
 				border: none;\
 				outline: none;\
 				cursor: pointer;\
-				padding: 4px 6px;\
+				padding: 5px 6px;\
 				transition: 0.3s;\
 			}\
 			\
@@ -216,6 +216,13 @@ function addCssRules() {
 				vertical-align: top;\
 			}\
 			\
+			#beedleItemPanelWrapper {\
+				display: block;\
+				overflow-y: auto;\
+				height: 100%;\
+				width: 100%;\
+			}\
+			\
 			#beedleItemHeader {\
 				background-color: #DDD;\
 			}\
@@ -309,7 +316,7 @@ function beedleBotServingMockup() {
  */
 function beedleBotServingPurchaseMockup() {
 	setItem('heartBeat', Date.now());
-	
+
 	var valueSeparator = itemEntryFormat.valueSeparator;
 	var entrySeparator = itemEntryFormat.entrySeparator;
 	var itemEntries = getItem('itemEntries');
@@ -379,7 +386,7 @@ function trunc(text, length, useWordBoundary ){
     if (text.length <= length) {
 		return text;
 	}
-	
+
     var subText = text.substr(0, length - 1);
 	if (useWordBoundary) {
 		var lastIndexOfSpace = subText.lastIndexOf(' ');
@@ -392,7 +399,7 @@ function trunc(text, length, useWordBoundary ){
 			subText = subText.substr(0, boundaryIndex);
 		}
 	}
-	
+
     return subText + '&hellip;';
 };
 
@@ -487,7 +494,7 @@ function toggleInterface() {
 		$(beedleInterface).removeClass('hiddenInterface');
 
 		$(beedleInterface).css('left', itemFrameLeft);
-		$(beedleInterface).width(itemFrameWidth);
+		$(beedleInterface).width(itemFrameWidth - interfaceWidthSpacing);
 		$(tabNavigation).show();
 		$(content).show();
 		$(hidebar).prop('title', localization.hideInterface);
@@ -576,13 +583,15 @@ function openMiscellaneousTab() {
 function createLayout() {
 	// Create the layout table
 	$('#beedleInterface').append('<table id="beedleLayout">\
-			<tr>\
-				<td id="beedleNavigation"></td>\
-			</tr>\
-			<tr>\
-				<td id="beedleHidebar"></td>\
-				<td id="beedleContent"></td>\
-			<tr/>\
+			<tbody>\
+				<tr>\
+					<td id="beedleNavigation"></td>\
+				</tr>\
+				<tr>\
+					<td id="beedleHidebar"></td>\
+					<td id="beedleContent"></td>\
+				</tr>\
+			</tbody>\
 		</table>');
 	$('#beedleNavigation').attr('colspan', 2);
 }
@@ -643,19 +652,21 @@ function createPurchaseTabLayout() {
 		</table>');
 
 	// Create the item panel layout
-	$('#beedleItemPanel').append('<table id="beedleItemPanelLayout">\
-			<thead>\
-				<tr id="beedleItemHeader">\
-					<th class="beedleItemName"></td>\
-					<th id="beedleTotalCostCell" class="beedleItemCost" title="' +
-						localization.totalCost + '">0</td>\
-					<th id="beedleTotalProfitCell" class="beedleItemProfit" title="' +
-						localization.totalProfit + '">+0</td>\
-				</tr>\
-			</thead>\
-			<tbody>\
-			</tbody>\
-		</table>');
+	$('#beedleItemPanel').append('<div id="beedleItemPanelWrapper">\
+			<table id="beedleItemPanelLayout">\
+				<thead>\
+					<tr id="beedleItemHeader">\
+						<th class="beedleItemName"></td>\
+						<th id="beedleTotalCostCell" class="beedleItemCost" title="' +
+							localization.totalCost + '">0</td>\
+						<th id="beedleTotalProfitCell" class="beedleItemProfit" title="' +
+							localization.totalProfit + '">+0</td>\
+					</tr>\
+				</thead>\
+				<tbody>\
+				</tbody>\
+			</table>\
+		</div>');
 }
 
 /*
@@ -774,7 +785,7 @@ function update(preventLoop) {
 		window.setTimeout(loadInterface, 500);
 		return;
 	}
-	
+
 	// Check heart beat of server
 	var heartBeat = getItem('heartBeat');
 	if (Date.now() - heartBeat >= heartbeatDiff) {
@@ -1049,9 +1060,9 @@ function updateItemPanel() {
 		var itemProfit = Number(itemData[3]);
 		var itemWasCached = toBoolean(itemData[4]);
 		var itemConsiderForShop = toBoolean(itemData[5]);
-		
+
 		var itemNameTruncated = trunc(itemName, itemNameTruncLength, true);
-		
+
 		var notCachedClass = '';
 		if (!itemWasCached) {
 			notCachedClass = ' beedleItemNotCached';
@@ -1082,7 +1093,7 @@ function updateItemPanel() {
  * Creates and loads the web user interface.
  */
 function loadInterface() {
-	//beedleBotServingMockup();
+	beedleBotServingMockup();
 
 	// Web storage is necessary for BeedleBots communication
 	if (!isSupportingWebStorage()) {
@@ -1099,7 +1110,7 @@ function loadInterface() {
 	// Determine the size and position of the item frame,
 	// the interface will overlap it
 	var itemFrame = $('body');
-	var itemFrameWidth = $(itemFrame)[0].scrollWidth;
+	var itemFrameWidth = $(itemFrame)[0].scrollWidth ;
 	var itemFrameHeight = $(itemFrame)[0].scrollHeight;
 	var itemFramePosition = $(itemFrame).position();
 	// If frame is not yet ready
@@ -1116,8 +1127,8 @@ function loadInterface() {
 
 	// Position the container
 	$(beedleInterface).css(itemFramePosition);
-	$(beedleInterface).width(itemFrameWidth);
-	$(beedleInterface).height(itemFrameHeight);
+	$(beedleInterface).width(itemFrameWidth - interfaceWidthSpacing);
+	$(beedleInterface).height(itemFrameHeight - interfaceHeightSpacing);
 
 	// Create the layout of the interface
 	createLayout();
@@ -1253,6 +1264,8 @@ localization.totalProfit = 'gesamte Einnahmen';
 // Miscellaneous settings
 var heartbeatDiff = 10000;
 var itemNameTruncLength = 18;
+var interfaceHeightSpacing = 1;
+var interfaceWidthSpacing = 1;
 
 // Notification sound
 var notificationSound = document.createElement('audio');
