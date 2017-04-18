@@ -15,6 +15,7 @@ public final class StandardShopPriceFinder {
 	public static final int NO_PRICE = -1;
 	private static final String CONTENT_END_PATTERN_FIRST = "|";
 	private static final String CONTENT_END_PATTERN_SECOND = "}";
+	private static final String CONTENT_IGNORE_PET_PATTERN = "{{NPC/Layout|";
 	private static final String CONTENT_START_PATTERN = "|VerkPreis=";
 	private static final String SERVER_QUERY_POST = "&action=edit";
 	private static final String SERVER_QUERY_PRE = "?title=";
@@ -58,6 +59,12 @@ public final class StandardShopPriceFinder {
 				if (line == null) {
 					break;
 				}
+
+				// The item is a pet
+				if (line.indexOf(CONTENT_IGNORE_PET_PATTERN) != -1) {
+					return Optional.of(0);
+				}
+
 				startIndex = line.indexOf(CONTENT_START_PATTERN);
 
 				if (startIndex != -1) {
