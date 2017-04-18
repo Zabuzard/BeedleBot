@@ -25,6 +25,7 @@ import de.zabuza.sparkle.freewar.IFreewarInstance;
 public final class Routine {
 
 	private final static long AWAITING_DELIVERY_YIELD_UNTIL = 2000;
+	private final static long WAIT_FOR_CAN_MOVE_YIELD_UNTIL = 2000;
 	private Queue<Item> mBoughtItemsBuffer;
 	private final Point mCentralTradersDepot;
 	private AnalyseResult mCurrentAnalyseResult;
@@ -32,6 +33,7 @@ public final class Routine {
 	private final WebDriver mDriver;
 	private final IFreewarInstance mInstance;
 	private long mLastAwaitingDeliveryTimestamp;
+	private long mLastWaitForCanMoveTimestamp;
 	private ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
 	private EPhase mPhase;
@@ -60,6 +62,7 @@ public final class Routine {
 		mCentralTradersDepot = new Point(88, 89);
 		mNavigator = new CentralTradersDepotNavigator(mInstance, mDriver);
 		mLastAwaitingDeliveryTimestamp = System.currentTimeMillis();
+		mLastWaitForCanMoveTimestamp = System.currentTimeMillis();
 	}
 
 	public Queue<Item> fetchBoughtItems() {
@@ -173,6 +176,14 @@ public final class Routine {
 
 			// Wait phase
 			if (getPhase() == EPhase.WAIT) {
+				final long currentTimestamp = System.currentTimeMillis();
+				if (currentTimestamp - mLastWaitForCanMoveTimestamp < WAIT_FOR_CAN_MOVE_YIELD_UNTIL) {
+					// Yield this iteration to not over-stress the movement
+					// method
+					return;
+				}
+
+				mLastWaitForCanMoveTimestamp = currentTimestamp;
 				if (mInstance.getMovement().canMove()) {
 					mLogger.logInfo("Waited for can move");
 
