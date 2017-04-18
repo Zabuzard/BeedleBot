@@ -63,7 +63,7 @@ public final class WaitForDeliveryTask implements ITask {
 		}
 
 		mWasThereADelivery = false;
-		final ArrayList<Message> messages = mChat.getMessages(EChatType.DIRECT);
+		final ArrayList<Message> messages = mChat.getMessages();
 
 		// All messages are unknown if there is no last message
 		boolean reachedLastMessages = mLastMessage == null;
