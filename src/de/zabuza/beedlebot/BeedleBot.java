@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import de.zabuza.beedlebot.databridge.DataBridge;
@@ -36,8 +35,6 @@ import de.zabuza.sparkle.webdriver.IHasWebDriver;
  *
  */
 public final class BeedleBot {
-	private static final String CHROME_USER_PROFILE_KEY = "user-data-dir";
-	private static final String CHROME_DISABLE_INFO_BARS_ARGUMENT = "disable-infobars";
 	private static final String IMAGE_PATH_ICON = "res/img/icon.png";
 
 	/**
@@ -152,16 +149,8 @@ public final class BeedleBot {
 
 			// Set options
 			final DesiredCapabilities capabilities = mApi.createCapabilities(browser,
-					browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary());
-			final String userProfile = browserSettingsProvider.getUserProfile();
-			// Try to set the profile if browser is chrome
-			if (browser == EBrowser.CHROME) {
-				// At the moment only Chrome supports local storage technology
-				final ChromeOptions options = new ChromeOptions();
-				options.addArguments(CHROME_USER_PROFILE_KEY + "=" + userProfile);
-				options.addArguments(CHROME_DISABLE_INFO_BARS_ARGUMENT);
-				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-			}
+					browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary(),
+					browserSettingsProvider.getUserProfile());
 			mApi.setCapabilities(capabilities);
 
 			// Login and create an instance

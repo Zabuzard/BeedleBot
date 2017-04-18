@@ -126,5 +126,6 @@ public final class ItemDictionary {
 
 	private void initializeStandardShopPrices() {
 		mStandardShopPrices.put("altes Relikt", 0);
+		mStandardShopPrices.put("Finstereis-Bewacher", 0);
 	}
 }

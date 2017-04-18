@@ -3,9 +3,10 @@ package de.zabuza.beedlebot.databridge;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.html5.SessionStorage;
+import org.openqa.selenium.html5.WebStorage;
 
 import de.zabuza.beedlebot.exceptions.DriverStorageUnsupportedException;
 import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
@@ -22,22 +23,26 @@ public final class DataBridge {
 	private final SessionStorage mStorage;
 
 	public DataBridge(final WebDriver driver) throws DriverStorageUnsupportedException {
-		// Get storage from chrome driver
-		ChromeDriver chromeDriver = null;
+		// Get storage from driver
+		SessionStorage sessionStorage = null;
 
+		// Get the underlying raw driver
 		WebDriver rawDriver = driver;
 		while (rawDriver instanceof IWrapsWebDriver) {
 			rawDriver = ((IWrapsWebDriver) rawDriver).getRawDriver();
 		}
-		if (rawDriver instanceof ChromeDriver) {
-			chromeDriver = (ChromeDriver) rawDriver;
+
+		if (rawDriver instanceof WebStorage) {
+			sessionStorage = ((WebStorage) rawDriver).getSessionStorage();
+		} else if (rawDriver instanceof JavascriptExecutor) {
+			sessionStorage = new JavaScriptSessionStorage((JavascriptExecutor) rawDriver);
 		}
 
-		if (chromeDriver == null) {
-			throw new DriverStorageUnsupportedException(driver);
+		if (sessionStorage == null) {
+			throw new DriverStorageUnsupportedException(rawDriver);
 		}
 
-		mStorage = chromeDriver.getSessionStorage();
+		mStorage = sessionStorage;
 	}
 
 	public void clearProblem() {

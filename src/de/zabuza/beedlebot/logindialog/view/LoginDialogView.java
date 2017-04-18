@@ -316,10 +316,6 @@ public final class LoginDialogView {
 
 		mBrowserChoiceBox = new JComboBox<>();
 		for (final EBrowser browser : EBrowser.values()) {
-			// Currently only Chrome supports local storage technology
-			if (browser != EBrowser.CHROME) {
-				continue;
-			}
 			mBrowserChoiceBox.addItem(browser);
 			if (browser == EBrowser.CHROME) {
 				mBrowserChoiceBox.setSelectedItem(browser);
