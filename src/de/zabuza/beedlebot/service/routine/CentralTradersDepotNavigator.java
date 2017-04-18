@@ -14,6 +14,7 @@ import de.zabuza.beedlebot.store.EItemCategory;
 import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.frames.EFrame;
 import de.zabuza.sparkle.wait.EventQueueEmptyWait;
+import de.zabuza.sparkle.wait.LinkTextPresenceWait;
 
 public final class CentralTradersDepotNavigator {
 	private static final String AMULET_CATEGORY_ANCHOR = "Kategorie: Halsschmuck";
@@ -62,6 +63,8 @@ public final class CentralTradersDepotNavigator {
 			mLogger.logDebug("Exiting central traders depot purchased dialog");
 		}
 
+		// Wait for dialog to appear
+		new LinkTextPresenceWait(mDriver, CONTINUE_ANCHOR);
 		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
 
 		// Wait for click to get executed

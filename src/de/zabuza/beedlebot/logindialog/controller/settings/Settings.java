@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 
 /**
  * Class for the tool settings.
@@ -67,7 +68,7 @@ public final class Settings {
 			}
 		} catch (final IOException e) {
 			// Log the error but continue
-			mLogger.logError("Error while loading settings: " + e);
+			mLogger.logError("Error while loading settings: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 
@@ -92,14 +93,14 @@ public final class Settings {
 			mProperties.store(target, FILE_COMMENT);
 		} catch (final IOException e) {
 			// Log the error but continue
-			mLogger.logError("Error while saving settings: " + e);
+			mLogger.logError("Error while saving settings: " + LoggerUtil.getStackTrace(e));
 		} finally {
 			if (target != null) {
 				try {
 					target.close();
 				} catch (final IOException e) {
 					// Log the error but continue
-					mLogger.logError("Error while closing settings file for saving: " + e);
+					mLogger.logError("Error while closing settings file for saving: " + LoggerUtil.getStackTrace(e));
 				}
 			}
 		}

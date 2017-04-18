@@ -7,6 +7,7 @@ import de.zabuza.beedlebot.databridge.io.FetchDataService;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.beedlebot.service.routine.Routine;
 import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.IFreewarAPI;
@@ -93,12 +94,12 @@ public final class Service extends Thread {
 			mPushDataService.setBeedleBotServing(true);
 		} catch (final Exception e1) {
 			// Do not enter the service loop
-			mLogger.logError("Error while starting service, not entering: " + e1);
+			mLogger.logError("Error while starting service, not entering: " + LoggerUtil.getStackTrace(e1));
 			mDoRun = false;
 			try {
 				mPushDataService.setBeedleBotServing(false);
 			} catch (final Exception e2) {
-				mLogger.logError("Error while starting service, not entering: " + e2);
+				mLogger.logError("Error while starting service, not entering: " + LoggerUtil.getStackTrace(e2));
 			}
 			terminateParent = true;
 		}
@@ -169,7 +170,7 @@ public final class Service extends Thread {
 				// Delay the next iteration
 				waitIteration();
 			} catch (final Exception e1) {
-				mLogger.logError("Error while running service, shutting down: " + e1);
+				mLogger.logError("Error while running service, shutting down: " + LoggerUtil.getStackTrace(e1));
 				// Try to shutdown
 				mDoRun = false;
 				mPaused = true;
@@ -177,7 +178,7 @@ public final class Service extends Thread {
 				try {
 					mPushDataService.setBeedleBotServing(false);
 				} catch (final Exception e2) {
-					mLogger.logError("Error while trying to shutdown service: " + e2);
+					mLogger.logError("Error while trying to shutdown service: " + LoggerUtil.getStackTrace(e2));
 				}
 				terminateParent = true;
 			}
@@ -194,7 +195,7 @@ public final class Service extends Thread {
 
 	public void setProblem(final Exception problem) {
 		mProblem = problem;
-		mLogger.logError("Problem registered: " + problem);
+		mLogger.logError("Problem registered: " + LoggerUtil.getStackTrace(problem));
 		mLogger.flush();
 
 		mPushDataService.updateActiveData();
@@ -209,7 +210,7 @@ public final class Service extends Thread {
 			sleep(SERVICE_INTERVAL);
 		} catch (final InterruptedException e) {
 			// Log the error but continue
-			mLogger.logError("Service wait got interrupted: " + e);
+			mLogger.logError("Service wait got interrupted: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 
@@ -224,7 +225,7 @@ public final class Service extends Thread {
 				mApi.shutdown(false);
 			} catch (final Exception e) {
 				// Log the error but continue
-				mLogger.logError("Error while shutting down API: " + e);
+				mLogger.logError("Error while shutting down API: " + LoggerUtil.getStackTrace(e));
 			}
 
 		}

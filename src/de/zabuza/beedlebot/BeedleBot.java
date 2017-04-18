@@ -16,6 +16,7 @@ import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.exceptions.EmptyUserCredentialsException;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.beedlebot.logindialog.LoginDialog;
 import de.zabuza.beedlebot.logindialog.controller.settings.IBrowserSettingsProvider;
 import de.zabuza.beedlebot.logindialog.controller.settings.IUserSettingsProvider;
@@ -49,7 +50,7 @@ public final class BeedleBot {
 			beedleBot.initialize();
 			beedleBot.start();
 		} catch (final Exception e) {
-			LoggerFactory.getLogger().logError("Error, shutting down: " + e);
+			LoggerFactory.getLogger().logError("Error, shutting down: " + LoggerUtil.getStackTrace(e));
 			// Try to shutdown
 			if (beedleBot != null) {
 				beedleBot.shutdown();
@@ -104,14 +105,14 @@ public final class BeedleBot {
 		try {
 			stop();
 		} catch (final Exception e) {
-			mLogger.logError("Error while stopping: " + e);
+			mLogger.logError("Error while stopping: " + LoggerUtil.getStackTrace(e));
 		}
 
 		if (mTrayManager != null) {
 			try {
 				mTrayManager.removeTrayIcon();
 			} catch (final Exception e) {
-				mLogger.logError("Error while removing tray icon: " + e);
+				mLogger.logError("Error while removing tray icon: " + LoggerUtil.getStackTrace(e));
 			}
 
 		}
@@ -166,7 +167,7 @@ public final class BeedleBot {
 			mService.registerPushDataService(mPushDataService);
 			mService.start();
 		} catch (final Exception e) {
-			mLogger.logError("Error while starting service, shutting down: " + e);
+			mLogger.logError("Error while starting service, shutting down: " + LoggerUtil.getStackTrace(e));
 			// Try to shutdown and free all resources
 			if (mStore != null) {
 				mStore.finalize();
@@ -186,13 +187,13 @@ public final class BeedleBot {
 		try {
 			stopLoginDialog();
 		} catch (final Exception e) {
-			mLogger.logError("Error while stopping login dialog: " + e);
+			mLogger.logError("Error while stopping login dialog: " + LoggerUtil.getStackTrace(e));
 		}
 
 		try {
 			stopService();
 		} catch (final Exception e) {
-			mLogger.logError("Error while stopping service: " + e);
+			mLogger.logError("Error while stopping service: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 
@@ -208,14 +209,14 @@ public final class BeedleBot {
 			try {
 				mService.stopService();
 			} catch (final Exception e) {
-				mLogger.logError("Error while stopping service: " + e);
+				mLogger.logError("Error while stopping service: " + LoggerUtil.getStackTrace(e));
 			}
 
 			try {
 				mStore.finalize();
 				mLogger.flush();
 			} catch (final Exception e) {
-				mLogger.logError("Error while finalizing store: " + e);
+				mLogger.logError("Error while finalizing store: " + LoggerUtil.getStackTrace(e));
 			}
 		}
 	}

@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.beedlebot.logindialog.controller.listener.CloseAtCancelActionListener;
 import de.zabuza.beedlebot.logindialog.controller.listener.ClosingCallbackWindowListener;
 import de.zabuza.beedlebot.logindialog.controller.listener.FileChooseSetActionListener;
@@ -186,7 +187,7 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			mSettings.saveSettings(this);
 		} catch (final Exception e) {
 			// Log the error but continue
-			mLogger.logError("Error while executing save action: " + e);
+			mLogger.logError("Error while executing save action: " + LoggerUtil.getStackTrace(e));
 		} finally {
 			// Close the settings dialog, if opened
 			if (mSettingsDialog != null) {
@@ -214,7 +215,7 @@ public final class SettingsController implements ISettingsProvider, IBrowserSett
 			passSettingsToSettingsDialogView();
 			mSettingsDialog.setVisible(true);
 		} catch (final Exception e) {
-			mLogger.logError("Error while executing settings action: " + e);
+			mLogger.logError("Error while executing settings action: " + LoggerUtil.getStackTrace(e));
 			// Try to close the dialog
 			if (mSettingsDialog != null) {
 				mSettingsDialog.dispatchEvent(new WindowEvent(mSettingsDialog, WindowEvent.WINDOW_CLOSING));

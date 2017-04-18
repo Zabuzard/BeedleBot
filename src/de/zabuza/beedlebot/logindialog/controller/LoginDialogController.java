@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import de.zabuza.beedlebot.BeedleBot;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.beedlebot.logindialog.controller.listener.ExitAtWindowCloseListener;
 import de.zabuza.beedlebot.logindialog.controller.listener.LoginActionListener;
 import de.zabuza.beedlebot.logindialog.controller.settings.SettingsController;
@@ -97,7 +98,7 @@ public final class LoginDialogController {
 			// Start the login
 			mBeedleBot.startService(mSettingsController, mSettingsController);
 		} catch (final Exception e) {
-			mLogger.logError("Error while starting login, shutting down: " + e);
+			mLogger.logError("Error while starting login, shutting down: " + LoggerUtil.getStackTrace(e));
 			// Try to shutdown
 			mBeedleBot.shutdown();
 		}

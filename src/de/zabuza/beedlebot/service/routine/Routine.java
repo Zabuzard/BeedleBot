@@ -12,6 +12,7 @@ import de.zabuza.beedlebot.databridge.io.PushDataService;
 import de.zabuza.beedlebot.exceptions.NotAtCentralTradersDepotException;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.beedlebot.service.Service;
 import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
 import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
@@ -191,7 +192,7 @@ public final class Routine {
 			}
 		} catch (final StaleElementReferenceException e) {
 			// Log the problem but continue
-			mLogger.logError("Error while routine: " + e);
+			mLogger.logError("Error while routine: " + LoggerUtil.getStackTrace(e));
 		} catch (final Exception e) {
 			mService.setProblem(e);
 		}
