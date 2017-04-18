@@ -37,7 +37,7 @@ import de.zabuza.sparkle.webdriver.IHasWebDriver;
  */
 public final class BeedleBot {
 	private static final String CHROME_USER_PROFILE_KEY = "user-data-dir";
-
+	private static final String CHROME_DISABLE_INFO_BARS_ARGUMENT = "disable-infobars";
 	private static final String IMAGE_PATH_ICON = "res/img/icon.png";
 
 	/**
@@ -159,6 +159,7 @@ public final class BeedleBot {
 				// At the moment only Chrome supports local storage technology
 				final ChromeOptions options = new ChromeOptions();
 				options.addArguments(CHROME_USER_PROFILE_KEY + "=" + userProfile);
+				options.addArguments(CHROME_DISABLE_INFO_BARS_ARGUMENT);
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 			}
 			mApi.setCapabilities(capabilities);
@@ -182,10 +183,10 @@ public final class BeedleBot {
 				mStore.finalize();
 			}
 			if (mInstance != null && mApi != null) {
-				mApi.logout(mInstance);
+				mApi.logout(mInstance, false);
 			}
 			if (mApi != null) {
-				mApi.shutdown();
+				mApi.shutdown(false);
 			}
 
 			shutdown();

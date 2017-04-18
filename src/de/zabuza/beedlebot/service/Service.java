@@ -220,17 +220,8 @@ public final class Service extends Thread {
 	private void shutdown() {
 		mLogger.logInfo("Shutting down service");
 		if (mApi != null) {
-			if (mInstance != null) {
-				try {
-					mApi.logout(mInstance);
-				} catch (final Exception e) {
-					// Log the error but continue
-					mLogger.logError("Error while loging out from API: " + e);
-				}
-				mInstance = null;
-			}
 			try {
-				mApi.shutdown();
+				mApi.shutdown(false);
 			} catch (final Exception e) {
 				// Log the error but continue
 				mLogger.logError("Error while shutting down API: " + e);
