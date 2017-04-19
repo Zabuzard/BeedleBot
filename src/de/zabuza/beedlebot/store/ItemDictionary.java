@@ -64,11 +64,18 @@ public final class ItemDictionary {
 		}
 	}
 
-	public boolean isItemRegisteredForPlayer(final String itemName) {
+	public boolean isItemRegisteredForPlayer(final String itemName, final EItemCategory category) {
 		return mItemsRegisteredForPlayer.contains(itemName);
 	}
 
-	public boolean isItemRegisteredForShop(final String itemName) {
+	public boolean isItemRegisteredForShop(final String itemName, final EItemCategory category) {
+		// Consider all weapons and amulets as shop items since they are to hard
+		// to sell to players
+		if (category == EItemCategory.ATTACK_WEAPON || category == EItemCategory.DEFENSE_WEAPON
+				|| category == EItemCategory.AMULET) {
+			return true;
+		}
+
 		return mItemsRegisteredForShop.contains(itemName);
 	}
 

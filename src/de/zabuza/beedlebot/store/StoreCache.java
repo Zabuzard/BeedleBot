@@ -114,6 +114,10 @@ public final class StoreCache implements Serializable {
 		}
 	}
 
+	public int size() {
+		return mNameToPriceData.size();
+	}
+
 	private void refreshLogger() {
 		mLogger = LoggerFactory.getLogger();
 	}

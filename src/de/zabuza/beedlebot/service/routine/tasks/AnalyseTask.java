@@ -179,7 +179,8 @@ public final class AnalyseTask implements ITask {
 
 			// Determine profit
 			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
-			final boolean isConsideredForShop = mStore.isItemConsideredForShop(itemName, itemCost, itemPriceData);
+			final boolean isConsideredForShop = mStore.isItemConsideredForShop(itemName, itemCost, itemPriceData,
+					mItemCategory);
 			final int itemProfit;
 			if (isConsideredForShop) {
 				final int standardShopPrice = itemPriceData.getStandardShopPrice();
