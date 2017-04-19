@@ -19,7 +19,7 @@ function addCssRules() {
 			}\
 			\
 			#beedleLayout, #beedleContentLayout, #beedleStatusPanelLayout,\
-			#beedleValuePanelLayout, #beedleItemPanelLayout {\
+			#beedleValuePanelLayout, #beedleItemPanelLayout, #beedleProblemPanelLayout {\
 				left: 0px;\
 				top: 0px;\
 				width: 100%;\
@@ -27,19 +27,20 @@ function addCssRules() {
 			}\
 			\
 			#beedleLayout, #beedleContentLayout, #beedleStatusPanelLayout,\
-			#beedleValuePanelLayout {\
+			#beedleValuePanelLayout, #beedleProblemPanelLayout {\
 				height: 100%;\
 			}\
 			\
 			#beedleLayout td, #beedleContentLayout td, #beedleStatusPanelLayout td,\
-			#beedleValuePanelLayout td, #beedleItemPanelLayout td, #beedleItemPanelLayout th {\
+			#beedleValuePanelLayout td, #beedleItemPanelLayout td, #beedleItemPanelLayout th,\
+			#beedleProblemPanelLayout td {\
 				margin: 0px;\
 				padding: 0px;\
 				text-align: center;\
 			}\
 			\
 			.beedleTab, .statusRibbonText, .valueText, .valueText span,\
-			.beedleItemName, .beedleItemCost, .beedleItemProfit {\
+			.beedleItemName, .beedleItemCost, .beedleItemProfit, #beedleProblemDescriptionText {\
 				font-family: Arial, helvetica, sans-serif;\
 				color: #222;\
 				font-size: 12px;\
@@ -138,6 +139,10 @@ function addCssRules() {
 				height: 40px;\
 				border-collapse: collapse;\
 				width: 100%;\
+			}\
+			\
+			.statusRibbonTable {\
+				box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.75);\
 			}\
 			\
 			.statusRibbon {\
@@ -263,6 +268,53 @@ function addCssRules() {
 			.beedleItemNotCached.beedleItemConsideredForPlayer {\
 				background: repeating-linear-gradient(-45deg, #F1C5C5, \
 					#F1C5C5 5px, #CDE3F3 5px, #CDE3F3 10px);\
+			}\
+			\
+			#beedleProblemPanel {\
+				vertical-align: top;\
+				height: 100px;\
+			}\
+			\
+			#beedleProblemDescription {\
+				text-align: left !important;\
+				padding-top: 10px !important;\
+			}\
+			\
+			#beedleProblemDescriptionText {\
+				font-size: 13px;\
+				font-weight: bold;\
+				margin-left: 5px;\
+			}\
+			\
+			#beedleProblemDetailsArea {\
+				width: 90%;\
+				height: 100%;\
+				resize: none;\
+				outline: none;\
+				border: 1px solid black;\
+				background-color: #778899;\
+				color: white;\
+				box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.75);\
+			}\
+			\
+			#beedleProblemDetailsArea::-webkit-input-placeholder {\
+				color:white;\
+				opacity:  0.7;\
+			}\
+			\
+			#beedleProblemDetailsArea:-moz-placeholder {\
+				color:white;\
+				opacity:  0.7;\
+			}\
+			\
+			#beedleProblemDetailsArea::-moz-placeholder {\
+				color:white;\
+				opacity:  0.7;\
+			}\
+			\
+			#beedleProblemDetailsArea:-ms-input-placeholder {\
+				color:white;\
+				opacity:  0.7;\
 			}\
 		</style>');
 }
@@ -574,7 +626,8 @@ function openSellTab() {
  * Opens and loads the miscellaneous tab to the content panel.
  */
 function openMiscellaneousTab() {
-
+	createMiscellaneousTabLayout();
+	createMiscellaneousTabContent();
 }
 
 /*
@@ -667,6 +720,31 @@ function createPurchaseTabLayout() {
 				</tbody>\
 			</table>\
 		</div>');
+}
+
+/*
+ * Creates the layout of the miscellaneous tab.
+ */
+function createMiscellaneousTabLayout() {
+	// Create the content layout table
+	$('#beedleContent').append('<table id="beedleContentLayout">\
+			<tr>\
+				<td id="beedleProblemPanel"></td>\
+			</tr>\
+			<tr>\
+				<td id="beedleHeightAbsorberPanel"></td>\
+			</tr>\
+		</table>');
+
+	// Create the problem panel layout
+	$('#beedleProblemPanel').append('<table id="beedleProblemPanelLayout">\
+			<tr>\
+				<td id="beedleProblemDescription"></td>\
+			</tr>\
+			<tr>\
+				<td id="beedleProblemDetails"></td>\
+			</tr>\
+		</table>');
 }
 
 /*
@@ -772,6 +850,26 @@ function createItemPanelContent() {
 }
 
 /*
+ * Creates the content of the miscellaneous tab.
+ */
+function createMiscellaneousTabContent() {
+	createProblemPanelContent();
+}
+
+/*
+ * Creates the content of the problem panel.
+ */
+function createProblemPanelContent() {
+	$('#beedleProblemDescription').append('<span id="beedleProblemDescriptionText">' +
+				localization.problemDescription +
+			':</span>');
+
+	$('#beedleProblemDetails').append('<textarea id="beedleProblemDetailsArea" placeholder="' +
+				localization.problemDetailsPlaceholder + '" readonly>' +
+			'</textarea>');
+}
+
+/*
  * Updates the data and display of the interface. If BeedleBot is not
  * serving anymore it will remove the interface.
  * @param preventLoop If true the method will not call itself every half second, if false it will
@@ -791,6 +889,7 @@ function update(preventLoop) {
 	if (Date.now() - heartBeat >= heartbeatDiff) {
 		// Fire a problem since server seems to be offline
 		setItem('state', states.problem);
+		setItem('problem', localization.problemHeartBeat);
 	}
 
 	// Update the correct tab
@@ -825,10 +924,10 @@ function updateSellTab() {
 }
 
 /*
- * Updates the data and display of the miscellaneous tab.
+ * Updates the data and display of the problem panel.
  */
 function updateMiscellaneousTab() {
-
+	updateProblemPanel();
 }
 
 /*
@@ -1090,6 +1189,29 @@ function updateItemPanel() {
 }
 
 /*
+ * Updates the data and display of the problem panel.
+ */
+function updateProblemPanel() {
+	// Update problem
+	var problem = getItem('problem');
+	var problemDetailsArea = $('#beedleProblemDetailsArea');
+	
+	var currentText = $(problemDetailsArea).val();
+	
+	if (problem == null) {
+		// Clear the field if not empty already
+		if (!currentText) {
+			$(problemDetailsArea).val('');
+		}
+	} else {
+		// Enter the text if different
+		if (problem != currentText) {
+			$(problemDetailsArea).val(problem);
+		}
+	}
+}
+
+/*
  * Creates and loads the web user interface.
  */
 function loadInterface() {
@@ -1180,6 +1302,7 @@ storageKeys.totalCost = 'totalCost';
 storageKeys.totalProfit = 'totalProfit';
 storageKeys.itemEntries = 'itemEntries';
 storageKeys.heartBeat = 'heartBeat';
+storageKeys.problem = 'problem';
 
 // BeedleBots states
 var states = {};
@@ -1260,6 +1383,9 @@ localization.inventory = 'aktuelle / maximale Inventargr&ouml;&szlig;e';
 localization.waitingTime = 'Wartezeit pro Itemkauf';
 localization.totalCost = 'gesamte Kosten';
 localization.totalProfit = 'gesamte Einnahmen';
+localization.problemDescription = 'Probleme';
+localization.problemDetailsPlaceholder = 'Es sind keine Probleme bekannt.';
+localization.problemHeartBeat = 'No heartbeat received. Server seems to be offline.';
 
 // Miscellaneous settings
 var heartbeatDiff = 10000;
