@@ -1388,7 +1388,7 @@ localization.problemDetailsPlaceholder = 'Es sind keine Probleme bekannt.';
 localization.problemHeartBeat = 'No heartbeat received. Server seems to be offline.';
 
 // Miscellaneous settings
-var heartbeatDiff = 10000;
+var heartbeatDiff = 20000;
 var itemNameTruncLength = 18;
 var interfaceHeightSpacing = 1;
 var interfaceWidthSpacing = 1;
