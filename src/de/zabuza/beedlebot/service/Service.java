@@ -60,7 +60,7 @@ public final class Service extends Thread {
 	public Exception getProblem() {
 		return mProblem;
 	}
-	
+
 	public long getProblemTimestamp() {
 		return mProblemTimestamp;
 	}

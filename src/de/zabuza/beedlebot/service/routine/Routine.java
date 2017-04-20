@@ -61,7 +61,7 @@ public final class Routine {
 		mWaitForDeliveryTask = new WaitForDeliveryTask(mInstance.getChat());
 		mCentralTradersDepot = new Point(88, 89);
 		mNavigator = new CentralTradersDepotNavigator(mInstance, mDriver);
-		
+
 		mLastAwaitingDeliveryTimestamp = 0;
 		mLastWaitForCanMoveTimestamp = 0;
 	}
