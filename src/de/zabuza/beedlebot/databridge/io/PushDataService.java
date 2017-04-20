@@ -64,7 +64,7 @@ public final class PushDataService {
 		if (mService.hasProblem()) {
 			state = EState.PROBLEM;
 			phase = EPhase.AWAITING_DELIVERY;
-			mDataBridge.setProblem(mService.getProblem(), System.currentTimeMillis());
+			mDataBridge.setProblem(mService.getProblem(), mService.getProblemTimestamp());
 		} else {
 			mDataBridge.clearProblem();
 			if (!isActive) {

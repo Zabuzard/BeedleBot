@@ -105,6 +105,7 @@ public final class ItemDictionary {
 		mItemNamePatterns.put(".*Schatztruhe.*", "Zaubertruhe");
 		mItemNamePatterns.put(".*Sprengkapsel.*", "Sumpfgasbombe");
 		mItemNamePatterns.put(".*Wissenszauber von .*", "Wissenszauber von Beispieluser");
+		mItemNamePatterns.put(".*Hinzauber zu .*", "Hinzauber zu Beispielspieler");
 	}
 
 	private void initializeItemsRegisteredForPlayer() {

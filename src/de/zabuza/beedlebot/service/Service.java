@@ -28,6 +28,7 @@ public final class Service extends Thread {
 	private final BeedleBot mParent;
 	private boolean mPaused;
 	private Exception mProblem;
+	private long mProblemTimestamp;
 	private PushDataService mPushDataService;
 	private Routine mRoutine;
 
@@ -53,10 +54,15 @@ public final class Service extends Thread {
 		mProblem = null;
 
 		lastUpdateMillis = 0;
+		mProblemTimestamp = 0;
 	}
 
 	public Exception getProblem() {
 		return mProblem;
+	}
+	
+	public long getProblemTimestamp() {
+		return mProblemTimestamp;
 	}
 
 	public boolean hasProblem() {
@@ -195,6 +201,7 @@ public final class Service extends Thread {
 
 	public void setProblem(final Exception problem) {
 		mProblem = problem;
+		mProblemTimestamp = System.currentTimeMillis();
 		mLogger.logError("Problem registered: " + LoggerUtil.getStackTrace(problem));
 		mLogger.flush();
 

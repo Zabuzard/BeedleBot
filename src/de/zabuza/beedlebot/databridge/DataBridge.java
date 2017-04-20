@@ -9,6 +9,7 @@ import org.openqa.selenium.html5.SessionStorage;
 import org.openqa.selenium.html5.WebStorage;
 
 import de.zabuza.beedlebot.exceptions.DriverStorageUnsupportedException;
+import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
 
 /**
@@ -131,7 +132,7 @@ public final class DataBridge {
 
 		problemText.append(timestampFormat);
 		problemText.append(": ");
-		problemText.append(problem.toString());
+		problemText.append(LoggerUtil.getStackTrace(problem));
 
 		mStorage.setItem(buildKey(StorageKeys.PROBLEM), problemText.toString());
 	}
