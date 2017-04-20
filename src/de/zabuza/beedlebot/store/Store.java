@@ -74,6 +74,9 @@ public final class Store {
 		if (item.isMagical()) {
 			return false;
 		}
+		if (item.getName().equals("gepresste Zauberkugel")) {
+			return false;
+		}
 
 		return item.getProfit() > 0;
 	}
