@@ -98,6 +98,7 @@ public final class WaitForDeliveryTask implements ITask {
 		}
 
 		// Update the last messages challenge
+		mLastMessagesChallenge.clear();
 		final int lastIndex = messages.size() - 1;
 		final int challengeSize = Math.min(lastIndex + 1, LAST_MESSAGES_CHALLENGE_SIZE);
 		for (int i = challengeSize - 1; i >= 0; i--) {

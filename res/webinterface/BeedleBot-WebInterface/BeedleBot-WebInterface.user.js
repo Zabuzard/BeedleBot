@@ -142,7 +142,7 @@ function addCssRules() {
 			}\
 			\
 			.statusRibbonTable {\
-				box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.75);\
+				box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.75);\
 			}\
 			\
 			.statusRibbon {\
@@ -272,7 +272,7 @@ function addCssRules() {
 			\
 			#beedleProblemPanel {\
 				vertical-align: top;\
-				height: 100px;\
+				height: 200px;\
 			}\
 			\
 			#beedleProblemDescription {\
@@ -288,13 +288,13 @@ function addCssRules() {
 			\
 			#beedleProblemDetailsArea {\
 				width: 90%;\
-				height: 100%;\
+				height: 170px;\
 				resize: none;\
 				outline: none;\
 				border: 1px solid black;\
 				background-color: #778899;\
 				color: white;\
-				box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.75);\
+				box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.75);\
 			}\
 			\
 			#beedleProblemDetailsArea::-webkit-input-placeholder {\
@@ -1195,9 +1195,9 @@ function updateProblemPanel() {
 	// Update problem
 	var problem = getItem('problem');
 	var problemDetailsArea = $('#beedleProblemDetailsArea');
-	
+
 	var currentText = $(problemDetailsArea).val();
-	
+
 	if (problem == null) {
 		// Clear the field if not empty already
 		if (!currentText) {
