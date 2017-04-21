@@ -25,11 +25,11 @@ public final class WaitForDeliveryTask implements ITask {
 	private boolean mWasThereADelivery;
 
 	public WaitForDeliveryTask(final IChat chat) {
-		mChat = chat;
-		mWasThereADelivery = false;
-		mLastMessagesChallenge = new LinkedList<>();
-		mDeliveryMessage = new Message(MESSAGE_DELIVERY_CONTENT, EChatType.DIRECT);
-		mLogger = LoggerFactory.getLogger();
+		this.mChat = chat;
+		this.mWasThereADelivery = false;
+		this.mLastMessagesChallenge = new LinkedList<>();
+		this.mDeliveryMessage = new Message(MESSAGE_DELIVERY_CONTENT, EChatType.DIRECT);
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -39,7 +39,7 @@ public final class WaitForDeliveryTask implements ITask {
 	 */
 	@Override
 	public void interrupt() {
-		mInterrupted = true;
+		this.mInterrupted = true;
 	}
 
 	/*
@@ -49,7 +49,7 @@ public final class WaitForDeliveryTask implements ITask {
 	 */
 	@Override
 	public boolean isInterrupted() {
-		return mInterrupted;
+		return this.mInterrupted;
 	}
 
 	/*
@@ -59,24 +59,24 @@ public final class WaitForDeliveryTask implements ITask {
 	 */
 	@Override
 	public void start() {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Starting WaitForDeliveryTask");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Starting WaitForDeliveryTask");
 		}
 
-		mWasThereADelivery = false;
-		final ArrayList<Message> messages = mChat.getMessages();
+		this.mWasThereADelivery = false;
+		final ArrayList<Message> messages = this.mChat.getMessages();
 
 		boolean succeededLastMessagesChallenge = false;
 		boolean reachedMessageFromChallenge = true;
 		Message messageFromChallenge = null;
 		for (final Message message : messages) {
 			if (!succeededLastMessagesChallenge && reachedMessageFromChallenge) {
-				if (mLastMessagesChallenge.isEmpty()) {
+				if (this.mLastMessagesChallenge.isEmpty()) {
 					// Challenge succeeded
 					succeededLastMessagesChallenge = true;
 				} else {
 					// Poll the next challenge
-					messageFromChallenge = mLastMessagesChallenge.poll();
+					messageFromChallenge = this.mLastMessagesChallenge.poll();
 					reachedMessageFromChallenge = false;
 				}
 			}
@@ -90,24 +90,24 @@ public final class WaitForDeliveryTask implements ITask {
 				reachedMessageFromChallenge = message.equals(messageFromChallenge);
 			} else {
 				// Try to match the delivery message
-				if (message.equals(mDeliveryMessage)) {
-					mWasThereADelivery = true;
+				if (message.equals(this.mDeliveryMessage)) {
+					this.mWasThereADelivery = true;
 					break;
 				}
 			}
 		}
 
 		// Update the last messages challenge
-		mLastMessagesChallenge.clear();
+		this.mLastMessagesChallenge.clear();
 		final int lastIndex = messages.size() - 1;
 		final int challengeSize = Math.min(lastIndex + 1, LAST_MESSAGES_CHALLENGE_SIZE);
 		for (int i = challengeSize - 1; i >= 0; i--) {
-			mLastMessagesChallenge.add(messages.get(lastIndex - i));
+			this.mLastMessagesChallenge.add(messages.get(lastIndex - i));
 		}
 	}
 
 	public boolean wasThereADelivery() {
-		return mWasThereADelivery;
+		return this.mWasThereADelivery;
 	}
 
 }

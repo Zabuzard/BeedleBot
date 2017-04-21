@@ -17,7 +17,7 @@ public final class AnalyseResult implements Queue<Item> {
 	private final Queue<Item> mItems;
 
 	public AnalyseResult() {
-		mItems = new PriorityQueue<>(new ProfitComparator());
+		this.mItems = new PriorityQueue<>(new ProfitComparator());
 	}
 
 	/*
@@ -27,7 +27,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean add(final Item e) {
-		return mItems.add(e);
+		return this.mItems.add(e);
 	}
 
 	/*
@@ -37,7 +37,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean addAll(final Collection<? extends Item> c) {
-		return mItems.addAll(c);
+		return this.mItems.addAll(c);
 	}
 
 	/*
@@ -47,7 +47,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public void clear() {
-		mItems.clear();
+		this.mItems.clear();
 	}
 
 	/*
@@ -57,7 +57,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean contains(final Object o) {
-		return mItems.contains(o);
+		return this.mItems.contains(o);
 	}
 
 	/*
@@ -67,7 +67,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean containsAll(final Collection<?> c) {
-		return mItems.containsAll(c);
+		return this.mItems.containsAll(c);
 	}
 
 	/*
@@ -77,7 +77,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public Item element() {
-		return mItems.element();
+		return this.mItems.element();
 	}
 
 	/*
@@ -87,7 +87,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return mItems.isEmpty();
+		return this.mItems.isEmpty();
 	}
 
 	/*
@@ -97,7 +97,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public Iterator<Item> iterator() {
-		return mItems.iterator();
+		return this.mItems.iterator();
 	}
 
 	/*
@@ -107,7 +107,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean offer(final Item e) {
-		return mItems.offer(e);
+		return this.mItems.offer(e);
 	}
 
 	/*
@@ -117,7 +117,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public Item peek() {
-		return mItems.peek();
+		return this.mItems.peek();
 	}
 
 	/*
@@ -127,7 +127,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public Item poll() {
-		return mItems.poll();
+		return this.mItems.poll();
 	}
 
 	/*
@@ -137,7 +137,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public Item remove() {
-		return mItems.remove();
+		return this.mItems.remove();
 	}
 
 	/*
@@ -147,7 +147,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean remove(final Object o) {
-		return mItems.remove(o);
+		return this.mItems.remove(o);
 	}
 
 	/*
@@ -157,7 +157,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean removeAll(final Collection<?> c) {
-		return mItems.removeAll(c);
+		return this.mItems.removeAll(c);
 	}
 
 	/*
@@ -167,7 +167,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		return mItems.retainAll(c);
+		return this.mItems.retainAll(c);
 	}
 
 	/*
@@ -177,7 +177,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public int size() {
-		return mItems.size();
+		return this.mItems.size();
 	}
 
 	/*
@@ -187,7 +187,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public Object[] toArray() {
-		return mItems.toArray();
+		return this.mItems.toArray();
 	}
 
 	/*
@@ -197,6 +197,6 @@ public final class AnalyseResult implements Queue<Item> {
 	 */
 	@Override
 	public <T> T[] toArray(final T[] a) {
-		return mItems.toArray(a);
+		return this.mItems.toArray(a);
 	}
 }

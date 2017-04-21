@@ -104,10 +104,10 @@ public final class LoginDialogView {
 	 *            Frame of the view
 	 */
 	public LoginDialogView(final JFrame frame) {
-		mFrame = frame;
-		mContainer = frame.getContentPane();
-		mInputElements = new LinkedList<>();
-		mLogger = LoggerFactory.getLogger();
+		this.mFrame = frame;
+		this.mContainer = frame.getContentPane();
+		this.mInputElements = new LinkedList<>();
+		this.mLogger = LoggerFactory.getLogger();
 		initialize();
 	}
 
@@ -118,7 +118,7 @@ public final class LoginDialogView {
 	 *            Listener to add
 	 */
 	public void addListenerToLoginAction(final ActionListener listener) {
-		mLoginBtn.addActionListener(listener);
+		this.mLoginBtn.addActionListener(listener);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public final class LoginDialogView {
 	 *            Listener to add
 	 */
 	public void addListenerToSettingsAction(final ActionListener listener) {
-		mSettingsBtn.addActionListener(listener);
+		this.mSettingsBtn.addActionListener(listener);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public final class LoginDialogView {
 	 *            Listener to add
 	 */
 	public void addWindowListener(final WindowListener listener) {
-		mFrame.addWindowListener(listener);
+		this.mFrame.addWindowListener(listener);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public final class LoginDialogView {
 	 * @return The selected input browser
 	 */
 	public EBrowser getBrowser() {
-		return (EBrowser) mBrowserChoiceBox.getSelectedItem();
+		return (EBrowser) this.mBrowserChoiceBox.getSelectedItem();
 	}
 
 	/**
@@ -156,7 +156,7 @@ public final class LoginDialogView {
 	 * @return The login button to get
 	 */
 	public JButton getLoginButton() {
-		return mLoginBtn;
+		return this.mLoginBtn;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public final class LoginDialogView {
 	 * @return The input password
 	 */
 	public String getPassword() {
-		return mPasswordField.getText();
+		return this.mPasswordField.getText();
 	}
 
 	/**
@@ -174,7 +174,7 @@ public final class LoginDialogView {
 	 * @return The input username
 	 */
 	public String getUsername() {
-		return mUsernameField.getText();
+		return this.mUsernameField.getText();
 	}
 
 	/**
@@ -183,7 +183,7 @@ public final class LoginDialogView {
 	 * @return The selected input world
 	 */
 	public EWorld getWorld() {
-		return (EWorld) mWorldChoiceBox.getSelectedItem();
+		return (EWorld) this.mWorldChoiceBox.getSelectedItem();
 	}
 
 	/**
@@ -193,7 +193,7 @@ public final class LoginDialogView {
 	 *            Whether the fields should be enabled or disabled
 	 */
 	public void setAllInputEnabled(final boolean enabled) {
-		for (final JComponent element : mInputElements) {
+		for (final JComponent element : this.mInputElements) {
 			element.setEnabled(enabled);
 		}
 	}
@@ -205,7 +205,7 @@ public final class LoginDialogView {
 	 *            The browser to select
 	 */
 	public void setBrowser(final EBrowser browser) {
-		mBrowserChoiceBox.setSelectedItem(browser);
+		this.mBrowserChoiceBox.setSelectedItem(browser);
 	}
 
 	/**
@@ -215,7 +215,7 @@ public final class LoginDialogView {
 	 *            Whether the button should be enabled or disabled
 	 */
 	public void setLoginButtonEnabled(final boolean enabled) {
-		mLoginBtn.setEnabled(enabled);
+		this.mLoginBtn.setEnabled(enabled);
 	}
 
 	/**
@@ -225,7 +225,7 @@ public final class LoginDialogView {
 	 *            The password to set
 	 */
 	public void setPassword(final String password) {
-		mPasswordField.setText(password);
+		this.mPasswordField.setText(password);
 	}
 
 	/**
@@ -235,7 +235,7 @@ public final class LoginDialogView {
 	 *            Whether the button should be enabled or disabled
 	 */
 	public void setSettingsButtonEnabled(final boolean enabled) {
-		mSettingsBtn.setEnabled(enabled);
+		this.mSettingsBtn.setEnabled(enabled);
 	}
 
 	/**
@@ -245,7 +245,7 @@ public final class LoginDialogView {
 	 *            The username to set
 	 */
 	public void setUsername(final String username) {
-		mUsernameField.setText(username);
+		this.mUsernameField.setText(username);
 	}
 
 	/**
@@ -255,15 +255,15 @@ public final class LoginDialogView {
 	 *            The world to select
 	 */
 	public void setWorld(final EWorld world) {
-		mWorldChoiceBox.setSelectedItem(world);
+		this.mWorldChoiceBox.setSelectedItem(world);
 	}
 
 	/**
 	 * Initialize the contents of the view.
 	 */
 	private void initialize() {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Initializing LoginDialogView");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Initializing LoginDialogView");
 		}
 
 		initializePanels();
@@ -276,54 +276,54 @@ public final class LoginDialogView {
 	 * Initialize the buttons.
 	 */
 	private void initializeButtons() {
-		mLoginBtn = new JButton("Login");
-		mLoginBtn.setBounds(50, 130, 100, 23);
-		mMainPanel.add(mLoginBtn);
+		this.mLoginBtn = new JButton("Login");
+		this.mLoginBtn.setBounds(50, 130, 100, 23);
+		this.mMainPanel.add(this.mLoginBtn);
 
-		mSettingsBtn = new LinkButton("Settings");
-		mSettingsBtn.setBounds(130, 0, 80, 23);
-		mTrailerPanel.add(mSettingsBtn);
+		this.mSettingsBtn = new LinkButton("Settings");
+		this.mSettingsBtn.setBounds(130, 0, 80, 23);
+		this.mTrailerPanel.add(this.mSettingsBtn);
 	}
 
 	/**
 	 * Initialize the text fields.
 	 */
 	private void initializeInputFields() {
-		mUsernameField = new JTextField();
-		mUsernameField.setHorizontalAlignment(SwingConstants.LEFT);
-		mUsernameField.setBounds(70, 0, 123, 20);
-		mMainPanel.add(mUsernameField);
-		mInputElements.add(mUsernameField);
-		mUsernameField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mUsernameField = new JTextField();
+		this.mUsernameField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mUsernameField.setBounds(70, 0, 123, 20);
+		this.mMainPanel.add(this.mUsernameField);
+		this.mInputElements.add(this.mUsernameField);
+		this.mUsernameField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mPasswordField = new JPasswordField();
-		mPasswordField.setHorizontalAlignment(SwingConstants.LEFT);
-		mPasswordField.setBounds(70, 30, 123, 20);
-		mMainPanel.add(mPasswordField);
-		mInputElements.add(mPasswordField);
-		mPasswordField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mPasswordField = new JPasswordField();
+		this.mPasswordField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mPasswordField.setBounds(70, 30, 123, 20);
+		this.mMainPanel.add(this.mPasswordField);
+		this.mInputElements.add(this.mPasswordField);
+		this.mPasswordField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mWorldChoiceBox = new JComboBox<>();
+		this.mWorldChoiceBox = new JComboBox<>();
 		for (final EWorld world : EWorld.values()) {
-			mWorldChoiceBox.addItem(world);
+			this.mWorldChoiceBox.addItem(world);
 			if (world == EWorld.ONE) {
-				mWorldChoiceBox.setSelectedItem(world);
+				this.mWorldChoiceBox.setSelectedItem(world);
 			}
 		}
-		mWorldChoiceBox.setBounds(70, 60, 123, 20);
-		mMainPanel.add(mWorldChoiceBox);
-		mInputElements.add(mWorldChoiceBox);
+		this.mWorldChoiceBox.setBounds(70, 60, 123, 20);
+		this.mMainPanel.add(this.mWorldChoiceBox);
+		this.mInputElements.add(this.mWorldChoiceBox);
 
-		mBrowserChoiceBox = new JComboBox<>();
+		this.mBrowserChoiceBox = new JComboBox<>();
 		for (final EBrowser browser : EBrowser.values()) {
-			mBrowserChoiceBox.addItem(browser);
+			this.mBrowserChoiceBox.addItem(browser);
 			if (browser == EBrowser.CHROME) {
-				mBrowserChoiceBox.setSelectedItem(browser);
+				this.mBrowserChoiceBox.setSelectedItem(browser);
 			}
 		}
-		mBrowserChoiceBox.setBounds(70, 90, 123, 20);
-		mMainPanel.add(mBrowserChoiceBox);
-		mInputElements.add(mBrowserChoiceBox);
+		this.mBrowserChoiceBox.setBounds(70, 90, 123, 20);
+		this.mMainPanel.add(this.mBrowserChoiceBox);
+		this.mInputElements.add(this.mBrowserChoiceBox);
 	}
 
 	/**
@@ -334,39 +334,39 @@ public final class LoginDialogView {
 		usernameLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		usernameLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		usernameLbl.setBounds(0, 0, 65, 14);
-		mMainPanel.add(usernameLbl);
+		this.mMainPanel.add(usernameLbl);
 
 		final JLabel passwordLbl = new JLabel("Password:");
 		passwordLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		passwordLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		passwordLbl.setBounds(0, 30, 65, 14);
-		mMainPanel.add(passwordLbl);
+		this.mMainPanel.add(passwordLbl);
 
 		final JLabel worldChoiceLbl = new JLabel("World:");
 		worldChoiceLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		worldChoiceLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		worldChoiceLbl.setBounds(0, 60, 65, 14);
-		mMainPanel.add(worldChoiceLbl);
+		this.mMainPanel.add(worldChoiceLbl);
 
 		final JLabel browserChoiceLbl = new JLabel("Browser:");
 		browserChoiceLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		browserChoiceLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		browserChoiceLbl.setBounds(0, 90, 65, 14);
-		mMainPanel.add(browserChoiceLbl);
+		this.mMainPanel.add(browserChoiceLbl);
 	}
 
 	/**
 	 * Initialize the panels.
 	 */
 	private void initializePanels() {
-		mMainPanel = new JPanel();
-		mMainPanel.setBounds(10, 10, WIDTH - 25, 160);
-		mContainer.add(mMainPanel);
-		mMainPanel.setLayout(null);
+		this.mMainPanel = new JPanel();
+		this.mMainPanel.setBounds(10, 10, WIDTH - 25, 160);
+		this.mContainer.add(this.mMainPanel);
+		this.mMainPanel.setLayout(null);
 
-		mTrailerPanel = new JPanel();
-		mTrailerPanel.setBounds(10, 170, WIDTH - 25, 50);
-		mContainer.add(mTrailerPanel);
-		mTrailerPanel.setLayout(null);
+		this.mTrailerPanel = new JPanel();
+		this.mTrailerPanel.setBounds(10, 170, WIDTH - 25, 50);
+		this.mContainer.add(this.mTrailerPanel);
+		this.mTrailerPanel.setLayout(null);
 	}
 }

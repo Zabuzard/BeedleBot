@@ -6,20 +6,20 @@ public final class LogMessage {
 	private final long mTimestamp;
 
 	public LogMessage(final String message, final ELogLevel logLevel, final long timestamp) {
-		mMessage = message;
-		mLogLevel = logLevel;
-		mTimestamp = timestamp;
+		this.mMessage = message;
+		this.mLogLevel = logLevel;
+		this.mTimestamp = timestamp;
 	}
 
 	public ELogLevel getLogLevel() {
-		return mLogLevel;
+		return this.mLogLevel;
 	}
 
 	public String getMessage() {
-		return mMessage;
+		return this.mMessage;
 	}
 
 	public long getTimestamp() {
-		return mTimestamp;
+		return this.mTimestamp;
 	}
 }

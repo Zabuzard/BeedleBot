@@ -26,19 +26,19 @@ public final class PushDataService {
 	private final Service mService;
 
 	public PushDataService(final Service service, final IFreewarInstance instance, final DataBridge dataBridge) {
-		mService = service;
-		mInstance = instance;
-		mDataBridge = dataBridge;
+		this.mService = service;
+		this.mInstance = instance;
+		this.mDataBridge = dataBridge;
 
-		mRoutine = null;
+		this.mRoutine = null;
 	}
 
 	public void linkRoutine(final Routine routine) {
-		mRoutine = routine;
+		this.mRoutine = routine;
 	}
 
 	public void setBeedleBotServing(final boolean isBeedleBotServing) {
-		mDataBridge.setBeedleBotServing(isBeedleBotServing);
+		this.mDataBridge.setBeedleBotServing(isBeedleBotServing);
 	}
 
 	public void update() {
@@ -47,26 +47,26 @@ public final class PushDataService {
 	}
 
 	public void updateActiveData() {
-		if (mRoutine == null) {
+		if (this.mRoutine == null) {
 			return;
 		}
 
-		final boolean isActive = !mService.isPaused() && mService.isActive();
+		final boolean isActive = !this.mService.isPaused() && this.mService.isActive();
 
 		// Push active flag
-		mDataBridge.setActive(isActive);
+		this.mDataBridge.setActive(isActive);
 
 		// Determine phase
-		EPhase phase = mRoutine.getPhase();
+		EPhase phase = this.mRoutine.getPhase();
 
 		// Determine state
 		final EState state;
-		if (mService.hasProblem()) {
+		if (this.mService.hasProblem()) {
 			state = EState.PROBLEM;
 			phase = EPhase.AWAITING_DELIVERY;
-			mDataBridge.setProblem(mService.getProblem(), mService.getProblemTimestamp());
+			this.mDataBridge.setProblem(this.mService.getProblem(), this.mService.getProblemTimestamp());
 		} else {
-			mDataBridge.clearProblem();
+			this.mDataBridge.clearProblem();
 			if (!isActive) {
 				state = EState.INACTIVE;
 				phase = EPhase.AWAITING_DELIVERY;
@@ -77,34 +77,34 @@ public final class PushDataService {
 			}
 		}
 
-		mDataBridge.setState(state);
-		mDataBridge.setPhase(phase);
+		this.mDataBridge.setState(state);
+		this.mDataBridge.setPhase(phase);
 	}
 
 	public void updatePassiveData() {
-		if (mRoutine == null) {
+		if (this.mRoutine == null) {
 			return;
 		}
 
 		try {
-			final IPlayer player = mInstance.getPlayer();
-			final IInventory inventory = mInstance.getInventory();
+			final IPlayer player = this.mInstance.getPlayer();
+			final IInventory inventory = this.mInstance.getInventory();
 
 			// Update heartbeat
-			mDataBridge.updateHeartBeat();
+			this.mDataBridge.updateHeartBeat();
 
 			// Get lifepoints
-			mDataBridge.setCurrentLifepoints(player.getLifePoints());
-			mDataBridge.setMaxLifepoints(player.getMaxLifePoints());
+			this.mDataBridge.setCurrentLifepoints(player.getLifePoints());
+			this.mDataBridge.setMaxLifepoints(player.getMaxLifePoints());
 
 			// Get gold
-			mDataBridge.setGold(player.getGold());
+			this.mDataBridge.setGold(player.getGold());
 
 			// Get inventory size
 			final int speed = player.getSpeed();
 			final int inventorySize = inventory.getInventorySize();
-			mDataBridge.setMaxInventorySize(speed);
-			mDataBridge.setInventorySize(inventorySize);
+			this.mDataBridge.setMaxInventorySize(speed);
+			this.mDataBridge.setInventorySize(inventorySize);
 
 			// Compute waiting time
 			final int itemsMoreThanSpeed = inventorySize - speed;
@@ -114,20 +114,20 @@ public final class PushDataService {
 			} else {
 				waitingTime = WAITING_TIME_MIN;
 			}
-			mDataBridge.setWaitingTime(waitingTime);
+			this.mDataBridge.setWaitingTime(waitingTime);
 
 			// Push item-entries
-			final Queue<Item> boughtItems = mRoutine.fetchBoughtItems();
+			final Queue<Item> boughtItems = this.mRoutine.fetchBoughtItems();
 			for (final Item item : boughtItems) {
-				mDataBridge.pushItemEntry(new ItemEntry(item.getName(), item.getCost(), item.getProfit(),
+				this.mDataBridge.pushItemEntry(new ItemEntry(item.getName(), item.getCost(), item.getProfit(),
 						item.getStorePriceData().isCached(), item.isConsideredForShop()));
 			}
 
 			// Get total cost
-			mDataBridge.setTotalCost(mRoutine.getTotalCost());
+			this.mDataBridge.setTotalCost(this.mRoutine.getTotalCost());
 
 			// Get total profit
-			mDataBridge.setTotalProfit(mRoutine.getTotalProfit());
+			this.mDataBridge.setTotalProfit(this.mRoutine.getTotalProfit());
 		} catch (final NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
 			// Frame seems to have changed its content. Maybe the player
 			// interacted with it. Simply ignore the problem and yield this

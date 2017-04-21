@@ -30,22 +30,11 @@ public final class StoreCache implements Serializable {
 		LoggerFactory.getLogger().logInfo("Deserializing StoreCache");
 
 		StoreCache cache = null;
-		ObjectInputStream ois = null;
-		try {
-			final FileInputStream fis = new FileInputStream(buildSerializationPath(world));
-			ois = new ObjectInputStream(fis);
+		try (final ObjectInputStream ois = new ObjectInputStream(new FileInputStream(buildSerializationPath(world)))) {
 			cache = (StoreCache) ois.readObject();
 			cache.refreshLogger();
 		} catch (final IOException | ClassNotFoundException e) {
 			throw new StoreCacheDeserializationUnsuccessfulException(e);
-		} finally {
-			try {
-				if (ois != null) {
-					ois.close();
-				}
-			} catch (final IOException e) {
-				throw new StoreCacheDeserializationUnsuccessfulException(e);
-			}
 		}
 		return cache;
 	}
@@ -65,60 +54,50 @@ public final class StoreCache implements Serializable {
 	private final EWorld mWorld;
 
 	public StoreCache(final EWorld world) {
-		mNameToPriceData = new HashMap<>();
-		mWorld = world;
-		mLogger = LoggerFactory.getLogger();
+		this.mNameToPriceData = new HashMap<>();
+		this.mWorld = world;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	public void clear() {
-		mNameToPriceData.clear();
+		this.mNameToPriceData.clear();
 	}
 
 	public Collection<ItemPrice> getAllItemPrices() {
-		return Collections.unmodifiableCollection(mNameToPriceData.values());
+		return Collections.unmodifiableCollection(this.mNameToPriceData.values());
 	}
 
 	public ItemPrice getItemPrice(final String itemName) {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Get item price from cache: " + itemName);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Get item price from cache: " + itemName);
 		}
-		return mNameToPriceData.get(itemName);
+		return this.mNameToPriceData.get(itemName);
 	}
 
 	public boolean hasItemPrice(final String itemName) {
-		return mNameToPriceData.containsKey(itemName);
+		return this.mNameToPriceData.containsKey(itemName);
 	}
 
 	public void putItemPrice(final ItemPrice itemPrice) {
-		mNameToPriceData.put(itemPrice.getName(), itemPrice);
+		this.mNameToPriceData.put(itemPrice.getName(), itemPrice);
 	}
 
 	public void serialize() throws StoreCacheSerializationUnsuccessfulException {
-		mLogger.logInfo("Serializing StoreCache");
+		this.mLogger.logInfo("Serializing StoreCache");
 
-		ObjectOutputStream oos = null;
-		try {
-			final FileOutputStream fos = new FileOutputStream(buildSerializationPath(mWorld));
-			oos = new ObjectOutputStream(fos);
+		try (final ObjectOutputStream oos = new ObjectOutputStream(
+				new FileOutputStream(buildSerializationPath(this.mWorld)))) {
 			oos.writeObject(this);
 		} catch (final IOException e) {
 			throw new StoreCacheSerializationUnsuccessfulException(e);
-		} finally {
-			try {
-				if (oos != null) {
-					oos.close();
-				}
-			} catch (final IOException e) {
-				throw new StoreCacheSerializationUnsuccessfulException(e);
-			}
 		}
 	}
 
 	public int size() {
-		return mNameToPriceData.size();
+		return this.mNameToPriceData.size();
 	}
 
 	private void refreshLogger() {
-		mLogger = LoggerFactory.getLogger();
+		this.mLogger = LoggerFactory.getLogger();
 	}
 }

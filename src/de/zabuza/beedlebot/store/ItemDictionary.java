@@ -16,11 +16,11 @@ public final class ItemDictionary {
 	private final Map<String, Integer> mStandardShopPrices;
 
 	public ItemDictionary() {
-		mStandardShopPrices = new HashMap<>();
-		mPlayerPrices = new HashMap<>();
-		mItemNamePatterns = new HashMap<>();
-		mItemsRegisteredForShop = new HashSet<>();
-		mItemsRegisteredForPlayer = new HashSet<>();
+		this.mStandardShopPrices = new HashMap<>();
+		this.mPlayerPrices = new HashMap<>();
+		this.mItemNamePatterns = new HashMap<>();
+		this.mItemsRegisteredForShop = new HashSet<>();
+		this.mItemsRegisteredForPlayer = new HashSet<>();
 
 		initializeStandardShopPrices();
 		initializePlayerPrices();
@@ -32,7 +32,7 @@ public final class ItemDictionary {
 	}
 
 	public String applyItemNamePatterns(final String itemName) {
-		for (final Entry<String, String> entry : mItemNamePatterns.entrySet()) {
+		for (final Entry<String, String> entry : this.mItemNamePatterns.entrySet()) {
 			if (itemName.matches(entry.getKey())) {
 				return entry.getValue();
 			}
@@ -41,31 +41,29 @@ public final class ItemDictionary {
 	}
 
 	public boolean containsPlayerPrice(final String itemName) {
-		return mPlayerPrices.containsKey(itemName);
+		return this.mPlayerPrices.containsKey(itemName);
 	}
 
 	public boolean containsStandardShopPrice(final String itemName) {
-		return mStandardShopPrices.containsKey(itemName);
+		return this.mStandardShopPrices.containsKey(itemName);
 	}
 
 	public Optional<Integer> getPlayerPrice(final String itemName) {
 		if (containsPlayerPrice(itemName)) {
-			return Optional.of(mPlayerPrices.get(itemName));
-		} else {
-			return Optional.empty();
+			return Optional.of(this.mPlayerPrices.get(itemName));
 		}
+		return Optional.empty();
 	}
 
 	public Optional<Integer> getStandardShopPrice(final String itemName) {
 		if (containsStandardShopPrice(itemName)) {
-			return Optional.of(mStandardShopPrices.get(itemName));
-		} else {
-			return Optional.empty();
+			return Optional.of(this.mStandardShopPrices.get(itemName));
 		}
+		return Optional.empty();
 	}
 
-	public boolean isItemRegisteredForPlayer(final String itemName, final EItemCategory category) {
-		return mItemsRegisteredForPlayer.contains(itemName);
+	public boolean isItemRegisteredForPlayer(final String itemName) {
+		return this.mItemsRegisteredForPlayer.contains(itemName);
 	}
 
 	public boolean isItemRegisteredForShop(final String itemName, final EItemCategory category) {
@@ -76,64 +74,65 @@ public final class ItemDictionary {
 			return true;
 		}
 
-		return mItemsRegisteredForShop.contains(itemName);
+		return this.mItemsRegisteredForShop.contains(itemName);
 	}
 
 	private void initializeItemNamePatterns() {
-		mItemNamePatterns.put(".*Gewebeprobe.", "Gewebeprobe");
-		mItemNamePatterns.put(".*Puppe.*", "Puppe von Beispieluser");
-		mItemNamePatterns.put(".*personalisierter Hinzauber.*", "personalisierter Hinzauber");
-		mItemNamePatterns.put(".*Zeichnung.*", "Zeichnung von Beispiel-NPC");
-		mItemNamePatterns.put(".*Blutprobe.*", "Blutprobe");
-		mItemNamePatterns.put(".*Seelenstein.*", "Seelenstein von Beispielopfer");
-		mItemNamePatterns.put(".*Wein.*", "Wein von Beispielsponsor");
-		mItemNamePatterns.put(".*Geschenk.*", "Geschenk von Beispielsponsor");
-		mItemNamePatterns.put(".*Schnaps.*", "Schnaps von Beispielsponsor");
-		mItemNamePatterns.put(".*Kaktussaft.*", "Kaktussaft von Beispielsponsor");
-		mItemNamePatterns.put(".*Largudsaft.*", "Largudsaft von Beispielsponsor");
-		mItemNamePatterns.put(".*Cocktail.*", "Cocktail von Beispielsponsor");
-		mItemNamePatterns.put(".*Tee.*", "Tee von Beispielsponsor");
-		mItemNamePatterns.put(".*Zaubertruhe von.*", "Zaubertruhe von Beispieluser");
-		mItemNamePatterns.put(".*Rückangriff.*", "starker Rückangriffszauber");
-		mItemNamePatterns.put(".*Tagebuch.*", "Tagebuch Tag 125");
-		mItemNamePatterns.put(".*Notizblock.*", "Notizblock");
-		mItemNamePatterns.put(".*Freundschaftsring.*", "Freundschaftsring");
-		mItemNamePatterns.put(".*Ehering.*", "Ehering");
-		mItemNamePatterns.put(".*Foliant.*", "Foliant der Blutprobenwesen");
-		mItemNamePatterns.put(".*Hirtenstab.*", "Hirtenstab");
-		mItemNamePatterns.put(".*Knorpel-Monster aus Draht.*", "Knorpel-Monster aus Draht (Item)");
-		mItemNamePatterns.put(".*Schatztruhe.*", "Zaubertruhe");
-		mItemNamePatterns.put(".*Sprengkapsel.*", "Sumpfgasbombe");
-		mItemNamePatterns.put(".*Wissenszauber von .*", "Wissenszauber von Beispieluser");
-		mItemNamePatterns.put(".*Hinzauber zu .*", "Hinzauber zu Beispielspieler");
+		this.mItemNamePatterns.put(".*Gewebeprobe.", "Gewebeprobe");
+		this.mItemNamePatterns.put(".*Puppe.*", "Puppe von Beispieluser");
+		this.mItemNamePatterns.put(".*personalisierter Hinzauber.*", "personalisierter Hinzauber");
+		this.mItemNamePatterns.put(".*Zeichnung.*", "Zeichnung von Beispiel-NPC");
+		this.mItemNamePatterns.put(".*Blutprobe.*", "Blutprobe");
+		this.mItemNamePatterns.put(".*Seelenstein.*", "Seelenstein von Beispielopfer");
+		this.mItemNamePatterns.put(".*Wein.*", "Wein von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Geschenk.*", "Geschenk von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Schnaps.*", "Schnaps von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Kaktussaft.*", "Kaktussaft von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Largudsaft.*", "Largudsaft von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Cocktail.*", "Cocktail von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Tee.*", "Tee von Beispielsponsor");
+		this.mItemNamePatterns.put(".*Zaubertruhe von.*", "Zaubertruhe von Beispieluser");
+		this.mItemNamePatterns.put(".*Rückangriff.*", "starker Rückangriffszauber");
+		this.mItemNamePatterns.put(".*Tagebuch.*", "Tagebuch Tag 125");
+		this.mItemNamePatterns.put(".*Notizblock.*", "Notizblock");
+		this.mItemNamePatterns.put(".*Freundschaftsring.*", "Freundschaftsring");
+		this.mItemNamePatterns.put(".*Ehering.*", "Ehering");
+		this.mItemNamePatterns.put(".*Foliant.*", "Foliant der Blutprobenwesen");
+		this.mItemNamePatterns.put(".*Hirtenstab.*", "Hirtenstab");
+		this.mItemNamePatterns.put(".*Knorpel-Monster aus Draht.*", "Knorpel-Monster aus Draht (Item)");
+		this.mItemNamePatterns.put(".*Schatztruhe.*", "Zaubertruhe");
+		this.mItemNamePatterns.put(".*Sprengkapsel.*", "Sumpfgasbombe");
+		this.mItemNamePatterns.put(".*Wissenszauber von .*", "Wissenszauber von Beispieluser");
+		this.mItemNamePatterns.put(".*Hinzauber zu .*", "Hinzauber zu Beispielspieler");
 	}
 
 	private void initializeItemsRegisteredForPlayer() {
-		mItemsRegisteredForPlayer.add("Wakrudpilz");
-		mItemsRegisteredForPlayer.add("Kuhkopf");
-		mItemsRegisteredForPlayer.add("Seelenkapsel");
-		mItemsRegisteredForPlayer.add("Seelenkugel");
-		mItemsRegisteredForPlayer.add("toter Blutwurm");
-		mItemsRegisteredForPlayer.add("Onlo-Knochen");
-		mItemsRegisteredForPlayer.add("tote Wüstenmaus");
-		mItemsRegisteredForPlayer.add("Pfeil");
-		mItemsRegisteredForPlayer.add("Phasenkugel");
-		mItemsRegisteredForPlayer.add("Zauberbrötchen");
-		mItemsRegisteredForPlayer.add("Holz");
-		mItemsRegisteredForPlayer.add("Ölfass");
-		mItemsRegisteredForPlayer.add("Artefakt von Dranar");
-		mItemsRegisteredForPlayer.add("blauer Kristall");
+		this.mItemsRegisteredForPlayer.add("Wakrudpilz");
+		this.mItemsRegisteredForPlayer.add("Kuhkopf");
+		this.mItemsRegisteredForPlayer.add("Seelenkapsel");
+		this.mItemsRegisteredForPlayer.add("Seelenkugel");
+		this.mItemsRegisteredForPlayer.add("toter Blutwurm");
+		this.mItemsRegisteredForPlayer.add("Onlo-Knochen");
+		this.mItemsRegisteredForPlayer.add("tote Wüstenmaus");
+		this.mItemsRegisteredForPlayer.add("Pfeil");
+		this.mItemsRegisteredForPlayer.add("Phasenkugel");
+		this.mItemsRegisteredForPlayer.add("Zauberbrötchen");
+		this.mItemsRegisteredForPlayer.add("Holz");
+		this.mItemsRegisteredForPlayer.add("Ölfass");
+		this.mItemsRegisteredForPlayer.add("Artefakt von Dranar");
+		this.mItemsRegisteredForPlayer.add("blauer Kristall");
+		this.mItemsRegisteredForPlayer.add("roter Bergstein");
 	}
 
 	private void initializeItemsRegisteredForShop() {
-
+		// Nothing there at the moment
 	}
 
 	private void initializePlayerPrices() {
-
+		// Nothing there at the moment
 	}
 
 	private void initializeStandardShopPrices() {
-		mStandardShopPrices.put("altes Relikt", 0);
+		this.mStandardShopPrices.put("altes Relikt", Integer.valueOf(0));
 	}
 }

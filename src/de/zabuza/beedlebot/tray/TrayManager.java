@@ -30,29 +30,29 @@ public final class TrayManager {
 	private final Image mTrayIconImage;
 
 	public TrayManager(final BeedleBot beedleBot, final Image trayIconImage) {
-		mBeedleBot = beedleBot;
-		mTrayIconImage = trayIconImage;
-		mLogger = LoggerFactory.getLogger();
+		this.mBeedleBot = beedleBot;
+		this.mTrayIconImage = trayIconImage;
+		this.mLogger = LoggerFactory.getLogger();
 		initialize();
 	}
 
 	public void addTrayIcon() throws AWTException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Adding tray icon");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Adding tray icon");
 		}
-		mSystemTray.add(mTrayIcon);
+		this.mSystemTray.add(this.mTrayIcon);
 	}
 
 	public void removeTrayIcon() {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Removing tray icon");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Removing tray icon");
 		}
-		mSystemTray.remove(mTrayIcon);
+		this.mSystemTray.remove(this.mTrayIcon);
 	}
 
 	private void initialize() throws UnsupportedSystemTrayException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Initializing TrayManager");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Initializing TrayManager");
 		}
 
 		// If try is not supported, abort
@@ -60,10 +60,10 @@ public final class TrayManager {
 			throw new UnsupportedSystemTrayException();
 		}
 
-		mSystemTray = SystemTray.getSystemTray();
+		this.mSystemTray = SystemTray.getSystemTray();
 
-		mTrayIcon = new TrayIcon(mTrayIconImage, NAME_TRAY);
-		mTrayIcon.setImageAutoSize(true);
+		this.mTrayIcon = new TrayIcon(this.mTrayIconImage, NAME_TRAY);
+		this.mTrayIcon.setImageAutoSize(true);
 
 		final MenuItem restartItem = new MenuItem(NAME_RESTART);
 		final MenuItem exitItem = new MenuItem(NAME_EXIT);
@@ -71,9 +71,9 @@ public final class TrayManager {
 		final PopupMenu popup = new PopupMenu();
 		popup.add(restartItem);
 		popup.add(exitItem);
-		mTrayIcon.setPopupMenu(popup);
+		this.mTrayIcon.setPopupMenu(popup);
 
-		restartItem.addActionListener(new RestartListener(mBeedleBot));
-		exitItem.addActionListener(new ExitListener(mBeedleBot));
+		restartItem.addActionListener(new RestartListener(this.mBeedleBot));
+		exitItem.addActionListener(new ExitListener(this.mBeedleBot));
 	}
 }

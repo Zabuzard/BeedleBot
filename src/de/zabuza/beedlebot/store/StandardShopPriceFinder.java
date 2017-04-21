@@ -3,6 +3,7 @@ package de.zabuza.beedlebot.store;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
@@ -26,31 +27,34 @@ public final class StandardShopPriceFinder {
 	private final ILogger mLogger;
 
 	public StandardShopPriceFinder(final ItemDictionary itemDictionary) {
-		mItemDictionary = itemDictionary;
-		mLogger = LoggerFactory.getLogger();
+		this.mItemDictionary = itemDictionary;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	public Optional<Integer> findStandardShopPrice(final String itemName)
 			throws StandardShopPriceServiceUnavailableException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Finding standard shop price: " + itemName);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Finding standard shop price: " + itemName);
 		}
 
 		Integer shopPrice = null;
 
-		final String parsedItemName = mItemDictionary.applyItemNamePatterns(itemName);
+		final String parsedItemName = this.mItemDictionary.applyItemNamePatterns(itemName);
 
 		// Process exceptional items
-		if (mItemDictionary.containsStandardShopPrice(parsedItemName)) {
-			return mItemDictionary.getStandardShopPrice(parsedItemName);
+		if (this.mItemDictionary.containsStandardShopPrice(parsedItemName)) {
+			return this.mItemDictionary.getStandardShopPrice(parsedItemName);
 		}
 
-		BufferedReader br = null;
+		final String itemToUrl = parsedItemName.replaceAll("\\s", "_");
+		URL url;
 		try {
-			final String itemToUrl = parsedItemName.replaceAll("\\s", "_");
-			final URL url = new URL(SERVER_URL + SERVER_QUERY_PRE + itemToUrl + SERVER_QUERY_POST);
-			br = new BufferedReader(new InputStreamReader(url.openStream()));
+			url = new URL(SERVER_URL + SERVER_QUERY_PRE + itemToUrl + SERVER_QUERY_POST);
+		} catch (final MalformedURLException e) {
+			throw new StandardShopPriceServiceUnavailableException(e);
+		}
 
+		try (final BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
 			// Find shop price parameter
 			final StringBuilder shopPriceContent = new StringBuilder();
 			int startIndex = -1;
@@ -62,7 +66,7 @@ public final class StandardShopPriceFinder {
 
 				// The item is a pet
 				if (line.indexOf(CONTENT_IGNORE_PET_PATTERN) != -1) {
-					return Optional.of(0);
+					return Optional.of(Integer.valueOf(0));
 				}
 
 				startIndex = line.indexOf(CONTENT_START_PATTERN);
@@ -94,10 +98,9 @@ public final class StandardShopPriceFinder {
 					// Add beginning of line
 					shopPriceContent.append(line.substring(0, endIndex));
 					break;
-				} else {
-					// Add whole line
-					shopPriceContent.append(line);
 				}
+				// Add whole line
+				shopPriceContent.append(line);
 			}
 			if (endIndex == -1) {
 				return Optional.empty();
@@ -105,17 +108,9 @@ public final class StandardShopPriceFinder {
 
 			// Price extracted, format it
 			final String shopPriceText = shopPriceContent.toString();
-			shopPrice = Integer.parseInt(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
+			shopPrice = new Integer(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
 		} catch (final IOException e) {
 			throw new StandardShopPriceServiceUnavailableException(e);
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (final IOException e) {
-					throw new StandardShopPriceServiceUnavailableException(e);
-				}
-			}
 		}
 
 		return Optional.of(shopPrice);

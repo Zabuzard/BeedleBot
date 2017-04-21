@@ -24,7 +24,7 @@ public class LoginActionListener implements ActionListener {
 	 *            Controller of the login dialog
 	 */
 	public LoginActionListener(final LoginDialogController controller) {
-		mController = controller;
+		this.mController = controller;
 	}
 
 	/*
@@ -35,6 +35,6 @@ public class LoginActionListener implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		mController.startLogin();
+		this.mController.startLogin();
 	}
 }

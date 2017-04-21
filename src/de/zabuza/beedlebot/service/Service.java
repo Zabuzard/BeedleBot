@@ -37,52 +37,52 @@ public final class Service extends Thread {
 
 	public Service(final IFreewarAPI api, final IFreewarInstance instance, final WebDriver driver, final Store store,
 			final BeedleBot parent) {
-		mApi = api;
-		mInstance = instance;
-		mDriver = driver;
-		mStore = store;
-		mParent = parent;
-		mLogger = LoggerFactory.getLogger();
+		this.mApi = api;
+		this.mInstance = instance;
+		this.mDriver = driver;
+		this.mStore = store;
+		this.mParent = parent;
+		this.mLogger = LoggerFactory.getLogger();
 
-		mFetchDataService = null;
-		mPushDataService = null;
-		mRoutine = null;
+		this.mFetchDataService = null;
+		this.mPushDataService = null;
+		this.mRoutine = null;
 
-		mDoRun = true;
-		mShouldStopService = false;
-		mPaused = true;
-		mProblem = null;
+		this.mDoRun = true;
+		this.mShouldStopService = false;
+		this.mPaused = true;
+		this.mProblem = null;
 
-		lastUpdateMillis = 0;
-		mProblemTimestamp = 0;
+		this.lastUpdateMillis = 0;
+		this.mProblemTimestamp = 0;
 	}
 
 	public Exception getProblem() {
-		return mProblem;
+		return this.mProblem;
 	}
 
 	public long getProblemTimestamp() {
-		return mProblemTimestamp;
+		return this.mProblemTimestamp;
 	}
 
 	public boolean hasProblem() {
-		return mProblem != null;
+		return this.mProblem != null;
 	}
 
 	public boolean isActive() {
-		return mDoRun;
+		return this.mDoRun;
 	}
 
 	public boolean isPaused() {
-		return mPaused;
+		return this.mPaused;
 	}
 
 	public void registerFetchDataService(final FetchDataService fetchDataService) {
-		mFetchDataService = fetchDataService;
+		this.mFetchDataService = fetchDataService;
 	}
 
 	public void registerPushDataService(final PushDataService pushDataService) {
-		mPushDataService = pushDataService;
+		this.mPushDataService = pushDataService;
 	}
 
 	/*
@@ -95,25 +95,25 @@ public final class Service extends Thread {
 		boolean terminateParent = false;
 		try {
 			// Create and link the routine
-			mRoutine = new Routine(this, mInstance, mDriver, mPushDataService, mStore);
-			mPushDataService.linkRoutine(mRoutine);
-			mPushDataService.setBeedleBotServing(true);
+			this.mRoutine = new Routine(this, this.mInstance, this.mDriver, this.mPushDataService, this.mStore);
+			this.mPushDataService.linkRoutine(this.mRoutine);
+			this.mPushDataService.setBeedleBotServing(true);
 		} catch (final Exception e1) {
 			// Do not enter the service loop
-			mLogger.logError("Error while starting service, not entering: " + LoggerUtil.getStackTrace(e1));
-			mDoRun = false;
+			this.mLogger.logError("Error while starting service, not entering: " + LoggerUtil.getStackTrace(e1));
+			this.mDoRun = false;
 			try {
-				mPushDataService.setBeedleBotServing(false);
+				this.mPushDataService.setBeedleBotServing(false);
 			} catch (final Exception e2) {
-				mLogger.logError("Error while starting service, not entering: " + LoggerUtil.getStackTrace(e2));
+				this.mLogger.logError("Error while starting service, not entering: " + LoggerUtil.getStackTrace(e2));
 			}
 			terminateParent = true;
 		}
 
 		// Enter the service loop
-		while (mDoRun) {
+		while (this.mDoRun) {
 			try {
-				if (mFetchDataService == null || mPushDataService == null) {
+				if (this.mFetchDataService == null || this.mPushDataService == null) {
 					waitIteration();
 					continue;
 				}
@@ -121,8 +121,8 @@ public final class Service extends Thread {
 				// Determine if to update services
 				final boolean doUpdate;
 				final long currentMillis = System.currentTimeMillis();
-				if (currentMillis - lastUpdateMillis >= UPDATE_INTERVAL) {
-					lastUpdateMillis = currentMillis;
+				if (currentMillis - this.lastUpdateMillis >= UPDATE_INTERVAL) {
+					this.lastUpdateMillis = currentMillis;
 					doUpdate = true;
 				} else {
 					doUpdate = false;
@@ -130,61 +130,61 @@ public final class Service extends Thread {
 
 				// Fetch data
 				if (doUpdate) {
-					mFetchDataService.update();
+					this.mFetchDataService.update();
 				}
 
 				// Check signals
 				if (doUpdate) {
-					if (mPaused && mFetchDataService.isStartSignalSet()) {
+					if (this.mPaused && this.mFetchDataService.isStartSignalSet()) {
 						// Continue from pause
-						mPaused = false;
+						this.mPaused = false;
 						// Clear the problem flag
 						clearProblem();
-						mFetchDataService.clearStartSignal();
-						mPushDataService.updateActiveData();
+						this.mFetchDataService.clearStartSignal();
+						this.mPushDataService.updateActiveData();
 
-						mLogger.logInfo("Continuing service");
+						this.mLogger.logInfo("Continuing service");
 					}
-					if (!mPaused && (hasProblem() || mFetchDataService.isStopSignalSet())) {
+					if (!this.mPaused && (hasProblem() || this.mFetchDataService.isStopSignalSet())) {
 						// Pause
-						mPaused = true;
-						mFetchDataService.clearStopSignal();
-						mRoutine.reset();
-						mPushDataService.updateActiveData();
+						this.mPaused = true;
+						this.mFetchDataService.clearStopSignal();
+						this.mRoutine.reset();
+						this.mPushDataService.updateActiveData();
 
-						mLogger.logInfo("Pause service");
-						mLogger.flush();
+						this.mLogger.logInfo("Pause service");
+						this.mLogger.flush();
 					}
 				}
-				if (mShouldStopService) {
-					mDoRun = false;
-					mPaused = true;
-					mRoutine.reset();
-					mPushDataService.setBeedleBotServing(false);
+				if (this.mShouldStopService) {
+					this.mDoRun = false;
+					this.mPaused = true;
+					this.mRoutine.reset();
+					this.mPushDataService.setBeedleBotServing(false);
 				}
 
 				// Continue routine
-				if (!mPaused) {
-					mRoutine.update();
+				if (!this.mPaused) {
+					this.mRoutine.update();
 				}
 
 				// Push data
 				if (doUpdate) {
-					mPushDataService.update();
+					this.mPushDataService.update();
 				}
 
 				// Delay the next iteration
 				waitIteration();
 			} catch (final Exception e1) {
-				mLogger.logError("Error while running service, shutting down: " + LoggerUtil.getStackTrace(e1));
+				this.mLogger.logError("Error while running service, shutting down: " + LoggerUtil.getStackTrace(e1));
 				// Try to shutdown
-				mDoRun = false;
-				mPaused = true;
-				mRoutine.reset();
+				this.mDoRun = false;
+				this.mPaused = true;
+				this.mRoutine.reset();
 				try {
-					mPushDataService.setBeedleBotServing(false);
+					this.mPushDataService.setBeedleBotServing(false);
 				} catch (final Exception e2) {
-					mLogger.logError("Error while trying to shutdown service: " + LoggerUtil.getStackTrace(e2));
+					this.mLogger.logError("Error while trying to shutdown service: " + LoggerUtil.getStackTrace(e2));
 				}
 				terminateParent = true;
 			}
@@ -195,21 +195,21 @@ public final class Service extends Thread {
 
 		// Request parent to terminate
 		if (terminateParent) {
-			mParent.shutdown();
+			this.mParent.shutdown();
 		}
 	}
 
 	public void setProblem(final Exception problem) {
-		mProblem = problem;
-		mProblemTimestamp = System.currentTimeMillis();
-		mLogger.logError("Problem registered: " + LoggerUtil.getStackTrace(problem));
-		mLogger.flush();
+		this.mProblem = problem;
+		this.mProblemTimestamp = System.currentTimeMillis();
+		this.mLogger.logError("Problem registered: " + LoggerUtil.getStackTrace(problem));
+		this.mLogger.flush();
 
-		mPushDataService.updateActiveData();
+		this.mPushDataService.updateActiveData();
 	}
 
 	public void stopService() {
-		mShouldStopService = true;
+		this.mShouldStopService = true;
 	}
 
 	public void waitIteration() {
@@ -217,22 +217,22 @@ public final class Service extends Thread {
 			sleep(SERVICE_INTERVAL);
 		} catch (final InterruptedException e) {
 			// Log the error but continue
-			mLogger.logError("Service wait got interrupted: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Service wait got interrupted: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 
 	private void clearProblem() {
-		mProblem = null;
+		this.mProblem = null;
 	}
 
 	private void shutdown() {
-		mLogger.logInfo("Shutting down service");
-		if (mApi != null) {
+		this.mLogger.logInfo("Shutting down service");
+		if (this.mApi != null) {
 			try {
-				mApi.shutdown(false);
+				this.mApi.shutdown(false);
 			} catch (final Exception e) {
 				// Log the error but continue
-				mLogger.logError("Error while shutting down API: " + LoggerUtil.getStackTrace(e));
+				this.mLogger.logError("Error while shutting down API: " + LoggerUtil.getStackTrace(e));
 			}
 
 		}

@@ -9,39 +9,39 @@ public final class FetchDataService {
 	private boolean mIsStopSignalSet;
 
 	public FetchDataService(final DataBridge dataBridge) {
-		mDataBridge = dataBridge;
+		this.mDataBridge = dataBridge;
 	}
 
 	public void clearStartSignal() {
-		mIsStartSignalSet = false;
-		mDataBridge.clearStartSignal();
+		this.mIsStartSignalSet = false;
+		this.mDataBridge.clearStartSignal();
 	}
 
 	public void clearStopSignal() {
-		mIsStopSignalSet = false;
-		mDataBridge.clearStopSignal();
+		this.mIsStopSignalSet = false;
+		this.mDataBridge.clearStopSignal();
 	}
 
 	public boolean isStartSignalSet() {
-		return mIsStartSignalSet;
+		return this.mIsStartSignalSet;
 	}
 
 	public boolean isStopSignalSet() {
-		return mIsStopSignalSet;
+		return this.mIsStopSignalSet;
 	}
 
 	public void update() {
 		// Fetch data
-		setStartSignal(mDataBridge.isStartSignalSet());
-		setStopSignal(mDataBridge.isStopSignalSet());
+		setStartSignal(this.mDataBridge.isStartSignalSet());
+		setStopSignal(this.mDataBridge.isStopSignalSet());
 	}
 
 	private void setStartSignal(final boolean isStartSignalSet) {
-		mIsStartSignalSet = isStartSignalSet;
+		this.mIsStartSignalSet = isStartSignalSet;
 	}
 
 	private void setStopSignal(final boolean isStopSignalSet) {
-		mIsStopSignalSet = isStopSignalSet;
+		this.mIsStopSignalSet = isStopSignalSet;
 	}
 
 }

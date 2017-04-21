@@ -15,9 +15,9 @@ public final class PlayerPrice implements Serializable, Cloneable {
 	private final EWorld mWorld;
 
 	public PlayerPrice(final int price, final long timestamp, final EWorld world) {
-		mPrice = price;
-		mTimestamp = timestamp;
-		mWorld = world;
+		this.mPrice = price;
+		this.mTimestamp = timestamp;
+		this.mWorld = world;
 	}
 
 	/*
@@ -31,15 +31,15 @@ public final class PlayerPrice implements Serializable, Cloneable {
 	}
 
 	public int getPrice() {
-		return mPrice;
+		return this.mPrice;
 	}
 
 	public long getTimestamp() {
-		return mTimestamp;
+		return this.mTimestamp;
 	}
 
 	public EWorld getWorld() {
-		return mWorld;
+		return this.mWorld;
 	}
 
 	/*
@@ -51,13 +51,13 @@ public final class PlayerPrice implements Serializable, Cloneable {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("PlayerPrice [price=");
-		builder.append(mPrice);
+		builder.append(this.mPrice);
 		builder.append(", timestamp=");
-		builder.append(mTimestamp);
+		builder.append(this.mTimestamp);
 		builder.append(", ");
-		if (mWorld != null) {
+		if (this.mWorld != null) {
 			builder.append("world=");
-			builder.append(mWorld);
+			builder.append(this.mWorld);
 		}
 		builder.append("]");
 		return builder.toString();

@@ -25,19 +25,19 @@ public final class PlayerPriceFinder {
 	private final ILogger mLogger;
 
 	public PlayerPriceFinder(final ItemDictionary itemDictionary) {
-		mItemDictionary = itemDictionary;
-		mLogger = LoggerFactory.getLogger();
+		this.mItemDictionary = itemDictionary;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	public Optional<PlayerPrice> findPlayerPrice(final String itemName, final EWorld world)
 			throws PlayerPriceServiceAnswerWrongFormatException, PlayerPriceServiceUnavailableException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Finding player price: " + itemName + ", " + world);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Finding player price: " + itemName + ", " + world);
 		}
 
 		// Process exceptional items
-		if (mItemDictionary.containsPlayerPrice(itemName)) {
-			final int price = mItemDictionary.getPlayerPrice(itemName).get();
+		if (this.mItemDictionary.containsPlayerPrice(itemName)) {
+			final int price = this.mItemDictionary.getPlayerPrice(itemName).get().intValue();
 			final long timestampNow = System.currentTimeMillis();
 			return Optional.of(new PlayerPrice(price, timestampNow, world));
 		}

@@ -74,63 +74,63 @@ public final class BeedleBot {
 	private TrayManager mTrayManager;
 
 	public BeedleBot() {
-		mTrayManager = null;
-		mLoginDialog = null;
-		mIconImage = null;
-		mApi = null;
-		mInstance = null;
-		mDriver = null;
-		mDataBridge = null;
-		mService = null;
-		mPushDataService = null;
-		mFetchDataService = null;
-		mStore = null;
-		mLogger = LoggerFactory.getLogger();
+		this.mTrayManager = null;
+		this.mLoginDialog = null;
+		this.mIconImage = null;
+		this.mApi = null;
+		this.mInstance = null;
+		this.mDriver = null;
+		this.mDataBridge = null;
+		this.mService = null;
+		this.mPushDataService = null;
+		this.mFetchDataService = null;
+		this.mStore = null;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	public void initialize() throws IOException, AWTException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Initializing BeedleBot");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Initializing BeedleBot");
 		}
-		mIconImage = ImageIO.read(new File(IMAGE_PATH_ICON));
-		mTrayManager = new TrayManager(this, mIconImage);
-		mTrayManager.addTrayIcon();
+		this.mIconImage = ImageIO.read(new File(IMAGE_PATH_ICON));
+		this.mTrayManager = new TrayManager(this, this.mIconImage);
+		this.mTrayManager.addTrayIcon();
 	}
 
 	public void shutdown() {
-		mLogger.flush();
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Shutting down BeedleBot");
+		this.mLogger.flush();
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Shutting down BeedleBot");
 		}
 		try {
 			stop();
 		} catch (final Exception e) {
-			mLogger.logError("Error while stopping: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while stopping: " + LoggerUtil.getStackTrace(e));
 		}
 
-		if (mTrayManager != null) {
+		if (this.mTrayManager != null) {
 			try {
-				mTrayManager.removeTrayIcon();
+				this.mTrayManager.removeTrayIcon();
 			} catch (final Exception e) {
-				mLogger.logError("Error while removing tray icon: " + LoggerUtil.getStackTrace(e));
+				this.mLogger.logError("Error while removing tray icon: " + LoggerUtil.getStackTrace(e));
 			}
 
 		}
 
-		mLogger.logInfo("BeedleBot shutdown");
-		mLogger.close();
+		this.mLogger.logInfo("BeedleBot shutdown");
+		this.mLogger.close();
 	}
 
 	public void start() {
-		mLogger.logInfo("BeedleBot start");
+		this.mLogger.logInfo("BeedleBot start");
 
-		mLoginDialog = new LoginDialog(this, mIconImage);
+		this.mLoginDialog = new LoginDialog(this, this.mIconImage);
 	}
 
 	public void startService(final IUserSettingsProvider userSettingsProvider,
 			final IBrowserSettingsProvider browserSettingsProvider) throws EmptyUserCredentialsException {
 		try {
-			mLogger.logInfo("Starting service");
+			this.mLogger.logInfo("Starting service");
 
 			final String username = userSettingsProvider.getUserName();
 			final String password = userSettingsProvider.getPassword();
@@ -142,41 +142,41 @@ public final class BeedleBot {
 			}
 
 			// Create the store
-			mStore = new Store(username, world);
+			this.mStore = new Store(username, world);
 
 			// Create Freewar API
 			final EBrowser browser = browserSettingsProvider.getBrowser();
-			mApi = new Sparkle(browser);
+			this.mApi = new Sparkle(browser);
 
 			// Set options
-			final DesiredCapabilities capabilities = mApi.createCapabilities(browser,
+			final DesiredCapabilities capabilities = this.mApi.createCapabilities(browser,
 					browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary(),
 					browserSettingsProvider.getUserProfile());
-			mApi.setCapabilities(capabilities);
+			this.mApi.setCapabilities(capabilities);
 
 			// Login and create an instance
-			mInstance = mApi.login(username, password, world);
-			mDriver = ((IHasWebDriver) mInstance).getWebDriver();
+			this.mInstance = this.mApi.login(username, password, world);
+			this.mDriver = ((IHasWebDriver) this.mInstance).getWebDriver();
 
 			// Create and start all services
-			mDataBridge = new DataBridge(mDriver);
-			mService = new Service(mApi, mInstance, mDriver, mStore, this);
-			mPushDataService = new PushDataService(mService, mInstance, mDataBridge);
-			mFetchDataService = new FetchDataService(mDataBridge);
-			mService.registerFetchDataService(mFetchDataService);
-			mService.registerPushDataService(mPushDataService);
-			mService.start();
+			this.mDataBridge = new DataBridge(this.mDriver);
+			this.mService = new Service(this.mApi, this.mInstance, this.mDriver, this.mStore, this);
+			this.mPushDataService = new PushDataService(this.mService, this.mInstance, this.mDataBridge);
+			this.mFetchDataService = new FetchDataService(this.mDataBridge);
+			this.mService.registerFetchDataService(this.mFetchDataService);
+			this.mService.registerPushDataService(this.mPushDataService);
+			this.mService.start();
 		} catch (final Exception e) {
-			mLogger.logError("Error while starting service, shutting down: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while starting service, shutting down: " + LoggerUtil.getStackTrace(e));
 			// Try to shutdown and free all resources
-			if (mStore != null) {
-				mStore.finalize();
+			if (this.mStore != null) {
+				this.mStore.shutdown();
 			}
-			if (mInstance != null && mApi != null) {
-				mApi.logout(mInstance, false);
+			if (this.mInstance != null && this.mApi != null) {
+				this.mApi.logout(this.mInstance, false);
 			}
-			if (mApi != null) {
-				mApi.shutdown(false);
+			if (this.mApi != null) {
+				this.mApi.shutdown(false);
 			}
 
 			shutdown();
@@ -187,36 +187,36 @@ public final class BeedleBot {
 		try {
 			stopLoginDialog();
 		} catch (final Exception e) {
-			mLogger.logError("Error while stopping login dialog: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while stopping login dialog: " + LoggerUtil.getStackTrace(e));
 		}
 
 		try {
 			stopService();
 		} catch (final Exception e) {
-			mLogger.logError("Error while stopping service: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while stopping service: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 
 	private void stopLoginDialog() {
-		if (mLoginDialog != null && mLoginDialog.isActive()) {
-			mLoginDialog.dispose();
-			mLoginDialog = null;
+		if (this.mLoginDialog != null && this.mLoginDialog.isActive()) {
+			this.mLoginDialog.dispose();
+			this.mLoginDialog = null;
 		}
 	}
 
 	private void stopService() {
-		if (mService != null && mService.isActive()) {
+		if (this.mService != null && this.mService.isActive()) {
 			try {
-				mService.stopService();
+				this.mService.stopService();
 			} catch (final Exception e) {
-				mLogger.logError("Error while stopping service: " + LoggerUtil.getStackTrace(e));
+				this.mLogger.logError("Error while stopping service: " + LoggerUtil.getStackTrace(e));
 			}
 
 			try {
-				mStore.finalize();
-				mLogger.flush();
+				this.mStore.shutdown();
+				this.mLogger.flush();
 			} catch (final Exception e) {
-				mLogger.logError("Error while finalizing store: " + LoggerUtil.getStackTrace(e));
+				this.mLogger.logError("Error while finalizing store: " + LoggerUtil.getStackTrace(e));
 			}
 		}
 	}

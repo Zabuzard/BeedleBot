@@ -40,8 +40,8 @@ public final class Settings {
 	 * Create a new settings object.
 	 */
 	public Settings() {
-		mProperties = new Properties();
-		mLogger = LoggerFactory.getLogger();
+		this.mProperties = new Properties();
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	/**
@@ -52,23 +52,26 @@ public final class Settings {
 	 *            Provider which settings will be affected
 	 */
 	public final void loadSettings(final ISettingsProvider provider) {
-		mLogger.logInfo("Loading settings");
-		try {
+		this.mLogger.logInfo("Loading settings");
+		try (final FileInputStream fis = new FileInputStream(FILEPATH)) {
 			try {
-				mProperties.load(new FileInputStream(FILEPATH));
+				this.mProperties.load(fis);
 			} catch (final FileNotFoundException e) {
-				mLogger.logInfo("Creating settings file");
+				this.mLogger.logInfo("Creating settings file");
 				saveSettings(provider);
-				mProperties.load(new FileInputStream(FILEPATH));
+
+				try (final FileInputStream anotherFis = new FileInputStream(FILEPATH)) {
+					this.mProperties.load(anotherFis);
+				}
 			}
 
 			// Fetch and set every saved setting
-			for (Entry<Object, Object> entry : mProperties.entrySet()) {
+			for (Entry<Object, Object> entry : this.mProperties.entrySet()) {
 				provider.setSetting((String) entry.getKey(), (String) entry.getValue());
 			}
 		} catch (final IOException e) {
 			// Log the error but continue
-			mLogger.logError("Error while loading settings: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while loading settings: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 
@@ -79,30 +82,19 @@ public final class Settings {
 	 *            Provider which settings will be affected
 	 */
 	public final void saveSettings(final ISettingsProvider provider) {
-		mLogger.logInfo("Saving settings");
+		this.mLogger.logInfo("Saving settings");
 
-		FileOutputStream target = null;
-		try {
-			// Fetch and put every setting
-			for (Entry<String, String> entry : provider.getAllSettings().entrySet()) {
-				mProperties.put(entry.getKey(), entry.getValue());
-			}
+		// Fetch and put every setting
+		for (Entry<String, String> entry : provider.getAllSettings().entrySet()) {
+			this.mProperties.put(entry.getKey(), entry.getValue());
+		}
 
+		try (final FileOutputStream target = new FileOutputStream(new File(FILEPATH))) {
 			// Save the settings
-			target = new FileOutputStream(new File(FILEPATH));
-			mProperties.store(target, FILE_COMMENT);
+			this.mProperties.store(target, FILE_COMMENT);
 		} catch (final IOException e) {
 			// Log the error but continue
-			mLogger.logError("Error while saving settings: " + LoggerUtil.getStackTrace(e));
-		} finally {
-			if (target != null) {
-				try {
-					target.close();
-				} catch (final IOException e) {
-					// Log the error but continue
-					mLogger.logError("Error while closing settings file for saving: " + LoggerUtil.getStackTrace(e));
-				}
-			}
+			this.mLogger.logError("Error while saving settings: " + LoggerUtil.getStackTrace(e));
 		}
 	}
 }

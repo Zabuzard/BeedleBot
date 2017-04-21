@@ -48,39 +48,39 @@ public final class LoginDialogController {
 	 *            The beedle bot tool
 	 */
 	public LoginDialogController(final JFrame owner, final LoginDialogView view, final BeedleBot beedleBot) {
-		mOwner = owner;
-		mView = view;
-		mBeedleBot = beedleBot;
-		mSettingsController = new SettingsController(owner, view);
-		mLogger = LoggerFactory.getLogger();
+		this.mOwner = owner;
+		this.mView = view;
+		this.mBeedleBot = beedleBot;
+		this.mSettingsController = new SettingsController(owner, view);
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	/**
 	 * Initializes the controller.
 	 */
 	public void initialize() {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Initializing LoginDialogController");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Initializing LoginDialogController");
 		}
 
 		linkListener();
-		mSettingsController.initialize();
+		this.mSettingsController.initialize();
 		// Pass the saved settings to the view
-		mSettingsController.passSettingsToMainView();
+		this.mSettingsController.passSettingsToMainView();
 	}
 
 	/**
 	 * Shuts the beedle bot tool down.
 	 */
 	public void shutdownTool() {
-		mBeedleBot.shutdown();
+		this.mBeedleBot.shutdown();
 	}
 
 	/**
 	 * Starts the controller.
 	 */
 	public void start() {
-
+		// Nothing to do there yet
 	}
 
 	/**
@@ -89,18 +89,18 @@ public final class LoginDialogController {
 	public void startLogin() {
 		try {
 			// First save the current content of the view
-			mSettingsController.executeSaveAction();
+			this.mSettingsController.executeSaveAction();
 
 			// Close the dialog
-			mOwner.setVisible(false);
-			mOwner.dispose();
+			this.mOwner.setVisible(false);
+			this.mOwner.dispose();
 
 			// Start the login
-			mBeedleBot.startService(mSettingsController, mSettingsController);
+			this.mBeedleBot.startService(this.mSettingsController, this.mSettingsController);
 		} catch (final Exception e) {
-			mLogger.logError("Error while starting login, shutting down: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while starting login, shutting down: " + LoggerUtil.getStackTrace(e));
 			// Try to shutdown
-			mBeedleBot.shutdown();
+			this.mBeedleBot.shutdown();
 		}
 	}
 
@@ -108,9 +108,9 @@ public final class LoginDialogController {
 	 * Links the listener to the view.
 	 */
 	private void linkListener() {
-		mView.addListenerToLoginAction(new LoginActionListener(this));
-		mView.addWindowListener(new ExitAtWindowCloseListener(this));
+		this.mView.addListenerToLoginAction(new LoginActionListener(this));
+		this.mView.addWindowListener(new ExitAtWindowCloseListener(this));
 
-		mOwner.getRootPane().setDefaultButton(mView.getLoginButton());
+		this.mOwner.getRootPane().setDefaultButton(this.mView.getLoginButton());
 	}
 }

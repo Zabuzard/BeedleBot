@@ -61,10 +61,9 @@ public final class StoreUtil {
 		http.setRequestProperty(POST_REQUEST_TYPE_PROPERTY, POST_REQUEST_TYPE);
 
 		http.connect();
-		final OutputStream os = http.getOutputStream();
-		os.write(out);
-
-		os.close();
+		try (final OutputStream os = http.getOutputStream()) {
+			os.write(out);
+		}
 		http.disconnect();
 	}
 

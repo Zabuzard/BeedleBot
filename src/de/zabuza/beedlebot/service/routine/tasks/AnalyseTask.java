@@ -47,14 +47,14 @@ public final class AnalyseTask implements ITask {
 
 	public AnalyseTask(final WebDriver driver, final IFrameManager frameManager, final AnalyseResult result,
 			final EItemCategory itemCategory, final Store store, final CentralTradersDepotNavigator navigator) {
-		mInterrupted = false;
-		mDriver = driver;
-		mFrameManager = frameManager;
-		mResult = result;
-		mItemCategory = itemCategory;
-		mStore = store;
-		mNavigator = navigator;
-		mLogger = LoggerFactory.getLogger();
+		this.mInterrupted = false;
+		this.mDriver = driver;
+		this.mFrameManager = frameManager;
+		this.mResult = result;
+		this.mItemCategory = itemCategory;
+		this.mStore = store;
+		this.mNavigator = navigator;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -64,7 +64,7 @@ public final class AnalyseTask implements ITask {
 	 */
 	@Override
 	public void interrupt() {
-		mInterrupted = true;
+		this.mInterrupted = true;
 	}
 
 	/*
@@ -74,7 +74,7 @@ public final class AnalyseTask implements ITask {
 	 */
 	@Override
 	public boolean isInterrupted() {
-		return mInterrupted;
+		return this.mInterrupted;
 	}
 
 	/*
@@ -84,29 +84,29 @@ public final class AnalyseTask implements ITask {
 	 */
 	@Override
 	public void start() throws ItemCategoryNotOpenedException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Starting AnalyseTask");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Starting AnalyseTask");
 		}
 
 		// Open category
-		final boolean wasClicked = mNavigator.openItemCategory(mItemCategory);
+		final boolean wasClicked = this.mNavigator.openItemCategory(this.mItemCategory);
 
 		if (!wasClicked) {
-			mNavigator.exitMenu();
+			this.mNavigator.exitMenu();
 			throw new ItemCategoryNotOpenedException();
 		}
 
 		// Retrieve content
 		// Ensure that we extract from the correct frame in case that another
 		// thread might have changed the focus
-		mFrameManager.switchToFrame(EFrame.MAIN);
-		final String content = mDriver.getPageSource();
+		this.mFrameManager.switchToFrame(EFrame.MAIN);
+		final String content = this.mDriver.getPageSource();
 
 		// Process content
 		processContent(content);
 
 		// Finish the task
-		mNavigator.exitMenu();
+		this.mNavigator.exitMenu();
 	}
 
 	private void processContent(final String content) throws PageContentWrongFormatException,
@@ -151,7 +151,7 @@ public final class AnalyseTask implements ITask {
 					itemCostEnd);
 			// Remove thousand separator
 			itemCostText = itemCostText.replaceAll("\\.", "");
-			final Integer itemCost = Integer.parseInt(itemCostText);
+			final int itemCost = Integer.parseInt(itemCostText);
 
 			// Extract purchase anchor
 			final int purchaseAnchorStart = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_START);
@@ -178,9 +178,9 @@ public final class AnalyseTask implements ITask {
 			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);
 
 			// Determine profit
-			final ItemPrice itemPriceData = mStore.getItemPrice(itemName);
-			final boolean isConsideredForShop = mStore.isItemConsideredForShop(itemName, itemCost, itemPriceData,
-					mItemCategory);
+			final ItemPrice itemPriceData = this.mStore.getItemPrice(itemName);
+			final boolean isConsideredForShop = this.mStore.isItemConsideredForShop(itemName, itemCost, itemPriceData,
+					this.mItemCategory);
 			final int itemProfit;
 			if (isConsideredForShop) {
 				final int standardShopPrice = itemPriceData.getStandardShopPrice();
@@ -195,11 +195,11 @@ public final class AnalyseTask implements ITask {
 			}
 
 			final Item item = new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical,
-					isConsideredForShop, itemPriceData, mItemCategory);
+					isConsideredForShop, itemPriceData, this.mItemCategory);
 
 			// Add the item to the analyse result if accepted
-			if (mStore.isItemAccepted(item)) {
-				mResult.add(item);
+			if (Store.isItemAccepted(item)) {
+				this.mResult.add(item);
 			}
 		}
 	}

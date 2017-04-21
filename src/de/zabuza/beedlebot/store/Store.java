@@ -18,6 +18,17 @@ public final class Store {
 		return (int) Math.floor(standardShopPrice * FULL_SHOP_DISCOUNT_FACTOR);
 	}
 
+	public static boolean isItemAccepted(final Item item) {
+		if (item.isMagical()) {
+			return false;
+		}
+		if (item.getName().equals("gepresste Zauberkugel")) {
+			return false;
+		}
+
+		return item.getProfit() > 0;
+	}
+
 	private static boolean isItemPriceValid(final ItemPrice itemPrice) {
 		final long now = System.currentTimeMillis();
 
@@ -44,50 +55,36 @@ public final class Store {
 	private final PurchaseRegister mPurchaseRegister;
 	private final StandardShopPriceFinder mStandardShopPriceFinder;
 	private final StoreCache mStoreCache;
+
 	private final EWorld mWorld;
 
 	public Store(final String user, final EWorld world) {
-		mLogger = LoggerFactory.getLogger();
-		mWorld = world;
-		mItemDictionary = new ItemDictionary();
-		mStandardShopPriceFinder = new StandardShopPriceFinder(mItemDictionary);
-		mPlayerPriceFinder = new PlayerPriceFinder(mItemDictionary);
-		mPurchaseRegister = new PurchaseRegister(user, world);
+		this.mLogger = LoggerFactory.getLogger();
+		this.mWorld = world;
+		this.mItemDictionary = new ItemDictionary();
+		this.mStandardShopPriceFinder = new StandardShopPriceFinder(this.mItemDictionary);
+		this.mPlayerPriceFinder = new PlayerPriceFinder(this.mItemDictionary);
+		this.mPurchaseRegister = new PurchaseRegister(user, world);
 
 		// Try to create cache from serialized content
-		if (StoreCache.hasSerializedCache(mWorld)) {
-			mStoreCache = StoreCache.deserialize(mWorld);
+		if (StoreCache.hasSerializedCache(this.mWorld)) {
+			this.mStoreCache = StoreCache.deserialize(this.mWorld);
 		} else {
-			mStoreCache = new StoreCache(mWorld);
+			this.mStoreCache = new StoreCache(this.mWorld);
 		}
-	}
-
-	public void finalize() {
-		mStoreCache.serialize();
 	}
 
 	public ItemPrice getItemPrice(final String itemName) {
 		return getItemPrice(itemName, false);
 	}
 
-	public boolean isItemAccepted(final Item item) {
-		if (item.isMagical()) {
-			return false;
-		}
-		if (item.getName().equals("gepresste Zauberkugel")) {
-			return false;
-		}
-
-		return item.getProfit() > 0;
-	}
-
 	public boolean isItemConsideredForShop(final String itemName, final int cost, final ItemPrice itemPrice,
 			final EItemCategory category) {
 		// First check the dictionary for exceptions
-		if (mItemDictionary.isItemRegisteredForShop(itemName, category)) {
+		if (this.mItemDictionary.isItemRegisteredForShop(itemName, category)) {
 			return true;
 		}
-		if (mItemDictionary.isItemRegisteredForPlayer(itemName, category)) {
+		if (this.mItemDictionary.isItemRegisteredForPlayer(itemName)) {
 			return false;
 		}
 
@@ -98,30 +95,32 @@ public final class Store {
 			if (playerPrice - cost >= CONSIDER_PLAYER_PRICE_COST_ABS) {
 				// Decide for the bigger one
 				return shopPrice >= playerPrice;
-			} else {
-				// Decide for shop
-				return true;
 			}
-		} else {
 			// Decide for shop
 			return true;
 		}
+		// Decide for shop
+		return true;
 	}
 
 	public void registerItemPurchase(final Item item) {
-		mPurchaseRegister.registerPurchase(item);
+		this.mPurchaseRegister.registerPurchase(item);
+	}
+
+	public void shutdown() {
+		this.mStoreCache.serialize();
 	}
 
 	private ItemPrice getItemPrice(final String itemName, final boolean ignoreCache)
 			throws NoStandardShopPriceException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Getting item price: " + itemName + ", " + ignoreCache);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Getting item price: " + itemName + ", " + ignoreCache);
 		}
 
 		ItemPrice itemPrice = null;
 		// Try to use the cache first
-		if (!ignoreCache && mStoreCache.hasItemPrice(itemName)) {
-			ItemPrice storedItemPrice = mStoreCache.getItemPrice(itemName);
+		if (!ignoreCache && this.mStoreCache.hasItemPrice(itemName)) {
+			ItemPrice storedItemPrice = this.mStoreCache.getItemPrice(itemName);
 			if (isItemPriceValid(storedItemPrice)) {
 				itemPrice = storedItemPrice;
 			}
@@ -130,27 +129,28 @@ public final class Store {
 		// Lookup the price if item is not cached or not valid
 		if (itemPrice == null) {
 			// Lookup standard price in FwWiki
-			final Optional<Integer> standardShopPrice = mStandardShopPriceFinder.findStandardShopPrice(itemName);
+			final Optional<Integer> standardShopPrice = this.mStandardShopPriceFinder.findStandardShopPrice(itemName);
 
 			if (!standardShopPrice.isPresent()) {
 				throw new NoStandardShopPriceException(itemName);
 			}
 
 			// Lookup player to player price in MPLogger interface
-			final Optional<PlayerPrice> playerPrice = mPlayerPriceFinder.findPlayerPrice(itemName, mWorld);
+			final Optional<PlayerPrice> playerPrice = this.mPlayerPriceFinder.findPlayerPrice(itemName, this.mWorld);
 
 			// Create data
 			if (playerPrice.isPresent()) {
-				itemPrice = new ItemPrice(itemName, standardShopPrice.get(), playerPrice.get(), false,
+				itemPrice = new ItemPrice(itemName, standardShopPrice.get().intValue(), playerPrice.get(), false,
 						System.currentTimeMillis());
 			} else {
-				itemPrice = new ItemPrice(itemName, standardShopPrice.get(), false, System.currentTimeMillis());
+				itemPrice = new ItemPrice(itemName, standardShopPrice.get().intValue(), false,
+						System.currentTimeMillis());
 			}
 
 			// Create a version for the cache and update it
 			final ItemPrice cacheItemPrice = itemPrice.clone();
 			cacheItemPrice.setIsCached(true);
-			mStoreCache.putItemPrice(cacheItemPrice);
+			this.mStoreCache.putItemPrice(cacheItemPrice);
 		}
 
 		return itemPrice;

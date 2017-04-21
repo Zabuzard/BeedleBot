@@ -21,12 +21,12 @@ public final class PurchaseTask implements ITask {
 	private boolean mWasBought;
 
 	public PurchaseTask(final CentralTradersDepotNavigator nagivator, final IPlayer player, final Item item) {
-		mNavigator = nagivator;
-		mPlayer = player;
-		mItem = item;
-		mInterrupted = false;
-		mWasBought = false;
-		mLogger = LoggerFactory.getLogger();
+		this.mNavigator = nagivator;
+		this.mPlayer = player;
+		this.mItem = item;
+		this.mInterrupted = false;
+		this.mWasBought = false;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	/*
@@ -36,7 +36,7 @@ public final class PurchaseTask implements ITask {
 	 */
 	@Override
 	public void interrupt() {
-		mInterrupted = true;
+		this.mInterrupted = true;
 	}
 
 	/*
@@ -46,7 +46,7 @@ public final class PurchaseTask implements ITask {
 	 */
 	@Override
 	public boolean isInterrupted() {
-		return mInterrupted;
+		return this.mInterrupted;
 	}
 
 	/*
@@ -56,43 +56,43 @@ public final class PurchaseTask implements ITask {
 	 */
 	@Override
 	public void start() throws ItemCategoryNotOpenedException, PurchaseDialogNotClosedException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Starting PurchaseTask");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Starting PurchaseTask");
 		}
 
 		// Check if player has enough gold to buy the item
-		final int currentGold = mPlayer.getGold();
-		if (currentGold < mItem.getCost()) {
+		final int currentGold = this.mPlayer.getGold();
+		if (currentGold < this.mItem.getCost()) {
 			throw new PurchaseNoGoldException();
 		}
 
-		final boolean wasCategoryClicked = mNavigator.openItemCategory(mItem.getItemCategory());
+		final boolean wasCategoryClicked = this.mNavigator.openItemCategory(this.mItem.getItemCategory());
 		if (!wasCategoryClicked) {
-			mNavigator.exitMenu();
+			this.mNavigator.exitMenu();
 			throw new ItemCategoryNotOpenedException();
 		}
 
 		// Click the purchase anchor
-		final boolean wasBought = mNavigator.purchaseItem(mItem.getPurchaseAnchor());
+		final boolean wasBought = this.mNavigator.purchaseItem(this.mItem.getPurchaseAnchor());
 		if (!wasBought) {
 			// Item is not present anymore, another player may already have
 			// bought it
-			mNavigator.exitMenu();
+			this.mNavigator.exitMenu();
 			return;
 		}
 
 		// Click the continue anchor
-		final boolean wasContinueClicked = mNavigator.exitPurchasedDialog();
+		final boolean wasContinueClicked = this.mNavigator.exitPurchasedDialog();
 
 		if (!wasContinueClicked) {
-			mNavigator.exitMenu();
+			this.mNavigator.exitMenu();
 			throw new PurchaseDialogNotClosedException();
 		}
 
-		mWasBought = true;
+		this.mWasBought = true;
 	}
 
 	public boolean wasBought() {
-		return mWasBought;
+		return this.mWasBought;
 	}
 }

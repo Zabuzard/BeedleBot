@@ -37,80 +37,80 @@ public final class CentralTradersDepotNavigator {
 	private final ILogger mLogger;
 
 	public CentralTradersDepotNavigator(final IFreewarInstance instance, final WebDriver driver) {
-		mInstance = instance;
-		mChat = instance.getChat();
-		mFrameManager = instance.getFrameManager();
-		mDriver = driver;
-		mLogger = LoggerFactory.getLogger();
+		this.mInstance = instance;
+		this.mChat = instance.getChat();
+		this.mFrameManager = instance.getFrameManager();
+		this.mDriver = driver;
+		this.mLogger = LoggerFactory.getLogger();
 
-		mItemCategoryToAnchorNeedle = new HashMap<>();
-		mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.DEFENSE_WEAPON, DEFENSE_WEAPON_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.AMULET, AMULET_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.SPELL, SPELL_CATEGORY_ANCHOR);
-		mItemCategoryToAnchorNeedle.put(EItemCategory.MISCELLANEOUS, MISCELLANEOUS_CATEGORY_ANCHOR);
+		this.mItemCategoryToAnchorNeedle = new HashMap<>();
+		this.mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
+		this.mItemCategoryToAnchorNeedle.put(EItemCategory.DEFENSE_WEAPON, DEFENSE_WEAPON_CATEGORY_ANCHOR);
+		this.mItemCategoryToAnchorNeedle.put(EItemCategory.AMULET, AMULET_CATEGORY_ANCHOR);
+		this.mItemCategoryToAnchorNeedle.put(EItemCategory.SPELL, SPELL_CATEGORY_ANCHOR);
+		this.mItemCategoryToAnchorNeedle.put(EItemCategory.MISCELLANEOUS, MISCELLANEOUS_CATEGORY_ANCHOR);
 	}
 
 	public boolean exitMenu() {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Exiting central traders depot menu");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Exiting central traders depot menu");
 		}
 
-		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, EXIT_MENU_ANCHOR);
+		final boolean wasClicked = this.mInstance.clickAnchorByContent(EFrame.MAIN, EXIT_MENU_ANCHOR);
 
 		// Wait for click to get executed
-		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+		new EventQueueEmptyWait(this.mDriver).waitUntilCondition();
 
 		// Focus chat input in case user was typing before
-		mChat.focusChatInput();
+		this.mChat.focusChatInput();
 
 		return wasClicked;
 	}
 
 	public boolean exitPurchasedDialog() {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Exiting central traders depot purchased dialog");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Exiting central traders depot purchased dialog");
 		}
 
 		// Wait for dialog to appear
-		mFrameManager.switchToFrame(EFrame.MAIN);
-		new LinkTextPresenceWait(mDriver, CONTINUE_ANCHOR);
-		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
+		this.mFrameManager.switchToFrame(EFrame.MAIN);
+		new LinkTextPresenceWait(this.mDriver, CONTINUE_ANCHOR).waitUntilCondition();
+		final boolean wasClicked = this.mInstance.clickAnchorByContent(EFrame.MAIN, CONTINUE_ANCHOR);
 
 		// Wait for click to get executed
-		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+		new EventQueueEmptyWait(this.mDriver).waitUntilCondition();
 
 		// Focus chat input in case user was typing before
-		mChat.focusChatInput();
+		this.mChat.focusChatInput();
 
 		return wasClicked;
 	}
 
 	public boolean openItemCategory(final EItemCategory category) {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Opening central traders depot item category: " + category);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Opening central traders depot item category: " + category);
 		}
 
-		final String needle = mItemCategoryToAnchorNeedle.get(category);
-		final boolean wasClicked = mInstance.clickAnchorByContent(EFrame.MAIN, needle);
+		final String needle = this.mItemCategoryToAnchorNeedle.get(category);
+		final boolean wasClicked = this.mInstance.clickAnchorByContent(EFrame.MAIN, needle);
 
 		// Wait for click to get executed
-		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+		new EventQueueEmptyWait(this.mDriver).waitUntilCondition();
 
 		// Focus chat input in case user was typing before
-		mChat.focusChatInput();
+		this.mChat.focusChatInput();
 
 		return wasClicked;
 	}
 
 	public boolean purchaseItem(final String purchaseAnchor) {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Purchasing central traders depot item: " + purchaseAnchor);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Purchasing central traders depot item: " + purchaseAnchor);
 		}
 
-		mFrameManager.switchToFrame(EFrame.MAIN);
+		this.mFrameManager.switchToFrame(EFrame.MAIN);
 		final String selector = CSS_PURCHASE_ANCHOR_SELECTOR_PRE + purchaseAnchor + CSS_PURCHASE_ANCHOR_SELECTOR_SUC;
-		final List<WebElement> elements = mDriver.findElements(By.cssSelector(selector));
+		final List<WebElement> elements = this.mDriver.findElements(By.cssSelector(selector));
 		if (elements.isEmpty()) {
 			return false;
 		}
@@ -119,10 +119,10 @@ public final class CentralTradersDepotNavigator {
 		elements.iterator().next().click();
 
 		// Wait for click to get executed
-		new EventQueueEmptyWait(mDriver).waitUntilCondition();
+		new EventQueueEmptyWait(this.mDriver).waitUntilCondition();
 
 		// Focus chat input in case user was typing before
-		mChat.focusChatInput();
+		this.mChat.focusChatInput();
 
 		return true;
 	}

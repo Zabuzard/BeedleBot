@@ -30,14 +30,14 @@ public final class PurchaseRegister {
 	private final EWorld mWorld;
 
 	public PurchaseRegister(final String user, final EWorld world) {
-		mUser = user;
-		mWorld = world;
-		mLogger = LoggerFactory.getLogger();
+		this.mUser = user;
+		this.mWorld = world;
+		this.mLogger = LoggerFactory.getLogger();
 	}
 
 	public void registerPurchase(final Item item) throws PurchaseRegisterServiceUnavailableException {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Register purchase: " + item);
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Register purchase: " + item);
 		}
 
 		try {
@@ -49,8 +49,8 @@ public final class PurchaseRegister {
 
 			// Put data
 			arguments.put(ARG_ID, item.getId() + emptyText);
-			arguments.put(ARG_USER, mUser);
-			arguments.put(ARG_WORLD, StoreUtil.worldToNumber(mWorld) + emptyText);
+			arguments.put(ARG_USER, this.mUser);
+			arguments.put(ARG_WORLD, StoreUtil.worldToNumber(this.mWorld) + emptyText);
 			arguments.put(ARG_ITEM, item.getName());
 			arguments.put(ARG_COST, item.getCost() + emptyText);
 			arguments.put(ARG_PROFIT, item.getProfit() + emptyText);

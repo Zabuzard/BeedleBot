@@ -15,51 +15,51 @@ public final class Item {
 	public Item(final String name, final int cost, final int profit, final int id, final String purchaseAnchor,
 			boolean isMagical, final boolean isConsideredForShop, final ItemPrice storePriceData,
 			final EItemCategory itemCategory) {
-		mName = name;
-		mCost = cost;
-		mProfit = profit;
-		mId = id;
-		mItemCategory = itemCategory;
-		mStorePriceData = storePriceData;
-		mPurchaseAnchor = purchaseAnchor;
-		mIsMagical = isMagical;
-		mIsConsideredForShop = isConsideredForShop;
+		this.mName = name;
+		this.mCost = cost;
+		this.mProfit = profit;
+		this.mId = id;
+		this.mItemCategory = itemCategory;
+		this.mStorePriceData = storePriceData;
+		this.mPurchaseAnchor = purchaseAnchor;
+		this.mIsMagical = isMagical;
+		this.mIsConsideredForShop = isConsideredForShop;
 	}
 
 	public int getCost() {
-		return mCost;
+		return this.mCost;
 	}
 
 	public int getId() {
-		return mId;
+		return this.mId;
 	}
 
 	public EItemCategory getItemCategory() {
-		return mItemCategory;
+		return this.mItemCategory;
 	}
 
 	public String getName() {
-		return mName;
+		return this.mName;
 	}
 
 	public int getProfit() {
-		return mProfit;
+		return this.mProfit;
 	}
 
 	public String getPurchaseAnchor() {
-		return mPurchaseAnchor;
+		return this.mPurchaseAnchor;
 	}
 
 	public ItemPrice getStorePriceData() {
-		return mStorePriceData;
+		return this.mStorePriceData;
 	}
 
 	public boolean isConsideredForShop() {
-		return mIsConsideredForShop;
+		return this.mIsConsideredForShop;
 	}
 
 	public boolean isMagical() {
-		return mIsMagical;
+		return this.mIsMagical;
 	}
 
 	/*
@@ -71,35 +71,35 @@ public final class Item {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Item [cost=");
-		builder.append(mCost);
+		builder.append(this.mCost);
 		builder.append(", id=");
-		builder.append(mId);
+		builder.append(this.mId);
 		builder.append(", isConsideredForShop=");
-		builder.append(mIsConsideredForShop);
+		builder.append(this.mIsConsideredForShop);
 		builder.append(", isMagical=");
-		builder.append(mIsMagical);
+		builder.append(this.mIsMagical);
 		builder.append(", ");
-		if (mItemCategory != null) {
+		if (this.mItemCategory != null) {
 			builder.append("itemCategory=");
-			builder.append(mItemCategory);
+			builder.append(this.mItemCategory);
 			builder.append(", ");
 		}
-		if (mName != null) {
+		if (this.mName != null) {
 			builder.append("name=");
-			builder.append(mName);
+			builder.append(this.mName);
 			builder.append(", ");
 		}
 		builder.append("profit=");
-		builder.append(mProfit);
+		builder.append(this.mProfit);
 		builder.append(", ");
-		if (mPurchaseAnchor != null) {
+		if (this.mPurchaseAnchor != null) {
 			builder.append("purchaseAnchor=");
-			builder.append(mPurchaseAnchor);
+			builder.append(this.mPurchaseAnchor);
 			builder.append(", ");
 		}
-		if (mStorePriceData != null) {
+		if (this.mStorePriceData != null) {
 			builder.append("storePriceData=");
-			builder.append(mStorePriceData);
+			builder.append(this.mStorePriceData);
 		}
 		builder.append("]");
 		return builder.toString();

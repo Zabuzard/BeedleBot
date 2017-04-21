@@ -21,6 +21,11 @@ public final class DataBridge {
 
 	private static final String ITEM_ENTRY_SEPARATOR = ";";
 	private static final String ITEM_VALUE_SEPARATOR = "?";
+
+	private static String buildKey(final String key) {
+		return StorageKeys.KEY_INDEX + key;
+	}
+
 	private final SessionStorage mStorage;
 
 	public DataBridge(final WebDriver driver) throws DriverStorageUnsupportedException {
@@ -43,28 +48,28 @@ public final class DataBridge {
 			throw new DriverStorageUnsupportedException(rawDriver);
 		}
 
-		mStorage = sessionStorage;
+		this.mStorage = sessionStorage;
 	}
 
 	public void clearProblem() {
-		mStorage.setItem(buildKey(StorageKeys.PROBLEM), "");
+		this.mStorage.setItem(buildKey(StorageKeys.PROBLEM), "");
 	}
 
 	public void clearStartSignal() {
-		mStorage.removeItem(buildKey(StorageKeys.START_SIGNAL));
+		this.mStorage.removeItem(buildKey(StorageKeys.START_SIGNAL));
 	}
 
 	public void clearStopSignal() {
-		mStorage.removeItem(buildKey(StorageKeys.STOP_SIGNAL));
+		this.mStorage.removeItem(buildKey(StorageKeys.STOP_SIGNAL));
 	}
 
 	public boolean isStartSignalSet() {
-		final String value = mStorage.getItem(buildKey(StorageKeys.START_SIGNAL));
+		final String value = this.mStorage.getItem(buildKey(StorageKeys.START_SIGNAL));
 		return Boolean.valueOf(value).booleanValue();
 	}
 
 	public boolean isStopSignalSet() {
-		final String value = mStorage.getItem(buildKey(StorageKeys.STOP_SIGNAL));
+		final String value = this.mStorage.getItem(buildKey(StorageKeys.STOP_SIGNAL));
 		return Boolean.valueOf(value).booleanValue();
 	}
 
@@ -79,7 +84,7 @@ public final class DataBridge {
 		entryValue.append(entry.isConsideredForShop());
 
 		// Get current stored text
-		String value = mStorage.getItem(buildKey(StorageKeys.ITEM_ENTRIES));
+		String value = this.mStorage.getItem(buildKey(StorageKeys.ITEM_ENTRIES));
 
 		// Push entry
 		if (value == null) {
@@ -90,39 +95,39 @@ public final class DataBridge {
 		}
 		value += entryValue.toString();
 
-		mStorage.setItem(buildKey(StorageKeys.ITEM_ENTRIES), value);
+		this.mStorage.setItem(buildKey(StorageKeys.ITEM_ENTRIES), value);
 	}
 
 	public void setActive(final boolean isActive) {
-		mStorage.setItem(buildKey(StorageKeys.IS_ACTIVE), isActive + "");
+		this.mStorage.setItem(buildKey(StorageKeys.IS_ACTIVE), isActive + "");
 	}
 
 	public void setBeedleBotServing(final boolean isBeedleBotServing) {
-		mStorage.setItem(buildKey(StorageKeys.IS_BEEDLE_BOT_SERVING), isBeedleBotServing + "");
+		this.mStorage.setItem(buildKey(StorageKeys.IS_BEEDLE_BOT_SERVING), isBeedleBotServing + "");
 	}
 
 	public void setCurrentLifepoints(final int currentLifepoints) {
-		mStorage.setItem(buildKey(StorageKeys.CUR_LIFEPOINTS), currentLifepoints + "");
+		this.mStorage.setItem(buildKey(StorageKeys.CUR_LIFEPOINTS), currentLifepoints + "");
 	}
 
 	public void setGold(final int gold) {
-		mStorage.setItem(buildKey(StorageKeys.GOLD), gold + "");
+		this.mStorage.setItem(buildKey(StorageKeys.GOLD), gold + "");
 	}
 
 	public void setInventorySize(final int size) {
-		mStorage.setItem(buildKey(StorageKeys.INVENTORY_SIZE), size + "");
+		this.mStorage.setItem(buildKey(StorageKeys.INVENTORY_SIZE), size + "");
 	}
 
 	public void setMaxInventorySize(final int maxSize) {
-		mStorage.setItem(buildKey(StorageKeys.MAX_INVENTORY_SIZE), maxSize + "");
+		this.mStorage.setItem(buildKey(StorageKeys.MAX_INVENTORY_SIZE), maxSize + "");
 	}
 
 	public void setMaxLifepoints(final int maxLifepoints) {
-		mStorage.setItem(buildKey(StorageKeys.MAX_LIFEPOINTS), maxLifepoints + "");
+		this.mStorage.setItem(buildKey(StorageKeys.MAX_LIFEPOINTS), maxLifepoints + "");
 	}
 
 	public void setPhase(final EPhase phase) {
-		mStorage.setItem(buildKey(StorageKeys.PHASE), phase.toString());
+		this.mStorage.setItem(buildKey(StorageKeys.PHASE), phase.toString());
 	}
 
 	public void setProblem(final Exception problem, final long timestamp) {
@@ -134,31 +139,27 @@ public final class DataBridge {
 		problemText.append(": ");
 		problemText.append(LoggerUtil.getStackTrace(problem));
 
-		mStorage.setItem(buildKey(StorageKeys.PROBLEM), problemText.toString());
+		this.mStorage.setItem(buildKey(StorageKeys.PROBLEM), problemText.toString());
 	}
 
 	public void setState(final EState state) {
-		mStorage.setItem(buildKey(StorageKeys.STATE), state.toString());
+		this.mStorage.setItem(buildKey(StorageKeys.STATE), state.toString());
 	}
 
 	public void setTotalCost(final int totalCost) {
-		mStorage.setItem(buildKey(StorageKeys.TOTAL_COST), totalCost + "");
+		this.mStorage.setItem(buildKey(StorageKeys.TOTAL_COST), totalCost + "");
 	}
 
 	public void setTotalProfit(final int totalProfit) {
-		mStorage.setItem(buildKey(StorageKeys.TOTAL_PROFIT), totalProfit + "");
+		this.mStorage.setItem(buildKey(StorageKeys.TOTAL_PROFIT), totalProfit + "");
 	}
 
 	public void setWaitingTime(final int waitingTime) {
-		mStorage.setItem(buildKey(StorageKeys.WAITING_TIME), waitingTime + "");
+		this.mStorage.setItem(buildKey(StorageKeys.WAITING_TIME), waitingTime + "");
 	}
 
 	public void updateHeartBeat() {
-		mStorage.setItem(buildKey(StorageKeys.HEART_BEAT), System.currentTimeMillis() + "");
-	}
-
-	private String buildKey(final String key) {
-		return StorageKeys.KEY_INDEX + key;
+		this.mStorage.setItem(buildKey(StorageKeys.HEART_BEAT), System.currentTimeMillis() + "");
 	}
 
 }

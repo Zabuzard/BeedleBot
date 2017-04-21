@@ -14,32 +14,32 @@ public final class ItemEntry {
 
 	public ItemEntry(final String item, final int cost, final int profit, final boolean wasCached,
 			final boolean isConsideredForShop) {
-		mItem = item;
-		mCost = cost;
-		mProfit = profit;
-		mWasCached = wasCached;
-		mIsConsideredForShop = isConsideredForShop;
-		mTimestamp = createTimestamp();
+		this.mItem = item;
+		this.mCost = cost;
+		this.mProfit = profit;
+		this.mWasCached = wasCached;
+		this.mIsConsideredForShop = isConsideredForShop;
+		this.mTimestamp = createTimestamp();
 	}
 
 	public int getCost() {
-		return mCost;
+		return this.mCost;
 	}
 
 	public String getItem() {
-		return mItem;
+		return this.mItem;
 	}
 
 	public int getProfit() {
-		return mProfit;
+		return this.mProfit;
 	}
 
 	public long getTimestamp() {
-		return mTimestamp;
+		return this.mTimestamp;
 	}
 
 	public boolean isConsideredForShop() {
-		return mIsConsideredForShop;
+		return this.mIsConsideredForShop;
 	}
 
 	/*
@@ -51,26 +51,26 @@ public final class ItemEntry {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("ItemEntry [cost=");
-		builder.append(mCost);
+		builder.append(this.mCost);
 		builder.append(", isConsideredForShop=");
-		builder.append(mIsConsideredForShop);
+		builder.append(this.mIsConsideredForShop);
 		builder.append(", ");
-		if (mItem != null) {
+		if (this.mItem != null) {
 			builder.append("item=");
-			builder.append(mItem);
+			builder.append(this.mItem);
 			builder.append(", ");
 		}
 		builder.append("profit=");
-		builder.append(mProfit);
+		builder.append(this.mProfit);
 		builder.append(", timestamp=");
-		builder.append(mTimestamp);
+		builder.append(this.mTimestamp);
 		builder.append(", wasCached=");
-		builder.append(mWasCached);
+		builder.append(this.mWasCached);
 		builder.append("]");
 		return builder.toString();
 	}
 
 	public boolean wasCached() {
-		return mWasCached;
+		return this.mWasCached;
 	}
 }

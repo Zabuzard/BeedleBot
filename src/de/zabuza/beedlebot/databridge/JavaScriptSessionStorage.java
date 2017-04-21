@@ -13,7 +13,7 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 	private final JavascriptExecutor mExecutor;
 
 	public JavaScriptSessionStorage(final JavascriptExecutor executor) {
-		mExecutor = executor;
+		this.mExecutor = executor;
 	}
 
 	/*
@@ -24,7 +24,7 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 	@Override
 	public void clear() {
 		final String script = String.format(VAR_SESSION_STORAGE + ".clear()" + SYMBOL_END_COMMAND);
-		mExecutor.executeScript(script);
+		this.mExecutor.executeScript(script);
 	}
 
 	/*
@@ -36,7 +36,7 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 	public String getItem(final String key) {
 		final String script = String.format("return " + VAR_SESSION_STORAGE + ".getItem('%s')" + SYMBOL_END_COMMAND,
 				key);
-		final String item = (String) mExecutor.executeScript(script);
+		final String item = (String) this.mExecutor.executeScript(script);
 		return item;
 	}
 
@@ -52,8 +52,8 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 		final int size = size();
 		for (int i = 0; i < size; i++) {
 			final String getKeyNameScript = String
-					.format("return " + VAR_SESSION_STORAGE + ".key(%d)" + SYMBOL_END_COMMAND, i);
-			final String key = (String) mExecutor.executeScript(getKeyNameScript);
+					.format("return " + VAR_SESSION_STORAGE + ".key(%d)" + SYMBOL_END_COMMAND, Integer.valueOf(i));
+			final String key = (String) this.mExecutor.executeScript(getKeyNameScript);
 			keys.add(key);
 		}
 
@@ -69,7 +69,7 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 	@Override
 	public String removeItem(final String key) {
 		final String script = String.format(VAR_SESSION_STORAGE + ".removeItem('%s')" + SYMBOL_END_COMMAND, key);
-		mExecutor.executeScript(script);
+		this.mExecutor.executeScript(script);
 		return null;
 	}
 
@@ -83,7 +83,7 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 	public void setItem(final String key, final String value) {
 		final String script = String.format(VAR_SESSION_STORAGE + ".setItem('%s', '%s')" + SYMBOL_END_COMMAND, key,
 				value);
-		mExecutor.executeScript(script);
+		this.mExecutor.executeScript(script);
 	}
 
 	/*
@@ -94,7 +94,7 @@ public final class JavaScriptSessionStorage implements SessionStorage {
 	@Override
 	public int size() {
 		final String script = "return " + VAR_SESSION_STORAGE + ".length" + SYMBOL_END_COMMAND;
-		final long size = (long) mExecutor.executeScript(script);
+		final long size = ((Long) this.mExecutor.executeScript(script)).longValue();
 		return Math.toIntExact(size);
 	}
 

@@ -46,55 +46,55 @@ public final class Routine {
 
 	public Routine(final Service service, final IFreewarInstance instance, final WebDriver driver,
 			final PushDataService pushDataService, final Store store) {
-		mLogger = LoggerFactory.getLogger();
-		mService = service;
-		mInstance = instance;
-		mDriver = driver;
-		mPushDataService = pushDataService;
-		mStore = store;
-		mPhase = EPhase.ANALYSE;
-		mCurrentCategory = null;
-		mCurrentAnalyseResult = null;
-		mBoughtItemsBuffer = new LinkedList<>();
-		mTotalProfit = 0;
-		mTotalCost = 0;
-		mWaitForDeliveryTask = new WaitForDeliveryTask(mInstance.getChat());
-		mCentralTradersDepot = new Point(88, 89);
-		mNavigator = new CentralTradersDepotNavigator(mInstance, mDriver);
+		this.mLogger = LoggerFactory.getLogger();
+		this.mService = service;
+		this.mInstance = instance;
+		this.mDriver = driver;
+		this.mPushDataService = pushDataService;
+		this.mStore = store;
+		this.mPhase = EPhase.ANALYSE;
+		this.mCurrentCategory = null;
+		this.mCurrentAnalyseResult = null;
+		this.mBoughtItemsBuffer = new LinkedList<>();
+		this.mTotalProfit = 0;
+		this.mTotalCost = 0;
+		this.mWaitForDeliveryTask = new WaitForDeliveryTask(this.mInstance.getChat());
+		this.mCentralTradersDepot = new Point(88, 89);
+		this.mNavigator = new CentralTradersDepotNavigator(this.mInstance, this.mDriver);
 
-		mLastAwaitingDeliveryTimestamp = 0;
-		mLastWaitForCanMoveTimestamp = 0;
+		this.mLastAwaitingDeliveryTimestamp = 0;
+		this.mLastWaitForCanMoveTimestamp = 0;
 	}
 
 	public Queue<Item> fetchBoughtItems() {
-		Queue<Item> boughtItems = mBoughtItemsBuffer;
-		mBoughtItemsBuffer = new LinkedList<>();
+		Queue<Item> boughtItems = this.mBoughtItemsBuffer;
+		this.mBoughtItemsBuffer = new LinkedList<>();
 		return boughtItems;
 	}
 
 	public EPhase getPhase() {
-		return mPhase;
+		return this.mPhase;
 	}
 
 	public int getTotalCost() {
-		return mTotalCost;
+		return this.mTotalCost;
 	}
 
 	public int getTotalProfit() {
-		return mTotalProfit;
+		return this.mTotalProfit;
 	}
 
 	public void reset() {
 		setPhase(EPhase.ANALYSE);
-		mCurrentCategory = null;
-		mCurrentAnalyseResult = null;
+		this.mCurrentCategory = null;
+		this.mCurrentAnalyseResult = null;
 	}
 
 	public void update() {
 		try {
 			// Check if the current location is the central traders depot
-			final Point currentLocation = mInstance.getLocation().getPosition();
-			if (!currentLocation.equals(mCentralTradersDepot)) {
+			final Point currentLocation = this.mInstance.getLocation().getPosition();
+			if (!currentLocation.equals(this.mCentralTradersDepot)) {
 				throw new NotAtCentralTradersDepotException(currentLocation);
 			}
 
@@ -103,35 +103,35 @@ public final class Routine {
 				boolean finishedFullAnalyse = false;
 
 				// Determine the category for this round
-				if (mCurrentCategory == null || mCurrentCategory == EItemCategory.AMULET) {
+				if (this.mCurrentCategory == null || this.mCurrentCategory == EItemCategory.AMULET) {
 					// First analyse round
-					mCurrentCategory = EItemCategory.SPELL;
-					mCurrentAnalyseResult = new AnalyseResult();
-					mLogger.logInfo("Starting analyse");
-				} else if (mCurrentCategory == EItemCategory.SPELL) {
-					mCurrentCategory = EItemCategory.MISCELLANEOUS;
-				} else if (mCurrentCategory == EItemCategory.MISCELLANEOUS) {
-					mCurrentCategory = EItemCategory.ATTACK_WEAPON;
-				} else if (mCurrentCategory == EItemCategory.ATTACK_WEAPON) {
-					mCurrentCategory = EItemCategory.DEFENSE_WEAPON;
+					this.mCurrentCategory = EItemCategory.SPELL;
+					this.mCurrentAnalyseResult = new AnalyseResult();
+					this.mLogger.logInfo("Starting analyse");
+				} else if (this.mCurrentCategory == EItemCategory.SPELL) {
+					this.mCurrentCategory = EItemCategory.MISCELLANEOUS;
+				} else if (this.mCurrentCategory == EItemCategory.MISCELLANEOUS) {
+					this.mCurrentCategory = EItemCategory.ATTACK_WEAPON;
+				} else if (this.mCurrentCategory == EItemCategory.ATTACK_WEAPON) {
+					this.mCurrentCategory = EItemCategory.DEFENSE_WEAPON;
 				} else {
 					// Last analyse round
-					mCurrentCategory = EItemCategory.AMULET;
+					this.mCurrentCategory = EItemCategory.AMULET;
 					finishedFullAnalyse = true;
 				}
 
-				if (mLogger.isDebugEnabled()) {
-					mLogger.logDebug("Starting analyse, selected category: " + mCurrentCategory);
+				if (this.mLogger.isDebugEnabled()) {
+					this.mLogger.logDebug("Starting analyse, selected category: " + this.mCurrentCategory);
 				}
 
 				// Start analyse task
-				final AnalyseTask analyseTask = new AnalyseTask(mDriver, mInstance.getFrameManager(),
-						mCurrentAnalyseResult, mCurrentCategory, mStore, mNavigator);
+				final AnalyseTask analyseTask = new AnalyseTask(this.mDriver, this.mInstance.getFrameManager(),
+						this.mCurrentAnalyseResult, this.mCurrentCategory, this.mStore, this.mNavigator);
 				analyseTask.start();
 
 				// Proceed to the next phase
 				if (finishedFullAnalyse) {
-					if (mCurrentAnalyseResult.isEmpty()) {
+					if (this.mCurrentAnalyseResult.isEmpty()) {
 						// There are no items, wait for next delivery
 						setPhase(EPhase.AWAITING_DELIVERY);
 					} else {
@@ -145,7 +145,7 @@ public final class Routine {
 
 			// Purchase phase
 			if (getPhase() == EPhase.PURCHASE) {
-				final Item item = mCurrentAnalyseResult.poll();
+				final Item item = this.mCurrentAnalyseResult.poll();
 
 				// Abort and start waiting for the next delivery if there is no
 				// item
@@ -155,19 +155,19 @@ public final class Routine {
 				}
 
 				// Start the purchase task
-				final PurchaseTask purchaseTask = new PurchaseTask(mNavigator, mInstance.getPlayer(), item);
+				final PurchaseTask purchaseTask = new PurchaseTask(this.mNavigator, this.mInstance.getPlayer(), item);
 				purchaseTask.start();
 
 				if (purchaseTask.wasBought()) {
-					mStore.registerItemPurchase(item);
-					mBoughtItemsBuffer.add(item);
-					mTotalCost += item.getCost();
-					mTotalProfit += item.getProfit();
+					this.mStore.registerItemPurchase(item);
+					this.mBoughtItemsBuffer.add(item);
+					this.mTotalCost += item.getCost();
+					this.mTotalProfit += item.getProfit();
 
-					mLogger.logInfo("Bought item: " + item);
+					this.mLogger.logInfo("Bought item: " + item);
 				} else {
 					// Log the problem but continue
-					mLogger.logInfo("Item not bought: " + item);
+					this.mLogger.logInfo("Item not bought: " + item);
 				}
 
 				// Proceed to the next phase
@@ -178,15 +178,15 @@ public final class Routine {
 			// Wait phase
 			if (getPhase() == EPhase.WAIT) {
 				final long currentTimestamp = System.currentTimeMillis();
-				if (currentTimestamp - mLastWaitForCanMoveTimestamp < WAIT_FOR_CAN_MOVE_YIELD_UNTIL) {
+				if (currentTimestamp - this.mLastWaitForCanMoveTimestamp < WAIT_FOR_CAN_MOVE_YIELD_UNTIL) {
 					// Yield this iteration to not over-stress the movement
 					// method
 					return;
 				}
 
-				mLastWaitForCanMoveTimestamp = currentTimestamp;
-				if (mInstance.getMovement().canMove()) {
-					mLogger.logInfo("Waited for can move");
+				this.mLastWaitForCanMoveTimestamp = currentTimestamp;
+				if (this.mInstance.getMovement().canMove()) {
+					this.mLogger.logInfo("Waited for can move");
 
 					// Proceed to the next phase
 					setPhase(EPhase.PURCHASE);
@@ -198,15 +198,15 @@ public final class Routine {
 			// Awaiting delivery phase
 			if (getPhase() == EPhase.AWAITING_DELIVERY) {
 				final long currentTimestamp = System.currentTimeMillis();
-				if (currentTimestamp - mLastAwaitingDeliveryTimestamp < AWAITING_DELIVERY_YIELD_UNTIL) {
+				if (currentTimestamp - this.mLastAwaitingDeliveryTimestamp < AWAITING_DELIVERY_YIELD_UNTIL) {
 					// Yield this iteration to not over-stress the chat method
 					return;
 				}
 
-				mLastAwaitingDeliveryTimestamp = currentTimestamp;
-				mWaitForDeliveryTask.start();
-				if (mWaitForDeliveryTask.wasThereADelivery()) {
-					mLogger.logInfo("Waited for item delivery");
+				this.mLastAwaitingDeliveryTimestamp = currentTimestamp;
+				this.mWaitForDeliveryTask.start();
+				if (this.mWaitForDeliveryTask.wasThereADelivery()) {
+					this.mLogger.logInfo("Waited for item delivery");
 
 					// Proceed to the next phase
 					setPhase(EPhase.ANALYSE);
@@ -215,18 +215,18 @@ public final class Routine {
 			}
 		} catch (final StaleElementReferenceException e) {
 			// Log the problem but continue
-			mLogger.logError("Error while routine: " + LoggerUtil.getStackTrace(e));
+			this.mLogger.logError("Error while routine: " + LoggerUtil.getStackTrace(e));
 		} catch (final Exception e) {
-			mService.setProblem(e);
+			this.mService.setProblem(e);
 		}
 	}
 
 	private void setPhase(final EPhase phase) {
-		final EPhase oldPhase = mPhase;
-		mPhase = phase;
+		final EPhase oldPhase = this.mPhase;
+		this.mPhase = phase;
 
-		if (mPhase != oldPhase) {
-			mPushDataService.updateActiveData();
+		if (this.mPhase != oldPhase) {
+			this.mPushDataService.updateActiveData();
 		}
 	}
 }

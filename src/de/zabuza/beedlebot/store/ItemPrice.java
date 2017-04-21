@@ -22,11 +22,11 @@ public final class ItemPrice implements Serializable, Cloneable {
 
 	public ItemPrice(final String name, final int standardShopPrice, final PlayerPrice playerPrice,
 			final boolean isCached, final long lookupTimestamp) {
-		mName = name;
-		mStandardShopPrice = standardShopPrice;
-		mPlayerPrice = playerPrice;
-		mLookupTimestamp = lookupTimestamp;
-		mIsCached = isCached;
+		this.mName = name;
+		this.mStandardShopPrice = standardShopPrice;
+		this.mPlayerPrice = playerPrice;
+		this.mLookupTimestamp = lookupTimestamp;
+		this.mIsCached = isCached;
 	}
 
 	/*
@@ -41,41 +41,39 @@ public final class ItemPrice implements Serializable, Cloneable {
 			final PlayerPrice clonedPlayerPrice = playerPrice.get().clone();
 			return new ItemPrice(getName(), getStandardShopPrice(), clonedPlayerPrice, isCached(),
 					getLookupTimestamp());
-		} else {
-			return new ItemPrice(getName(), getStandardShopPrice(), isCached(), getLookupTimestamp());
 		}
+		return new ItemPrice(getName(), getStandardShopPrice(), isCached(), getLookupTimestamp());
 	}
 
 	public long getLookupTimestamp() {
-		return mLookupTimestamp;
+		return this.mLookupTimestamp;
 	}
 
 	public String getName() {
-		return mName;
+		return this.mName;
 	}
 
 	public Optional<PlayerPrice> getPlayerPrice() {
 		if (hasPlayerPrice()) {
-			return Optional.of(mPlayerPrice);
-		} else {
-			return Optional.empty();
+			return Optional.of(this.mPlayerPrice);
 		}
+		return Optional.empty();
 	}
 
 	public int getStandardShopPrice() {
-		return mStandardShopPrice;
+		return this.mStandardShopPrice;
 	}
 
 	public boolean hasPlayerPrice() {
-		return mPlayerPrice != null;
+		return this.mPlayerPrice != null;
 	}
 
 	public boolean isCached() {
-		return mIsCached;
+		return this.mIsCached;
 	}
 
 	public void setIsCached(final boolean isCached) {
-		mIsCached = isCached;
+		this.mIsCached = isCached;
 	}
 
 	/*
@@ -87,22 +85,22 @@ public final class ItemPrice implements Serializable, Cloneable {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("ItemPrice [isCached=");
-		builder.append(mIsCached);
+		builder.append(this.mIsCached);
 		builder.append(", lookupTimestamp=");
-		builder.append(mLookupTimestamp);
+		builder.append(this.mLookupTimestamp);
 		builder.append(", ");
-		if (mName != null) {
+		if (this.mName != null) {
 			builder.append("name=");
-			builder.append(mName);
+			builder.append(this.mName);
 			builder.append(", ");
 		}
-		if (mPlayerPrice != null) {
+		if (this.mPlayerPrice != null) {
 			builder.append("playerPrice=");
-			builder.append(mPlayerPrice);
+			builder.append(this.mPlayerPrice);
 			builder.append(", ");
 		}
 		builder.append("standardShopPrice=");
-		builder.append(mStandardShopPrice);
+		builder.append(this.mStandardShopPrice);
 		builder.append("]");
 		return builder.toString();
 	}

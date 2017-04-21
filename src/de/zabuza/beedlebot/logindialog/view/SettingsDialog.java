@@ -56,7 +56,11 @@ public final class SettingsDialog extends JDialog {
 	/**
 	 * The height of the dialog.
 	 */
-	private final static int HEIGHT = 410;
+	private final static int FRAME_HEIGHT = 410;
+	/**
+	 * The width of the dialog.
+	 */
+	private final static int FRAME_WIDTH = 400;
 	/**
 	 * The origin offset of the dialog to the owner, in both directions.
 	 */
@@ -69,10 +73,6 @@ public final class SettingsDialog extends JDialog {
 	 * Serial version UID.
 	 */
 	private static final long serialVersionUID = 1L;
-	/**
-	 * The width of the dialog.
-	 */
-	private final static int WIDTH = 400;
 	/**
 	 * Select binary button of the dialog for browsers.
 	 */
@@ -178,9 +178,9 @@ public final class SettingsDialog extends JDialog {
 	 */
 	public SettingsDialog(final JFrame owner) {
 		super(owner, DIALOG_TITLE);
-		mContainer = getContentPane();
-		mElements = new LinkedList<>();
-		mLogger = LoggerFactory.getLogger();
+		this.mContainer = getContentPane();
+		this.mElements = new LinkedList<>();
+		this.mLogger = LoggerFactory.getLogger();
 		initialize(owner);
 	}
 
@@ -191,7 +191,7 @@ public final class SettingsDialog extends JDialog {
 	 *            Listener to add
 	 */
 	public void addListenerToBinarySelectionAction(final ActionListener listener) {
-		mBinaryBtn.addActionListener(listener);
+		this.mBinaryBtn.addActionListener(listener);
 	}
 
 	/**
@@ -208,17 +208,17 @@ public final class SettingsDialog extends JDialog {
 	public void addListenerToBrowserDriverSelectionAction(final EBrowser browser, final ActionListener listener)
 			throws UnsupportedBrowserException {
 		if (browser == EBrowser.CHROME) {
-			mChromeBtn.addActionListener(listener);
+			this.mChromeBtn.addActionListener(listener);
 		} else if (browser == EBrowser.FIREFOX) {
-			mFirefoxBtn.addActionListener(listener);
+			this.mFirefoxBtn.addActionListener(listener);
 		} else if (browser == EBrowser.INTERNET_EXPLORER) {
-			mInternetExplorerBtn.addActionListener(listener);
+			this.mInternetExplorerBtn.addActionListener(listener);
 		} else if (browser == EBrowser.MS_EDGE) {
-			mMsEdgeBtn.addActionListener(listener);
+			this.mMsEdgeBtn.addActionListener(listener);
 		} else if (browser == EBrowser.OPERA) {
-			mOperaBtn.addActionListener(listener);
+			this.mOperaBtn.addActionListener(listener);
 		} else if (browser == EBrowser.SAFARI) {
-			mSafariBtn.addActionListener(listener);
+			this.mSafariBtn.addActionListener(listener);
 		} else {
 			throw new UnsupportedBrowserException(browser);
 		}
@@ -231,7 +231,7 @@ public final class SettingsDialog extends JDialog {
 	 *            Listener to add
 	 */
 	public void addListenerToCancelAction(final ActionListener listener) {
-		mCancelBtn.addActionListener(listener);
+		this.mCancelBtn.addActionListener(listener);
 	}
 
 	/**
@@ -241,7 +241,7 @@ public final class SettingsDialog extends JDialog {
 	 *            Listener to add
 	 */
 	public void addListenerToSaveAction(final ActionListener listener) {
-		mSaveBtn.addActionListener(listener);
+		this.mSaveBtn.addActionListener(listener);
 	}
 
 	/**
@@ -252,7 +252,7 @@ public final class SettingsDialog extends JDialog {
 	 *            Listener to add
 	 */
 	public void addListenerToUserProfileSelectionAction(final ActionListener listener) {
-		mUserProfileBtn.addActionListener(listener);
+		this.mUserProfileBtn.addActionListener(listener);
 	}
 
 	/**
@@ -261,7 +261,7 @@ public final class SettingsDialog extends JDialog {
 	 * @return The binary field
 	 */
 	public JTextField getBinaryField() {
-		return mBinaryField;
+		return this.mBinaryField;
 	}
 
 	/**
@@ -275,17 +275,17 @@ public final class SettingsDialog extends JDialog {
 	 */
 	public JTextField getBrowserDriverField(final EBrowser browser) throws UnsupportedBrowserException {
 		if (browser == EBrowser.CHROME) {
-			return mChromeDriverField;
+			return this.mChromeDriverField;
 		} else if (browser == EBrowser.FIREFOX) {
-			return mFirefoxDriverField;
+			return this.mFirefoxDriverField;
 		} else if (browser == EBrowser.INTERNET_EXPLORER) {
-			return mInternetExplorerDriverField;
+			return this.mInternetExplorerDriverField;
 		} else if (browser == EBrowser.MS_EDGE) {
-			return mMsEdgeDriverField;
+			return this.mMsEdgeDriverField;
 		} else if (browser == EBrowser.OPERA) {
-			return mOperaDriverField;
+			return this.mOperaDriverField;
 		} else if (browser == EBrowser.SAFARI) {
-			return mSafariDriverField;
+			return this.mSafariDriverField;
 		} else {
 			throw new UnsupportedBrowserException(browser);
 		}
@@ -297,7 +297,7 @@ public final class SettingsDialog extends JDialog {
 	 * @return The user profile field
 	 */
 	public JTextField getUserProfileField() {
-		return mUserProfileField;
+		return this.mUserProfileField;
 	}
 
 	/**
@@ -307,7 +307,7 @@ public final class SettingsDialog extends JDialog {
 	 *            Whether the elements should be enabled or disabled
 	 */
 	public void setAllElementsEnabled(final boolean enabled) {
-		for (final JComponent element : mElements) {
+		for (final JComponent element : this.mElements) {
 			element.setEnabled(enabled);
 		}
 	}
@@ -319,12 +319,12 @@ public final class SettingsDialog extends JDialog {
 	 *            The owning frame of this dialog
 	 */
 	private void initialize(final JFrame owner) {
-		if (mLogger.isDebugEnabled()) {
-			mLogger.logDebug("Initializing SettingsDialog");
+		if (this.mLogger.isDebugEnabled()) {
+			this.mLogger.logDebug("Initializing SettingsDialog");
 		}
 
 		setIconImage(owner.getIconImage());
-		setBounds(owner.getX() + OWNER_OFFSET, owner.getY() + OWNER_OFFSET, WIDTH, HEIGHT);
+		setBounds(owner.getX() + OWNER_OFFSET, owner.getY() + OWNER_OFFSET, FRAME_WIDTH, FRAME_HEIGHT);
 		setResizable(false);
 		initializePanels();
 		initializeLabels();
@@ -336,116 +336,116 @@ public final class SettingsDialog extends JDialog {
 	 * Initialize the buttons.
 	 */
 	private void initializeButtons() {
-		mChromeBtn = new JButton(SELECT_TITLE);
-		mChromeBtn.setBounds(290, 30, 80, 20);
-		mDriverPanel.add(mChromeBtn);
-		mElements.add(mChromeBtn);
+		this.mChromeBtn = new JButton(SELECT_TITLE);
+		this.mChromeBtn.setBounds(290, 30, 80, 20);
+		this.mDriverPanel.add(this.mChromeBtn);
+		this.mElements.add(this.mChromeBtn);
 
-		mFirefoxBtn = new JButton(SELECT_TITLE);
-		mFirefoxBtn.setBounds(290, 60, 80, 20);
-		mDriverPanel.add(mFirefoxBtn);
-		mElements.add(mFirefoxBtn);
+		this.mFirefoxBtn = new JButton(SELECT_TITLE);
+		this.mFirefoxBtn.setBounds(290, 60, 80, 20);
+		this.mDriverPanel.add(this.mFirefoxBtn);
+		this.mElements.add(this.mFirefoxBtn);
 
-		mInternetExplorerBtn = new JButton(SELECT_TITLE);
-		mInternetExplorerBtn.setBounds(290, 90, 80, 20);
-		mDriverPanel.add(mInternetExplorerBtn);
-		mElements.add(mInternetExplorerBtn);
+		this.mInternetExplorerBtn = new JButton(SELECT_TITLE);
+		this.mInternetExplorerBtn.setBounds(290, 90, 80, 20);
+		this.mDriverPanel.add(this.mInternetExplorerBtn);
+		this.mElements.add(this.mInternetExplorerBtn);
 
-		mMsEdgeBtn = new JButton(SELECT_TITLE);
-		mMsEdgeBtn.setBounds(290, 120, 80, 20);
-		mDriverPanel.add(mMsEdgeBtn);
-		mElements.add(mMsEdgeBtn);
+		this.mMsEdgeBtn = new JButton(SELECT_TITLE);
+		this.mMsEdgeBtn.setBounds(290, 120, 80, 20);
+		this.mDriverPanel.add(this.mMsEdgeBtn);
+		this.mElements.add(this.mMsEdgeBtn);
 
-		mOperaBtn = new JButton(SELECT_TITLE);
-		mOperaBtn.setBounds(290, 150, 80, 20);
-		mDriverPanel.add(mOperaBtn);
-		mElements.add(mOperaBtn);
+		this.mOperaBtn = new JButton(SELECT_TITLE);
+		this.mOperaBtn.setBounds(290, 150, 80, 20);
+		this.mDriverPanel.add(this.mOperaBtn);
+		this.mElements.add(this.mOperaBtn);
 
-		mSafariBtn = new JButton(SELECT_TITLE);
-		mSafariBtn.setBounds(290, 180, 80, 20);
-		mDriverPanel.add(mSafariBtn);
-		mElements.add(mSafariBtn);
+		this.mSafariBtn = new JButton(SELECT_TITLE);
+		this.mSafariBtn.setBounds(290, 180, 80, 20);
+		this.mDriverPanel.add(this.mSafariBtn);
+		this.mElements.add(this.mSafariBtn);
 
-		mBinaryBtn = new JButton(SELECT_TITLE);
-		mBinaryBtn.setBounds(290, 30, 80, 20);
-		mBrowserPanel.add(mBinaryBtn);
-		mElements.add(mBinaryBtn);
+		this.mBinaryBtn = new JButton(SELECT_TITLE);
+		this.mBinaryBtn.setBounds(290, 30, 80, 20);
+		this.mBrowserPanel.add(this.mBinaryBtn);
+		this.mElements.add(this.mBinaryBtn);
 
-		mUserProfileBtn = new JButton(SELECT_TITLE);
-		mUserProfileBtn.setBounds(290, 60, 80, 20);
-		mBrowserPanel.add(mUserProfileBtn);
-		mElements.add(mUserProfileBtn);
+		this.mUserProfileBtn = new JButton(SELECT_TITLE);
+		this.mUserProfileBtn.setBounds(290, 60, 80, 20);
+		this.mBrowserPanel.add(this.mUserProfileBtn);
+		this.mElements.add(this.mUserProfileBtn);
 
-		mSaveBtn = new JButton("Save");
-		mSaveBtn.setBounds((WIDTH / 2) - 100, 345, 80, 20);
-		mTrailerPanel.add(mSaveBtn);
-		mElements.add(mSaveBtn);
+		this.mSaveBtn = new JButton("Save");
+		this.mSaveBtn.setBounds((FRAME_WIDTH / 2) - 100, 345, 80, 20);
+		this.mTrailerPanel.add(this.mSaveBtn);
+		this.mElements.add(this.mSaveBtn);
 
-		mCancelBtn = new JButton("Cancel");
-		mCancelBtn.setBounds((WIDTH / 2) + 20, 345, 80, 20);
-		mTrailerPanel.add(mCancelBtn);
-		mElements.add(mCancelBtn);
+		this.mCancelBtn = new JButton("Cancel");
+		this.mCancelBtn.setBounds((FRAME_WIDTH / 2) + 20, 345, 80, 20);
+		this.mTrailerPanel.add(this.mCancelBtn);
+		this.mElements.add(this.mCancelBtn);
 	}
 
 	/**
 	 * Initialize the text fields.
 	 */
 	private void initializeInputFields() {
-		mChromeDriverField = new JTextField();
-		mChromeDriverField.setHorizontalAlignment(SwingConstants.LEFT);
-		mChromeDriverField.setBounds(80, 30, 200, 20);
-		mDriverPanel.add(mChromeDriverField);
-		mElements.add(mChromeDriverField);
-		mChromeDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mChromeDriverField = new JTextField();
+		this.mChromeDriverField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mChromeDriverField.setBounds(80, 30, 200, 20);
+		this.mDriverPanel.add(this.mChromeDriverField);
+		this.mElements.add(this.mChromeDriverField);
+		this.mChromeDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mFirefoxDriverField = new JTextField();
-		mFirefoxDriverField.setHorizontalAlignment(SwingConstants.LEFT);
-		mFirefoxDriverField.setBounds(80, 60, 200, 20);
-		mDriverPanel.add(mFirefoxDriverField);
-		mElements.add(mFirefoxDriverField);
-		mFirefoxDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mFirefoxDriverField = new JTextField();
+		this.mFirefoxDriverField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mFirefoxDriverField.setBounds(80, 60, 200, 20);
+		this.mDriverPanel.add(this.mFirefoxDriverField);
+		this.mElements.add(this.mFirefoxDriverField);
+		this.mFirefoxDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mInternetExplorerDriverField = new JTextField();
-		mInternetExplorerDriverField.setHorizontalAlignment(SwingConstants.LEFT);
-		mInternetExplorerDriverField.setBounds(80, 90, 200, 20);
-		mDriverPanel.add(mInternetExplorerDriverField);
-		mElements.add(mInternetExplorerDriverField);
-		mInternetExplorerDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mInternetExplorerDriverField = new JTextField();
+		this.mInternetExplorerDriverField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mInternetExplorerDriverField.setBounds(80, 90, 200, 20);
+		this.mDriverPanel.add(this.mInternetExplorerDriverField);
+		this.mElements.add(this.mInternetExplorerDriverField);
+		this.mInternetExplorerDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mMsEdgeDriverField = new JTextField();
-		mMsEdgeDriverField.setHorizontalAlignment(SwingConstants.LEFT);
-		mMsEdgeDriverField.setBounds(80, 120, 200, 20);
-		mDriverPanel.add(mMsEdgeDriverField);
-		mElements.add(mMsEdgeDriverField);
-		mMsEdgeDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mMsEdgeDriverField = new JTextField();
+		this.mMsEdgeDriverField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mMsEdgeDriverField.setBounds(80, 120, 200, 20);
+		this.mDriverPanel.add(this.mMsEdgeDriverField);
+		this.mElements.add(this.mMsEdgeDriverField);
+		this.mMsEdgeDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mOperaDriverField = new JTextField();
-		mOperaDriverField.setHorizontalAlignment(SwingConstants.LEFT);
-		mOperaDriverField.setBounds(80, 150, 200, 20);
-		mDriverPanel.add(mOperaDriverField);
-		mElements.add(mOperaDriverField);
-		mOperaDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mOperaDriverField = new JTextField();
+		this.mOperaDriverField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mOperaDriverField.setBounds(80, 150, 200, 20);
+		this.mDriverPanel.add(this.mOperaDriverField);
+		this.mElements.add(this.mOperaDriverField);
+		this.mOperaDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mSafariDriverField = new JTextField();
-		mSafariDriverField.setHorizontalAlignment(SwingConstants.LEFT);
-		mSafariDriverField.setBounds(80, 180, 200, 20);
-		mDriverPanel.add(mSafariDriverField);
-		mElements.add(mSafariDriverField);
-		mSafariDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mSafariDriverField = new JTextField();
+		this.mSafariDriverField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mSafariDriverField.setBounds(80, 180, 200, 20);
+		this.mDriverPanel.add(this.mSafariDriverField);
+		this.mElements.add(this.mSafariDriverField);
+		this.mSafariDriverField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mBinaryField = new JTextField();
-		mBinaryField.setHorizontalAlignment(SwingConstants.LEFT);
-		mBinaryField.setBounds(80, 30, 200, 20);
-		mBrowserPanel.add(mBinaryField);
-		mElements.add(mBinaryField);
-		mBinaryField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mBinaryField = new JTextField();
+		this.mBinaryField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mBinaryField.setBounds(80, 30, 200, 20);
+		this.mBrowserPanel.add(this.mBinaryField);
+		this.mElements.add(this.mBinaryField);
+		this.mBinaryField.setColumns(DEFAULT_FIELD_COLUMNS);
 
-		mUserProfileField = new JTextField();
-		mUserProfileField.setHorizontalAlignment(SwingConstants.LEFT);
-		mUserProfileField.setBounds(80, 60, 200, 20);
-		mBrowserPanel.add(mUserProfileField);
-		mElements.add(mUserProfileField);
-		mUserProfileField.setColumns(DEFAULT_FIELD_COLUMNS);
+		this.mUserProfileField = new JTextField();
+		this.mUserProfileField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mUserProfileField.setBounds(80, 60, 200, 20);
+		this.mBrowserPanel.add(this.mUserProfileField);
+		this.mElements.add(this.mUserProfileField);
+		this.mUserProfileField.setColumns(DEFAULT_FIELD_COLUMNS);
 	}
 
 	/**
@@ -456,72 +456,72 @@ public final class SettingsDialog extends JDialog {
 		mChromeDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mChromeDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mChromeDriverLbl.setBounds(10, 30, 60, 14);
-		mDriverPanel.add(mChromeDriverLbl);
+		this.mDriverPanel.add(mChromeDriverLbl);
 
 		JLabel mFirefoxDriverLbl = new JLabel("Firefox:");
 		mFirefoxDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mFirefoxDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mFirefoxDriverLbl.setBounds(10, 60, 60, 14);
-		mDriverPanel.add(mFirefoxDriverLbl);
+		this.mDriverPanel.add(mFirefoxDriverLbl);
 
 		JLabel mInternetExplorerDriverLbl = new JLabel("IE:");
 		mInternetExplorerDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mInternetExplorerDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mInternetExplorerDriverLbl.setBounds(10, 90, 60, 14);
-		mDriverPanel.add(mInternetExplorerDriverLbl);
+		this.mDriverPanel.add(mInternetExplorerDriverLbl);
 
 		JLabel mMsEdgeDriverLbl = new JLabel("MS Edge:");
 		mMsEdgeDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mMsEdgeDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mMsEdgeDriverLbl.setBounds(10, 120, 60, 14);
-		mDriverPanel.add(mMsEdgeDriverLbl);
+		this.mDriverPanel.add(mMsEdgeDriverLbl);
 
 		JLabel mOperaDriverLbl = new JLabel("Opera:");
 		mOperaDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mOperaDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mOperaDriverLbl.setBounds(10, 150, 60, 14);
-		mDriverPanel.add(mOperaDriverLbl);
+		this.mDriverPanel.add(mOperaDriverLbl);
 
 		JLabel mSafariDriverLbl = new JLabel("Safari:");
 		mSafariDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mSafariDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mSafariDriverLbl.setBounds(10, 180, 60, 14);
-		mDriverPanel.add(mSafariDriverLbl);
+		this.mDriverPanel.add(mSafariDriverLbl);
 
 		JLabel mBinaryLbl = new JLabel("Binary:");
 		mBinaryLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mBinaryLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mBinaryLbl.setBounds(10, 30, 60, 14);
-		mBrowserPanel.add(mBinaryLbl);
+		this.mBrowserPanel.add(mBinaryLbl);
 
 		JLabel mUserProfileLbl = new JLabel("Profile:");
 		mUserProfileLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mUserProfileLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mUserProfileLbl.setBounds(10, 60, 60, 14);
-		mBrowserPanel.add(mUserProfileLbl);
+		this.mBrowserPanel.add(mUserProfileLbl);
 	}
 
 	/**
 	 * Initialize the panels.
 	 */
 	private void initializePanels() {
-		mDriverPanel = new JPanel();
-		mDriverPanel.setBounds(10, 10, WIDTH - 25, 220);
+		this.mDriverPanel = new JPanel();
+		this.mDriverPanel.setBounds(10, 10, FRAME_WIDTH - 25, 220);
 		TitledBorder titledBorderDriver = BorderFactory.createTitledBorder(DRIVER_TITLE);
-		mDriverPanel.setBorder(titledBorderDriver);
-		mContainer.add(mDriverPanel);
-		mDriverPanel.setLayout(null);
+		this.mDriverPanel.setBorder(titledBorderDriver);
+		this.mContainer.add(this.mDriverPanel);
+		this.mDriverPanel.setLayout(null);
 
-		mBrowserPanel = new JPanel();
-		mBrowserPanel.setBounds(10, 230, WIDTH - 25, 100);
+		this.mBrowserPanel = new JPanel();
+		this.mBrowserPanel.setBounds(10, 230, FRAME_WIDTH - 25, 100);
 		TitledBorder titledBorderBrowser = BorderFactory.createTitledBorder(BROWSER_TITLE);
-		mBrowserPanel.setBorder(titledBorderBrowser);
-		mContainer.add(mBrowserPanel);
-		mBrowserPanel.setLayout(null);
+		this.mBrowserPanel.setBorder(titledBorderBrowser);
+		this.mContainer.add(this.mBrowserPanel);
+		this.mBrowserPanel.setLayout(null);
 
-		mTrailerPanel = new JPanel();
-		mTrailerPanel.setBounds(10, 340, WIDTH - 25, 70);
-		mContainer.add(mTrailerPanel);
-		mTrailerPanel.setLayout(null);
+		this.mTrailerPanel = new JPanel();
+		this.mTrailerPanel.setBounds(10, 340, FRAME_WIDTH - 25, 70);
+		this.mContainer.add(this.mTrailerPanel);
+		this.mTrailerPanel.setLayout(null);
 	}
 }
