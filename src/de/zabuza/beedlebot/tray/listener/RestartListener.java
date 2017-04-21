@@ -16,7 +16,7 @@ public final class RestartListener implements ActionListener {
 	private final BeedleBot mBeedleBot;
 	private final ILogger mLogger;
 
-	public RestartListener(BeedleBot beedleBot) {
+	public RestartListener(final BeedleBot beedleBot) {
 		this.mBeedleBot = beedleBot;
 		this.mLogger = LoggerFactory.getLogger();
 	}

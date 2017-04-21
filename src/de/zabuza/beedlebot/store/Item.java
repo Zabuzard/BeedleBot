@@ -13,7 +13,7 @@ public final class Item {
 	private final ItemPrice mStorePriceData;
 
 	public Item(final String name, final int cost, final int profit, final int id, final String purchaseAnchor,
-			boolean isMagical, final boolean isConsideredForShop, final ItemPrice storePriceData,
+			final boolean isMagical, final boolean isConsideredForShop, final ItemPrice storePriceData,
 			final EItemCategory itemCategory) {
 		this.mName = name;
 		this.mCost = cost;

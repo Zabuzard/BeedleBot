@@ -23,7 +23,7 @@ public final class Service extends Thread {
 	private boolean mDoRun;
 	private final WebDriver mDriver;
 	private FetchDataService mFetchDataService;
-	private IFreewarInstance mInstance;
+	private final IFreewarInstance mInstance;
 	private final ILogger mLogger;
 	private final BeedleBot mParent;
 	private boolean mPaused;

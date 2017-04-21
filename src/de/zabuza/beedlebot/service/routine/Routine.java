@@ -34,7 +34,7 @@ public final class Routine {
 	private final IFreewarInstance mInstance;
 	private long mLastAwaitingDeliveryTimestamp;
 	private long mLastWaitForCanMoveTimestamp;
-	private ILogger mLogger;
+	private final ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
 	private EPhase mPhase;
 	private final PushDataService mPushDataService;
@@ -42,7 +42,7 @@ public final class Routine {
 	private final Store mStore;
 	private int mTotalCost;
 	private int mTotalProfit;
-	private WaitForDeliveryTask mWaitForDeliveryTask;
+	private final WaitForDeliveryTask mWaitForDeliveryTask;
 
 	public Routine(final Service service, final IFreewarInstance instance, final WebDriver driver,
 			final PushDataService pushDataService, final Store store) {
@@ -67,7 +67,7 @@ public final class Routine {
 	}
 
 	public Queue<Item> fetchBoughtItems() {
-		Queue<Item> boughtItems = this.mBoughtItemsBuffer;
+		final Queue<Item> boughtItems = this.mBoughtItemsBuffer;
 		this.mBoughtItemsBuffer = new LinkedList<>();
 		return boughtItems;
 	}

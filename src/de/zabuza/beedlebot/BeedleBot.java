@@ -64,7 +64,7 @@ public final class BeedleBot {
 	private FetchDataService mFetchDataService;
 	private Image mIconImage;
 	private IFreewarInstance mInstance;
-	private ILogger mLogger;
+	private final ILogger mLogger;
 	private LoginDialog mLoginDialog;
 	private PushDataService mPushDataService;
 	private Service mService;

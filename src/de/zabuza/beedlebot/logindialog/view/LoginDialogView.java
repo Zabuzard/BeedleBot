@@ -67,7 +67,7 @@ public final class LoginDialogView {
 	/**
 	 * The logger to use for logging.
 	 */
-	private ILogger mLogger;
+	private final ILogger mLogger;
 	/**
 	 * Login button of the view.
 	 */

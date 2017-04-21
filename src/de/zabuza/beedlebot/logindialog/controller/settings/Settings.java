@@ -66,7 +66,7 @@ public final class Settings {
 			}
 
 			// Fetch and set every saved setting
-			for (Entry<Object, Object> entry : this.mProperties.entrySet()) {
+			for (final Entry<Object, Object> entry : this.mProperties.entrySet()) {
 				provider.setSetting((String) entry.getKey(), (String) entry.getValue());
 			}
 		} catch (final IOException e) {
@@ -85,7 +85,7 @@ public final class Settings {
 		this.mLogger.logInfo("Saving settings");
 
 		// Fetch and put every setting
-		for (Entry<String, String> entry : provider.getAllSettings().entrySet()) {
+		for (final Entry<String, String> entry : provider.getAllSettings().entrySet()) {
 			this.mProperties.put(entry.getKey(), entry.getValue());
 		}
 

@@ -62,12 +62,12 @@ public final class LoginDialogRunnable implements Runnable {
 			this.mFrame.setBounds(0, 0, LoginDialogView.WIDTH, LoginDialogView.HEIGHT);
 			this.mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.mFrame.getContentPane().setLayout(null);
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			this.mFrame.setLocation((screenSize.width - this.mFrame.getWidth()) / 2,
 					(screenSize.height - this.mFrame.getHeight()) / 2);
 
 			window = new LoginDialogView(this.mFrame);
-			LoginDialogController controller = new LoginDialogController(this.mFrame, window, this.mBeedleBot);
+			final LoginDialogController controller = new LoginDialogController(this.mFrame, window, this.mBeedleBot);
 			controller.initialize();
 			controller.start();
 		} catch (final Exception e) {

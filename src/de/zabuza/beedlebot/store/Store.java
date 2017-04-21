@@ -120,7 +120,7 @@ public final class Store {
 		ItemPrice itemPrice = null;
 		// Try to use the cache first
 		if (!ignoreCache && this.mStoreCache.hasItemPrice(itemName)) {
-			ItemPrice storedItemPrice = this.mStoreCache.getItemPrice(itemName);
+			final ItemPrice storedItemPrice = this.mStoreCache.getItemPrice(itemName);
 			if (isItemPriceValid(storedItemPrice)) {
 				itemPrice = storedItemPrice;
 			}

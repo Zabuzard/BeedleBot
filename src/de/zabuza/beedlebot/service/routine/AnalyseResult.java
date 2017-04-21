@@ -166,7 +166,7 @@ public final class AnalyseResult implements Queue<Item> {
 	 * @see java.util.Collection#retainAll(java.util.Collection)
 	 */
 	@Override
-	public boolean retainAll(Collection<?> c) {
+	public boolean retainAll(final Collection<?> c) {
 		return this.mItems.retainAll(c);
 	}
 

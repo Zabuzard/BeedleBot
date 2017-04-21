@@ -16,7 +16,7 @@ public final class ExitListener implements ActionListener {
 	private final BeedleBot mBeedleBot;
 	private final ILogger mLogger;
 
-	public ExitListener(BeedleBot beedleBot) {
+	public ExitListener(final BeedleBot beedleBot) {
 		this.mBeedleBot = beedleBot;
 		this.mLogger = LoggerFactory.getLogger();
 	}

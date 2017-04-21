@@ -16,8 +16,8 @@ import de.zabuza.beedlebot.logging.LoggerFactory;
 public final class LoginDialog {
 
 	private JFrame mFrame;
-	private ILogger mLogger;
-	private LoginDialogRunnable mLoginDialogRunnable;
+	private final ILogger mLogger;
+	private final LoginDialogRunnable mLoginDialogRunnable;
 
 	public LoginDialog(final BeedleBot beedleBot, final Image iconImage) {
 		this.mLogger = LoggerFactory.getLogger();

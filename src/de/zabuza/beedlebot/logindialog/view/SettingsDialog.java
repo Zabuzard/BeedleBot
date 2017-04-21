@@ -128,7 +128,7 @@ public final class SettingsDialog extends JDialog {
 	/**
 	 * The logger to use for logging.
 	 */
-	private ILogger mLogger;
+	private final ILogger mLogger;
 	/**
 	 * Select driver button of the dialog for Microsoft Edge.
 	 */
@@ -452,49 +452,49 @@ public final class SettingsDialog extends JDialog {
 	 * Initialize the labels.
 	 */
 	private void initializeLabels() {
-		JLabel mChromeDriverLbl = new JLabel("Chrome:");
+		final JLabel mChromeDriverLbl = new JLabel("Chrome:");
 		mChromeDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mChromeDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mChromeDriverLbl.setBounds(10, 30, 60, 14);
 		this.mDriverPanel.add(mChromeDriverLbl);
 
-		JLabel mFirefoxDriverLbl = new JLabel("Firefox:");
+		final JLabel mFirefoxDriverLbl = new JLabel("Firefox:");
 		mFirefoxDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mFirefoxDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mFirefoxDriverLbl.setBounds(10, 60, 60, 14);
 		this.mDriverPanel.add(mFirefoxDriverLbl);
 
-		JLabel mInternetExplorerDriverLbl = new JLabel("IE:");
+		final JLabel mInternetExplorerDriverLbl = new JLabel("IE:");
 		mInternetExplorerDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mInternetExplorerDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mInternetExplorerDriverLbl.setBounds(10, 90, 60, 14);
 		this.mDriverPanel.add(mInternetExplorerDriverLbl);
 
-		JLabel mMsEdgeDriverLbl = new JLabel("MS Edge:");
+		final JLabel mMsEdgeDriverLbl = new JLabel("MS Edge:");
 		mMsEdgeDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mMsEdgeDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mMsEdgeDriverLbl.setBounds(10, 120, 60, 14);
 		this.mDriverPanel.add(mMsEdgeDriverLbl);
 
-		JLabel mOperaDriverLbl = new JLabel("Opera:");
+		final JLabel mOperaDriverLbl = new JLabel("Opera:");
 		mOperaDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mOperaDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mOperaDriverLbl.setBounds(10, 150, 60, 14);
 		this.mDriverPanel.add(mOperaDriverLbl);
 
-		JLabel mSafariDriverLbl = new JLabel("Safari:");
+		final JLabel mSafariDriverLbl = new JLabel("Safari:");
 		mSafariDriverLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mSafariDriverLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mSafariDriverLbl.setBounds(10, 180, 60, 14);
 		this.mDriverPanel.add(mSafariDriverLbl);
 
-		JLabel mBinaryLbl = new JLabel("Binary:");
+		final JLabel mBinaryLbl = new JLabel("Binary:");
 		mBinaryLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mBinaryLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mBinaryLbl.setBounds(10, 30, 60, 14);
 		this.mBrowserPanel.add(mBinaryLbl);
 
-		JLabel mUserProfileLbl = new JLabel("Profile:");
+		final JLabel mUserProfileLbl = new JLabel("Profile:");
 		mUserProfileLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		mUserProfileLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mUserProfileLbl.setBounds(10, 60, 60, 14);
@@ -507,14 +507,14 @@ public final class SettingsDialog extends JDialog {
 	private void initializePanels() {
 		this.mDriverPanel = new JPanel();
 		this.mDriverPanel.setBounds(10, 10, FRAME_WIDTH - 25, 220);
-		TitledBorder titledBorderDriver = BorderFactory.createTitledBorder(DRIVER_TITLE);
+		final TitledBorder titledBorderDriver = BorderFactory.createTitledBorder(DRIVER_TITLE);
 		this.mDriverPanel.setBorder(titledBorderDriver);
 		this.mContainer.add(this.mDriverPanel);
 		this.mDriverPanel.setLayout(null);
 
 		this.mBrowserPanel = new JPanel();
 		this.mBrowserPanel.setBounds(10, 230, FRAME_WIDTH - 25, 100);
-		TitledBorder titledBorderBrowser = BorderFactory.createTitledBorder(BROWSER_TITLE);
+		final TitledBorder titledBorderBrowser = BorderFactory.createTitledBorder(BROWSER_TITLE);
 		this.mBrowserPanel.setBorder(titledBorderBrowser);
 		this.mContainer.add(this.mBrowserPanel);
 		this.mBrowserPanel.setLayout(null);

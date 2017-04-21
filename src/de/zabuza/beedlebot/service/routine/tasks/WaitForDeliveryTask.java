@@ -14,14 +14,14 @@ public final class WaitForDeliveryTask implements ITask {
 
 	private static final int LAST_MESSAGES_CHALLENGE_SIZE = 3;
 	private static final String MESSAGE_DELIVERY_CONTENT = "Eine Händler-Karawane kommt aus dem Süden und liefert neue Waren an.";
-	private IChat mChat;
-	private Message mDeliveryMessage;
+	private final IChat mChat;
+	private final Message mDeliveryMessage;
 	/**
 	 * Whether interrupted flag of the task is set.
 	 */
 	private boolean mInterrupted;
 	private final Queue<Message> mLastMessagesChallenge;
-	private ILogger mLogger;
+	private final ILogger mLogger;
 	private boolean mWasThereADelivery;
 
 	public WaitForDeliveryTask(final IChat chat) {
