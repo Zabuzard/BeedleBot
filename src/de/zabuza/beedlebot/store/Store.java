@@ -10,7 +10,7 @@ import de.zabuza.sparkle.freewar.EWorld;
 
 public final class Store {
 	private static final int CONSIDER_PLAYER_PRICE_COST_ABS = 200;
-	private static final double FULL_SHOP_DISCOUNT_FACTOR = 1.15;
+	private static final double FULL_SHOP_DISCOUNT_FACTOR = 1.14;
 	private static final int STORED_ITEM_LOOKUP_VALIDITY_DAYS = 10;
 	private static final int STORED_ITEM_PLAYER_PRICE_VALIDITY_DAYS = 30;
 
