@@ -6,12 +6,33 @@ import java.util.Set;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.html5.SessionStorage;
 
+/**
+ * Session storage implementation that works on a {@link JavascriptExecutor}.
+ * 
+ * @author Zabuza {@literal <zabuza.dev@gmail.com>}
+ *
+ */
 public final class JavaScriptSessionStorage implements SessionStorage {
+	/**
+	 * Symbol that ends a Javascript command.
+	 */
 	private final static String SYMBOL_END_COMMAND = ";";
+	/**
+	 * Variable that represents the session storage in Javascript.
+	 */
 	private final static String VAR_SESSION_STORAGE = "window.sessionStorage";
 
+	/**
+	 * The Javascript executor to use for executing commands.
+	 */
 	private final JavascriptExecutor mExecutor;
 
+	/**
+	 * Creates a new instance which works on the given Javascript executor.
+	 * 
+	 * @param executor
+	 *            The Javascript executor to use for executing commands
+	 */
 	public JavaScriptSessionStorage(final JavascriptExecutor executor) {
 		this.mExecutor = executor;
 	}

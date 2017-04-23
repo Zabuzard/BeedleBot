@@ -31,14 +31,22 @@ import de.zabuza.sparkle.webdriver.EBrowser;
 import de.zabuza.sparkle.webdriver.IHasWebDriver;
 
 /**
+ * The entry class of the BeedleBot tool. After creation and initialization via
+ * {@link #initialize()} the tool can be started by {@link #start()} and ended
+ * by {@link #shutdown()} or {@link #stop()}.
  * 
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}
  *
  */
 public final class BeedleBot {
+	/**
+	 * The file path to the image of the icon to use.
+	 */
 	private static final String IMAGE_PATH_ICON = "res/img/icon.png";
 
 	/**
+	 * Starts the BeedleBot tool and ensures that all thrown and not caught
+	 * exceptions create log messages and shutdown the tool.
 	 * 
 	 * @param args
 	 *            Not supported
@@ -58,21 +66,61 @@ public final class BeedleBot {
 		}
 	}
 
+	/**
+	 * The Freewar API to use for creation of Freewar instances.
+	 */
 	private IFreewarAPI mApi;
+	/**
+	 * The data bridge to use which is the communication channel of the tool
+	 * with its web interface.
+	 */
 	private DataBridge mDataBridge;
+	/**
+	 * The driver to use for interaction with the browser.
+	 */
 	private WebDriver mDriver;
+	/**
+	 * The fetch data service to use for getting data from the web interface.
+	 */
 	private FetchDataService mFetchDataService;
+	/**
+	 * The image of the icon to use.
+	 */
 	private Image mIconImage;
+	/**
+	 * The Freewar instance to use for interaction with the game.
+	 */
 	private IFreewarInstance mInstance;
+	/**
+	 * The logger to use for logging.
+	 */
 	private final ILogger mLogger;
+	/**
+	 * The login dialog to use prior to service start.
+	 */
 	private LoginDialog mLoginDialog;
+	/**
+	 * The push data service to use for setting data to the web interface.
+	 */
 	private PushDataService mPushDataService;
+	/**
+	 * The main service of the tool.
+	 */
 	private Service mService;
-
+	/**
+	 * The store to use which holds data for Freewar items.
+	 */
 	private Store mStore;
-
+	/**
+	 * The tray manager to use which manages the tray icon of the tool.
+	 */
 	private TrayManager mTrayManager;
 
+	/**
+	 * Creates a new instance of the tool. After creation call
+	 * {@link #initialize()} and then {@link #start()}. To end the tool call
+	 * {@link #shutdown()} or {@link #stop()}.
+	 */
 	public BeedleBot() {
 		this.mTrayManager = null;
 		this.mLoginDialog = null;
@@ -88,6 +136,14 @@ public final class BeedleBot {
 		this.mLogger = LoggerFactory.getLogger();
 	}
 
+	/**
+	 * Initializes the tool. Call this method prior to {@link #start()}.
+	 * 
+	 * @throws IOException
+	 *             If an I/O-Exception occurs when reading the icon image
+	 * @throws AWTException
+	 *             If the desktop system tray is missing
+	 */
 	public void initialize() throws IOException, AWTException {
 		if (this.mLogger.isDebugEnabled()) {
 			this.mLogger.logDebug("Initializing BeedleBot");
@@ -97,6 +153,12 @@ public final class BeedleBot {
 		this.mTrayManager.addTrayIcon();
 	}
 
+	/**
+	 * Shuts the tool down and frees all used resources. The object instance can
+	 * not be used anymore after calling this method, instead create a new one.
+	 * If the tool should only get restarted consider using {@link #stop()}
+	 * instead of this method.
+	 */
 	public void shutdown() {
 		this.mLogger.flush();
 		if (this.mLogger.isDebugEnabled()) {
@@ -121,12 +183,30 @@ public final class BeedleBot {
 		this.mLogger.close();
 	}
 
+	/**
+	 * Starts the tool. Prior to this call {@link #initialize()}. To end the
+	 * tool call {@link #shutdown()} or {@link #stop()}.
+	 */
 	public void start() {
 		this.mLogger.logInfo("BeedleBot start");
 
 		this.mLoginDialog = new LoginDialog(this, this.mIconImage);
 	}
 
+	/**
+	 * Starts the actual main service of the tool. The method tries to catch all
+	 * not caught exceptions to ensure a proper shutdown of the tool.
+	 * 
+	 * @param userSettingsProvider
+	 *            Object that provides settings about the Freewar user to use
+	 *            for the tool
+	 * @param browserSettingsProvider
+	 *            Object that provides settings about the browser to use for the
+	 *            tool
+	 * @throws EmptyUserCredentialsException
+	 *             If user settings like name or password are empty or
+	 *             <tt>null</tt>
+	 */
 	public void startService(final IUserSettingsProvider userSettingsProvider,
 			final IBrowserSettingsProvider browserSettingsProvider) throws EmptyUserCredentialsException {
 		try {
@@ -183,6 +263,10 @@ public final class BeedleBot {
 		}
 	}
 
+	/**
+	 * Stops the tool. In contrast to {@link #shutdown()} the tool object can be
+	 * restarted with {@link #start()} after this method.
+	 */
 	public void stop() {
 		try {
 			stopLoginDialog();
@@ -197,6 +281,11 @@ public final class BeedleBot {
 		}
 	}
 
+	/**
+	 * Stops the login dialog if present and active. The dialog can not be used
+	 * anymore after calling this method. Instead restart the tool by calling
+	 * {@link #stop()} and {@link #start()}.
+	 */
 	private void stopLoginDialog() {
 		if (this.mLoginDialog != null && this.mLoginDialog.isActive()) {
 			this.mLoginDialog.dispose();
@@ -204,6 +293,11 @@ public final class BeedleBot {
 		}
 	}
 
+	/**
+	 * Stops the actual main service of the tool if present and active. The
+	 * service can not be used anymore after calling this method. Instead
+	 * restart the tool by calling {@link #stop()} and {@link #start()}.
+	 */
 	private void stopService() {
 		if (this.mService != null && this.mService.isActive()) {
 			try {
