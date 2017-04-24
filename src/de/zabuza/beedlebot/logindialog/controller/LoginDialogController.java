@@ -19,12 +19,15 @@ import de.zabuza.beedlebot.logindialog.view.LoginDialogView;
  */
 public final class LoginDialogController {
 	/**
-	 * The beedle bot tool.
+	 * The tool to use for callbacks regarding starting the service.
 	 */
 	private final BeedleBot mBeedleBot;
+	/**
+	 * The logger used for logging.
+	 */
 	private final ILogger mLogger;
 	/**
-	 * The owning frame of this controller.
+	 * The frame that holds the dialog.
 	 */
 	private final JFrame mOwner;
 	/**
@@ -38,14 +41,14 @@ public final class LoginDialogController {
 
 	/**
 	 * Creates a new controller of the login dialog by connecting it to the
-	 * view.
+	 * view. After creation use {@link #initialize()} and then {@link #start()}.
 	 * 
 	 * @param owner
 	 *            The owning frame of this controller
 	 * @param view
 	 *            View of the main frame
 	 * @param beedleBot
-	 *            The beedle bot tool
+	 *            The tool to use for callbacks regarding starting the service
 	 */
 	public LoginDialogController(final JFrame owner, final LoginDialogView view, final BeedleBot beedleBot) {
 		this.mOwner = owner;
@@ -56,7 +59,7 @@ public final class LoginDialogController {
 	}
 
 	/**
-	 * Initializes the controller.
+	 * Initializes the controller. Use this method prior to {@link #start()}.
 	 */
 	public void initialize() {
 		if (this.mLogger.isDebugEnabled()) {
@@ -70,21 +73,21 @@ public final class LoginDialogController {
 	}
 
 	/**
-	 * Shuts the beedle bot tool down.
+	 * Shuts the whole tool down.
 	 */
 	public void shutdownTool() {
 		this.mBeedleBot.shutdown();
 	}
 
 	/**
-	 * Starts the controller.
+	 * Starts the controller. Use {@link #initialize()} prior to this method.
 	 */
 	public void start() {
 		// Nothing to do there yet
 	}
 
 	/**
-	 * Starts the login.
+	 * Starts the login to the service and disposes the login dialog.
 	 */
 	public void startLogin() {
 		try {

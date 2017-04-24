@@ -8,9 +8,9 @@ package de.zabuza.beedlebot.databridge;
  */
 public enum EPhase {
 	/**
-	 * Phase in which the tool analyses all items of the central traders depot.
+	 * Phase in which the tool analyzes all items of the central traders depot.
 	 */
-	ANALYSE,
+	ANALYZE,
 	/**
 	 * Phase in which the tool awaits a new item delivery at the central traders
 	 * depot.

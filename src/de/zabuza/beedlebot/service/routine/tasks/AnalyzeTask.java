@@ -10,7 +10,7 @@ import de.zabuza.beedlebot.exceptions.NoPlayerPriceThoughConsideredException;
 import de.zabuza.beedlebot.exceptions.PageContentWrongFormatException;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
-import de.zabuza.beedlebot.service.routine.AnalyseResult;
+import de.zabuza.beedlebot.service.routine.AnalyzeResult;
 import de.zabuza.beedlebot.service.routine.CentralTradersDepotNavigator;
 import de.zabuza.beedlebot.store.EItemCategory;
 import de.zabuza.beedlebot.store.Item;
@@ -20,7 +20,7 @@ import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.frames.EFrame;
 import de.zabuza.sparkle.freewar.frames.IFrameManager;
 
-public final class AnalyseTask implements ITask {
+public final class AnalyzeTask implements ITask {
 	private static final String CONTENT_BUY_ANCHOR_END = "\"> kaufen";
 	private static final String CONTENT_BUY_ANCHOR_START = "Gold <a href=\"";
 	private static final String CONTENT_ID_START = "mit_item=";
@@ -42,10 +42,10 @@ public final class AnalyseTask implements ITask {
 	private final EItemCategory mItemCategory;
 	private final ILogger mLogger;
 	private final CentralTradersDepotNavigator mNavigator;
-	private final AnalyseResult mResult;
+	private final AnalyzeResult mResult;
 	private final Store mStore;
 
-	public AnalyseTask(final WebDriver driver, final IFrameManager frameManager, final AnalyseResult result,
+	public AnalyzeTask(final WebDriver driver, final IFrameManager frameManager, final AnalyzeResult result,
 			final EItemCategory itemCategory, final Store store, final CentralTradersDepotNavigator navigator) {
 		this.mInterrupted = false;
 		this.mDriver = driver;
@@ -85,7 +85,7 @@ public final class AnalyseTask implements ITask {
 	@Override
 	public void start() throws ItemCategoryNotOpenedException {
 		if (this.mLogger.isDebugEnabled()) {
-			this.mLogger.logDebug("Starting AnalyseTask");
+			this.mLogger.logDebug("Starting AnalyzeTask");
 		}
 
 		// Open category
@@ -196,7 +196,7 @@ public final class AnalyseTask implements ITask {
 			final Item item = new Item(itemName, itemCost, itemProfit, id, purchaseAnchorDecoded, isMagical,
 					isConsideredForShop, itemPriceData, this.mItemCategory);
 
-			// Add the item to the analyse result if accepted
+			// Add the item to the analyze result if accepted
 			if (Store.isItemAccepted(item)) {
 				this.mResult.add(item);
 			}

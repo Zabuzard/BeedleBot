@@ -14,7 +14,7 @@ import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.beedlebot.service.Service;
-import de.zabuza.beedlebot.service.routine.tasks.AnalyseTask;
+import de.zabuza.beedlebot.service.routine.tasks.AnalyzeTask;
 import de.zabuza.beedlebot.service.routine.tasks.PurchaseTask;
 import de.zabuza.beedlebot.service.routine.tasks.WaitForDeliveryTask;
 import de.zabuza.beedlebot.store.EItemCategory;
@@ -28,7 +28,7 @@ public final class Routine {
 	private final static long WAIT_FOR_CAN_MOVE_YIELD_UNTIL = 2000;
 	private Queue<Item> mBoughtItemsBuffer;
 	private final Point mCentralTradersDepot;
-	private AnalyseResult mCurrentAnalyseResult;
+	private AnalyzeResult mCurrentAnalyzeResult;
 	private EItemCategory mCurrentCategory;
 	private final WebDriver mDriver;
 	private final IFreewarInstance mInstance;
@@ -52,9 +52,9 @@ public final class Routine {
 		this.mDriver = driver;
 		this.mPushDataService = pushDataService;
 		this.mStore = store;
-		this.mPhase = EPhase.ANALYSE;
+		this.mPhase = EPhase.ANALYZE;
 		this.mCurrentCategory = null;
-		this.mCurrentAnalyseResult = null;
+		this.mCurrentAnalyzeResult = null;
 		this.mBoughtItemsBuffer = new LinkedList<>();
 		this.mTotalProfit = 0;
 		this.mTotalCost = 0;
@@ -85,9 +85,9 @@ public final class Routine {
 	}
 
 	public void reset() {
-		setPhase(EPhase.ANALYSE);
+		setPhase(EPhase.ANALYZE);
 		this.mCurrentCategory = null;
-		this.mCurrentAnalyseResult = null;
+		this.mCurrentAnalyzeResult = null;
 	}
 
 	public void update() {
@@ -98,16 +98,16 @@ public final class Routine {
 				throw new NotAtCentralTradersDepotException(currentLocation);
 			}
 
-			// Analyse phase
-			if (getPhase() == EPhase.ANALYSE) {
-				boolean finishedFullAnalyse = false;
+			// Analyze phase
+			if (getPhase() == EPhase.ANALYZE) {
+				boolean finishedFullAnalyze = false;
 
 				// Determine the category for this round
 				if (this.mCurrentCategory == null || this.mCurrentCategory == EItemCategory.AMULET) {
-					// First analyse round
+					// First analyze round
 					this.mCurrentCategory = EItemCategory.SPELL;
-					this.mCurrentAnalyseResult = new AnalyseResult();
-					this.mLogger.logInfo("Starting analyse");
+					this.mCurrentAnalyzeResult = new AnalyzeResult();
+					this.mLogger.logInfo("Starting analyze");
 				} else if (this.mCurrentCategory == EItemCategory.SPELL) {
 					this.mCurrentCategory = EItemCategory.MISCELLANEOUS;
 				} else if (this.mCurrentCategory == EItemCategory.MISCELLANEOUS) {
@@ -115,23 +115,23 @@ public final class Routine {
 				} else if (this.mCurrentCategory == EItemCategory.ATTACK_WEAPON) {
 					this.mCurrentCategory = EItemCategory.DEFENSE_WEAPON;
 				} else {
-					// Last analyse round
+					// Last analyze round
 					this.mCurrentCategory = EItemCategory.AMULET;
-					finishedFullAnalyse = true;
+					finishedFullAnalyze = true;
 				}
 
 				if (this.mLogger.isDebugEnabled()) {
-					this.mLogger.logDebug("Starting analyse, selected category: " + this.mCurrentCategory);
+					this.mLogger.logDebug("Starting analyze, selected category: " + this.mCurrentCategory);
 				}
 
-				// Start analyse task
-				final AnalyseTask analyseTask = new AnalyseTask(this.mDriver, this.mInstance.getFrameManager(),
-						this.mCurrentAnalyseResult, this.mCurrentCategory, this.mStore, this.mNavigator);
-				analyseTask.start();
+				// Start analyze task
+				final AnalyzeTask analyzeTask = new AnalyzeTask(this.mDriver, this.mInstance.getFrameManager(),
+						this.mCurrentAnalyzeResult, this.mCurrentCategory, this.mStore, this.mNavigator);
+				analyzeTask.start();
 
 				// Proceed to the next phase
-				if (finishedFullAnalyse) {
-					if (this.mCurrentAnalyseResult.isEmpty()) {
+				if (finishedFullAnalyze) {
+					if (this.mCurrentAnalyzeResult.isEmpty()) {
 						// There are no items, wait for next delivery
 						setPhase(EPhase.AWAITING_DELIVERY);
 					} else {
@@ -145,7 +145,7 @@ public final class Routine {
 
 			// Purchase phase
 			if (getPhase() == EPhase.PURCHASE) {
-				final Item item = this.mCurrentAnalyseResult.poll();
+				final Item item = this.mCurrentAnalyzeResult.poll();
 
 				// Abort and start waiting for the next delivery if there is no
 				// item
@@ -209,7 +209,7 @@ public final class Routine {
 					this.mLogger.logInfo("Waited for item delivery");
 
 					// Proceed to the next phase
-					setPhase(EPhase.ANALYSE);
+					setPhase(EPhase.ANALYZE);
 				}
 				return;
 			}

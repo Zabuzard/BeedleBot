@@ -8,15 +8,22 @@ import java.util.Queue;
 import de.zabuza.beedlebot.store.Item;
 
 /**
+ * Queue that holds items that are the result of an analyze at the central
+ * traders depot. Items are returned sorted descending by their profit.
  * 
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}
  *
  */
-public final class AnalyseResult implements Queue<Item> {
-
+public final class AnalyzeResult implements Queue<Item> {
+	/**
+	 * The queue of items that belong to this object.
+	 */
 	private final Queue<Item> mItems;
 
-	public AnalyseResult() {
+	/**
+	 * Creates a new empty analyze result.
+	 */
+	public AnalyzeResult() {
 		this.mItems = new PriorityQueue<>(new ProfitComparator());
 	}
 
