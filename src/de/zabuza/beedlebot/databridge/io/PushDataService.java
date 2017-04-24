@@ -17,14 +17,53 @@ import de.zabuza.sparkle.freewar.IFreewarInstance;
 import de.zabuza.sparkle.freewar.inventory.IInventory;
 import de.zabuza.sparkle.freewar.player.IPlayer;
 
+/**
+ * Service which pushes data from the tool to the tools web interface via a
+ * {@link DataBridge}. After creating call {@link #linkRoutine(Routine)} to link
+ * a routine to this service. Call {@link #update()} to push data from tool to
+ * the bridge. The service has two update cycles, they can be accessed with
+ * {@link #updateActiveData()} and {@link #updatePassiveData()}.
+ * 
+ * @author Zabuza {@literal <zabuza.dev@gmail.com>}
+ *
+ */
 public final class PushDataService {
-
+	/**
+	 * The standard waiting time after purchasing an item at the central traders
+	 * depot.
+	 */
 	private static final int WAITING_TIME_MIN = 10;
+	/**
+	 * The data bridge to use for accessing and setting data.
+	 */
 	private final DataBridge mDataBridge;
+	/**
+	 * The current Freewar instance of the tool.
+	 */
 	private final IFreewarInstance mInstance;
+	/**
+	 * The routine object to use for accessing the state of the tool.
+	 */
 	private Routine mRoutine;
+	/**
+	 * The service object to use for accessing the state of the tool.
+	 */
 	private final Service mService;
 
+	/**
+	 * Creates a new push data service which uses the given data bridge to
+	 * access data. After creating call {@link #linkRoutine(Routine)} to link a
+	 * routine to this service. Call {@link #update()} to push the data of the
+	 * tool to the web interface. Use {@link #updateActiveData()} to only push
+	 * important data and {@link #updatePassiveData()} to also push the rest.
+	 * 
+	 * @param service
+	 *            The service object to use for accessing the state of the tool
+	 * @param instance
+	 *            The current Freewar instance of the tool
+	 * @param dataBridge
+	 *            The data bridge to use for accessing and setting data
+	 */
 	public PushDataService(final Service service, final IFreewarInstance instance, final DataBridge dataBridge) {
 		this.mService = service;
 		this.mInstance = instance;
@@ -33,19 +72,42 @@ public final class PushDataService {
 		this.mRoutine = null;
 	}
 
+	/**
+	 * Links the given routine to this service. It is used to access the state
+	 * of the tool.
+	 * 
+	 * @param routine
+	 *            The routine to link
+	 */
 	public void linkRoutine(final Routine routine) {
 		this.mRoutine = routine;
 	}
 
+	/**
+	 * Sets whether the tool is alive and running.
+	 * 
+	 * @param isBeedleBotServing
+	 *            <tt>True</tt> if the tool is alive and running, <tt>false</tt>
+	 *            if not
+	 */
 	public void setBeedleBotServing(final boolean isBeedleBotServing) {
 		this.mDataBridge.setBeedleBotServing(isBeedleBotServing);
 	}
 
+	/**
+	 * Updates the data by pushing the it to the data bridge. This method calls
+	 * both update cycles, {@link #updateActiveData()} and
+	 * {@link #updatePassiveData()}.
+	 */
 	public void update() {
 		updateActiveData();
 		updatePassiveData();
 	}
 
+	/**
+	 * Updates only the important data like state information by pushing it to
+	 * the data bridge.
+	 */
 	public void updateActiveData() {
 		if (this.mRoutine == null) {
 			return;
@@ -81,6 +143,10 @@ public final class PushDataService {
 		this.mDataBridge.setPhase(phase);
 	}
 
+	/**
+	 * Updates passive data like player statistics and values by pushing it to
+	 * the data bridge.
+	 */
 	public void updatePassiveData() {
 		if (this.mRoutine == null) {
 			return;

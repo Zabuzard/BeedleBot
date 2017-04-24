@@ -78,10 +78,9 @@ public final class Store {
 		return getItemPrice(itemName, false);
 	}
 
-	public boolean isItemConsideredForShop(final String itemName, final int cost, final ItemPrice itemPrice,
-			final EItemCategory category) {
+	public boolean isItemConsideredForShop(final String itemName, final int cost, final ItemPrice itemPrice) {
 		// First check the dictionary for exceptions
-		if (this.mItemDictionary.isItemRegisteredForShop(itemName, category)) {
+		if (this.mItemDictionary.isItemRegisteredForShop(itemName)) {
 			return true;
 		}
 		if (this.mItemDictionary.isItemRegisteredForPlayer(itemName)) {

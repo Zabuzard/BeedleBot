@@ -66,11 +66,10 @@ public final class ItemDictionary {
 		return this.mItemsRegisteredForPlayer.contains(itemName);
 	}
 
-	public boolean isItemRegisteredForShop(final String itemName, final EItemCategory category) {
-		// Consider all weapons and amulets as shop items since they are to hard
-		// to sell to players
-		if (category == EItemCategory.ATTACK_WEAPON || category == EItemCategory.DEFENSE_WEAPON
-				|| category == EItemCategory.AMULET) {
+	public boolean isItemRegisteredForShop(final String itemName) {
+		// Consider every item that is not explicitly registered as player item
+		// as shop item as they are to hard to sell to players
+		if (!isItemRegisteredForPlayer(itemName)) {
 			return true;
 		}
 
