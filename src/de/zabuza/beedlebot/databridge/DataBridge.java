@@ -15,7 +15,7 @@ import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
 /**
  * The data bridge enables communication between the tool and its web interface
  * by using <a href="https://www.w3schools.com/html/html5_webstorage.asp">HTML 5
- * Webstorage technology</a>.
+ * Webstorage technology</a> which acts as shared memory.
  * 
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}
  *

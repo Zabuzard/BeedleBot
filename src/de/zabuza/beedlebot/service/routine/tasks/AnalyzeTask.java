@@ -20,31 +20,123 @@ import de.zabuza.beedlebot.store.Store;
 import de.zabuza.sparkle.freewar.frames.EFrame;
 import de.zabuza.sparkle.freewar.frames.IFrameManager;
 
+/**
+ * Task that analyzes items at the central traders depot and creates
+ * {@link AnalyzeResult}s which contains all items that should be bought because
+ * they are accepted by {@link Store#isItemAccepted(Item)}. After creation use
+ * {@link #start()}, the result will be put in-line into the data-structure
+ * given at construction. After this task has ended it should not be used
+ * anymore, instead create a new instance.
+ * 
+ * @author Zabuza {@literal <zabuza.dev@gmail.com>}
+ *
+ */
 public final class AnalyzeTask implements ITask {
-	private static final String CONTENT_BUY_ANCHOR_END = "\"> kaufen";
-	private static final String CONTENT_BUY_ANCHOR_START = "Gold <a href=\"";
-	private static final String CONTENT_ID_START = "mit_item=";
+	/**
+	 * The prefix of the anchor to buy an items.
+	 */
+	private static final String CONTENT_BUY_ANCHOR_PRE = "Gold <a href=\"";
+	/**
+	 * The suffix of the anchor to buy an items.
+	 */
+	private static final String CONTENT_BUY_ANCHOR_SUC = "\"> kaufen";
+	/**
+	 * The prefix of when the id of an item follows.
+	 */
+	private static final String CONTENT_ID_PRE = "mit_item=";
+	/**
+	 * The needle that represents if present whether an item is magic or not.
+	 */
 	private static final String CONTENT_IS_MAGICAL_PRESENCE = "class=\"itemmagic\"";
-	private static final String CONTENT_ITEM_COST_END = " Gold";
-	private static final String CONTENT_ITEM_COST_START = "für ";
-	private static final String CONTENT_ITEM_NAME_END = "</b>";
-	private static final String CONTENT_ITEM_NAME_START = "<b>";
+	/**
+	 * The prefix of when the cost of an item follows.
+	 */
+	private static final String CONTENT_ITEM_COST_PRE = "für ";
+	/**
+	 * The suffix of when the cost of an item ends.
+	 */
+	private static final String CONTENT_ITEM_COST_SUC = " Gold";
+	/**
+	 * The prefix of when the name of an item follows.
+	 */
+	private static final String CONTENT_ITEM_NAME_PRE = "<b>";
+	/**
+	 * The suffix of when the name of an item ends.
+	 */
+	private static final String CONTENT_ITEM_NAME_SUC = "</b>";
+	/**
+	 * The pattern that splits lines in the raw content format.
+	 */
 	private static final String CONTENT_LINE_SPLIT_PATTERN = "(<br\\s*/>|<br>)";
+	/**
+	 * Symbol that validates if present whether a line has content to be parsed
+	 * or not.
+	 */
 	private static final String CONTENT_LINE_VALIDATOR = "<b>";
-	private static final String CONTENT_NEEDLE_END = "Zurück";
-	private static final String CONTENT_NEEDLE_START = "Zurück";
+	/**
+	 * The prefix of when the content follows.
+	 */
+	private static final String CONTENT_NEEDLE_PRE = "Zurück";
+	/**
+	 * The suffix of when the content ends.
+	 */
+	private static final String CONTENT_NEEDLE_SUC = "Zurück";
+	/**
+	 * The driver to use for accessing browser contents.
+	 */
 	private final WebDriver mDriver;
+	/**
+	 * The frame manager to use for switching frame context in the game.
+	 */
 	private final IFrameManager mFrameManager;
 	/**
 	 * Whether interrupted flag of the task is set.
 	 */
 	private boolean mInterrupted;
+	/**
+	 * The item category to be processed by this task.
+	 */
 	private final EItemCategory mItemCategory;
+	/**
+	 * The logger to use for logging.
+	 */
 	private final ILogger mLogger;
+	/**
+	 * The navigator to use for navigating menus at the central traders depot.
+	 */
 	private final CentralTradersDepotNavigator mNavigator;
+	/**
+	 * The result of this task.
+	 */
 	private final AnalyzeResult mResult;
+	/**
+	 * The store to use for accessing item price data.
+	 */
 	private final Store mStore;
 
+	/**
+	 * Creates a new analyze task that can be started with the {@link #start()}
+	 * method. It analyzes items at the central traders depot and pushes the
+	 * results into the given {@link AnalyzeResult} object that contains all
+	 * items that should be bought because they are accepted by
+	 * {@link Store#isItemAccepted(Item)}. After this task has ended it should
+	 * not be used anymore, instead create a new instance.
+	 * 
+	 * @param driver
+	 *            The driver to use for accessing browser contents
+	 * @param frameManager
+	 *            The frame manager to use for switching frame context of the
+	 *            game
+	 * @param result
+	 *            The object to put the result of the analyze into
+	 * @param itemCategory
+	 *            The category of items to analyze
+	 * @param store
+	 *            The store to use for accessing item price data
+	 * @param navigator
+	 *            The navigator to use for navigating menus at the central
+	 *            traders depot
+	 */
 	public AnalyzeTask(final WebDriver driver, final IFrameManager frameManager, final AnalyzeResult result,
 			final EItemCategory itemCategory, final Store store, final CentralTradersDepotNavigator navigator) {
 		this.mInterrupted = false;
@@ -109,12 +201,29 @@ public final class AnalyzeTask implements ITask {
 		this.mNavigator.exitMenu();
 	}
 
+	/**
+	 * Processes the given raw page content and extracts and processes all
+	 * contained items.
+	 * 
+	 * @param content
+	 *            The raw page content to process
+	 * @throws PageContentWrongFormatException
+	 *             If the given raw page content is in a wrong format such that
+	 *             it can not be parsed correctly
+	 * @throws ItemLineWrongFormatException
+	 *             If the given raw page content contains a line that validates
+	 *             to a line which contains an item but it is in a wrong format
+	 *             such that it can not be parsed correctly
+	 * @throws NoPlayerPriceThoughConsideredException
+	 *             If a processed item has no player price though it was
+	 *             considered to have one
+	 */
 	private void processContent(final String content) throws PageContentWrongFormatException,
 			ItemLineWrongFormatException, NoPlayerPriceThoughConsideredException {
 		// Strip everything between start and end needle
-		final int startIndexRaw = content.indexOf(CONTENT_NEEDLE_START);
-		final int startIndex = startIndexRaw + CONTENT_NEEDLE_START.length();
-		final int endIndex = content.indexOf(CONTENT_NEEDLE_END, startIndex);
+		final int startIndexRaw = content.indexOf(CONTENT_NEEDLE_PRE);
+		final int startIndex = startIndexRaw + CONTENT_NEEDLE_PRE.length();
+		final int endIndex = content.indexOf(CONTENT_NEEDLE_SUC, startIndex);
 
 		if (startIndexRaw == -1 || endIndex == -1) {
 			throw new PageContentWrongFormatException(content);
@@ -129,50 +238,50 @@ public final class AnalyzeTask implements ITask {
 			}
 
 			// Extract item name
-			final int itemNameStart = itemContentLine.indexOf(CONTENT_ITEM_NAME_START);
-			final int itemNameEnd = itemContentLine.indexOf(CONTENT_ITEM_NAME_END);
+			final int itemNameStart = itemContentLine.indexOf(CONTENT_ITEM_NAME_PRE);
+			final int itemNameEnd = itemContentLine.indexOf(CONTENT_ITEM_NAME_SUC);
 
 			if (itemNameStart == -1 || itemNameEnd == -1) {
 				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
-			final String itemName = itemContentLine.substring(itemNameStart + CONTENT_ITEM_NAME_START.length(),
+			final String itemName = itemContentLine.substring(itemNameStart + CONTENT_ITEM_NAME_PRE.length(),
 					itemNameEnd);
 
 			// Extract cost
-			final int itemCostStart = itemContentLine.indexOf(CONTENT_ITEM_COST_START);
-			final int itemCostEnd = itemContentLine.indexOf(CONTENT_ITEM_COST_END);
+			final int itemCostStart = itemContentLine.indexOf(CONTENT_ITEM_COST_PRE);
+			final int itemCostEnd = itemContentLine.indexOf(CONTENT_ITEM_COST_SUC);
 
 			if (itemCostStart == -1 || itemCostEnd == -1) {
 				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
-			String itemCostText = itemContentLine.substring(itemCostStart + CONTENT_ITEM_COST_START.length(),
+			String itemCostText = itemContentLine.substring(itemCostStart + CONTENT_ITEM_COST_PRE.length(),
 					itemCostEnd);
 			// Remove thousand separator
 			itemCostText = itemCostText.replaceAll("\\.", "");
 			final int itemCost = Integer.parseInt(itemCostText);
 
 			// Extract purchase anchor
-			final int purchaseAnchorStart = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_START);
-			final int purchaseAnchorEnd = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_END);
+			final int purchaseAnchorStart = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_PRE);
+			final int purchaseAnchorEnd = itemContentLine.indexOf(CONTENT_BUY_ANCHOR_SUC);
 
 			if (purchaseAnchorStart == -1 || purchaseAnchorEnd == -1) {
 				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
 			final String purchaseAnchor = itemContentLine
-					.substring(purchaseAnchorStart + CONTENT_BUY_ANCHOR_START.length(), purchaseAnchorEnd);
+					.substring(purchaseAnchorStart + CONTENT_BUY_ANCHOR_PRE.length(), purchaseAnchorEnd);
 			final String purchaseAnchorDecoded = purchaseAnchor.replaceAll("&amp;", "&");
 
 			// Extract id from purchase anchor
-			final int idStart = purchaseAnchor.indexOf(CONTENT_ID_START);
+			final int idStart = purchaseAnchor.indexOf(CONTENT_ID_PRE);
 
 			if (idStart == -1) {
 				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
-			final int id = Integer.parseInt(purchaseAnchor.substring(idStart + CONTENT_ID_START.length()));
+			final int id = Integer.parseInt(purchaseAnchor.substring(idStart + CONTENT_ID_PRE.length()));
 
 			// Extract is magical state
 			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);

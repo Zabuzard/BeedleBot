@@ -77,7 +77,7 @@ public final class ItemDictionary {
 	}
 
 	private void initializeItemNamePatterns() {
-		this.mItemNamePatterns.put(".*Gewebeprobe.", "Gewebeprobe");
+		this.mItemNamePatterns.put(".*Gewebeprobe.*", "Gewebeprobe");
 		this.mItemNamePatterns.put(".*Puppe.*", "Puppe von Beispieluser");
 		this.mItemNamePatterns.put(".*personalisierter Hinzauber.*", "personalisierter Hinzauber");
 		this.mItemNamePatterns.put(".*Zeichnung.*", "Zeichnung von Beispiel-NPC");
