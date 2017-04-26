@@ -7,14 +7,41 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Provides various utility methods for item price data. Stores item price data
+ * for exceptional items.
+ * 
+ * @author Zabuza {@literal <zabuza.dev@gmail.com>}
+ *
+ */
 public final class ItemDictionary {
-
+	/**
+	 * Data-structure which maps item name patterns for non-unique items to
+	 * their unique representations.
+	 */
 	private final Map<String, String> mItemNamePatterns;
+	/**
+	 * Set which contains items that are explicitly registered to be sold to
+	 * players.
+	 */
 	private final Set<String> mItemsRegisteredForPlayer;
+	/**
+	 * Set which contains items that are explicitly registered to be sold to the
+	 * shop.
+	 */
 	private final Set<String> mItemsRegisteredForShop;
+	/**
+	 * Data-structure which maps item names to explicit player prices.
+	 */
 	private final Map<String, Integer> mPlayerPrices;
+	/**
+	 * Data-structure which maps item names to explicit standard shop prices.
+	 */
 	private final Map<String, Integer> mStandardShopPrices;
 
+	/**
+	 * Creates a new item dictionary.
+	 */
 	public ItemDictionary() {
 		this.mStandardShopPrices = new HashMap<>();
 		this.mPlayerPrices = new HashMap<>();
@@ -31,6 +58,14 @@ public final class ItemDictionary {
 		initializeItemNamePatterns();
 	}
 
+	/**
+	 * Applies known item name patterns to the given item name in order to get a
+	 * unique representation of it in case it is a non unique item.
+	 * 
+	 * @param itemName
+	 *            The name of the item to apply the patterns to
+	 * @return A unique representation name of the given item
+	 */
 	public String applyItemNamePatterns(final String itemName) {
 		for (final Entry<String, String> entry : this.mItemNamePatterns.entrySet()) {
 			if (itemName.matches(entry.getKey())) {
@@ -40,14 +75,41 @@ public final class ItemDictionary {
 		return itemName;
 	}
 
+	/**
+	 * Whether the dictionary contains an explicit player price for the given
+	 * item.
+	 * 
+	 * @param itemName
+	 *            The name of the item in question
+	 * @return <tt>True</tt> if the dictionary contains an explicit player price
+	 *         for the given item, <tt>false</tt> if not
+	 */
 	public boolean containsPlayerPrice(final String itemName) {
 		return this.mPlayerPrices.containsKey(itemName);
 	}
 
+	/**
+	 * Whether the dictionary contains an explicit standard shop price for the
+	 * given item.
+	 * 
+	 * @param itemName
+	 *            The name of the item in question
+	 * @return <tt>True</tt> if the dictionary contains an explicit standard
+	 *         shop price for the given item, <tt>false</tt> if not
+	 */
 	public boolean containsStandardShopPrice(final String itemName) {
 		return this.mStandardShopPrices.containsKey(itemName);
 	}
 
+	/**
+	 * If present gets the explicit player price stored in this dictionary for
+	 * the given item.
+	 * 
+	 * @param itemName
+	 *            The name of the item to get its price
+	 * @return If present the explicit player price stored in this dictionary
+	 *         for the given item
+	 */
 	public Optional<Integer> getPlayerPrice(final String itemName) {
 		if (containsPlayerPrice(itemName)) {
 			return Optional.of(this.mPlayerPrices.get(itemName));
@@ -55,6 +117,15 @@ public final class ItemDictionary {
 		return Optional.empty();
 	}
 
+	/**
+	 * If present gets the explicit standard shop price stored in this
+	 * dictionary for the given item.
+	 * 
+	 * @param itemName
+	 *            The name of the item to get its price
+	 * @return If present the explicit standard shop price stored in this
+	 *         dictionary for the given item
+	 */
 	public Optional<Integer> getStandardShopPrice(final String itemName) {
 		if (containsStandardShopPrice(itemName)) {
 			return Optional.of(this.mStandardShopPrices.get(itemName));
@@ -62,10 +133,28 @@ public final class ItemDictionary {
 		return Optional.empty();
 	}
 
+	/**
+	 * Whether the given item is explicitly registered to be sold to players in
+	 * this dictionary.
+	 * 
+	 * @param itemName
+	 *            The name of the item in question
+	 * @return <tt>True</tt> if the given item is explicitly registered to be
+	 *         sold to players in this dictionary, <tt>false</tt> if not
+	 */
 	public boolean isItemRegisteredForPlayer(final String itemName) {
 		return this.mItemsRegisteredForPlayer.contains(itemName);
 	}
 
+	/**
+	 * Whether the given item is explicitly registered to be sold to the shop in
+	 * this dictionary.
+	 * 
+	 * @param itemName
+	 *            The name of the item in question
+	 * @return <tt>True</tt> if the given item is explicitly registered to be
+	 *         sold to the shop in this dictionary, <tt>false</tt> if not
+	 */
 	public boolean isItemRegisteredForShop(final String itemName) {
 		// Consider every item that is not explicitly registered as player item
 		// as shop item as they are to hard to sell to players
@@ -76,6 +165,10 @@ public final class ItemDictionary {
 		return this.mItemsRegisteredForShop.contains(itemName);
 	}
 
+	/**
+	 * Initializes the data-structure that maps item name patterns with their
+	 * unique representation name.
+	 */
 	private void initializeItemNamePatterns() {
 		this.mItemNamePatterns.put(".*Gewebeprobe.*", "Gewebeprobe");
 		this.mItemNamePatterns.put(".*Puppe.*", "Puppe von Beispieluser");
@@ -106,6 +199,10 @@ public final class ItemDictionary {
 		this.mItemNamePatterns.put(".*Forschungssalz der .*", "Forschungssalz der XY-Mutation");
 	}
 
+	/**
+	 * Initializes the data-structure that holds all items that are explicitly
+	 * registered to be sold to players.
+	 */
 	private void initializeItemsRegisteredForPlayer() {
 		this.mItemsRegisteredForPlayer.add("Wakrudpilz");
 		this.mItemsRegisteredForPlayer.add("Kuhkopf");
@@ -124,14 +221,26 @@ public final class ItemDictionary {
 		this.mItemsRegisteredForPlayer.add("roter Bergstein");
 	}
 
+	/**
+	 * Initializes the data-structure that holds all items that are explicitly
+	 * registered to be sold to the shop.
+	 */
 	private void initializeItemsRegisteredForShop() {
 		// Nothing there at the moment
 	}
 
+	/**
+	 * Initializes the data-structure that maps item names to explicit player
+	 * prices.
+	 */
 	private void initializePlayerPrices() {
 		// Nothing there at the moment
 	}
 
+	/**
+	 * Intializes the data-structure that maps item names to explicit standard
+	 * shop prices.
+	 */
 	private void initializeStandardShopPrices() {
 		this.mStandardShopPrices.put("altes Relikt", Integer.valueOf(0));
 	}

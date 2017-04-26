@@ -23,10 +23,10 @@ import de.zabuza.sparkle.freewar.frames.IFrameManager;
 /**
  * Task that analyzes items at the central traders depot and creates
  * {@link AnalyzeResult}s which contains all items that should be bought because
- * they are accepted by {@link Store#isItemAccepted(Item)}. After creation use
- * {@link #start()}, the result will be put in-line into the data-structure
- * given at construction. After this task has ended it should not be used
- * anymore, instead create a new instance.
+ * they are accepted by {@link Store#isItemAcceptedForPurchase(Item)}. After
+ * creation use {@link #start()}, the result will be put in-line into the
+ * data-structure given at construction. After this task has ended it should not
+ * be used anymore, instead create a new instance.
  * 
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}
  *
@@ -119,8 +119,8 @@ public final class AnalyzeTask implements ITask {
 	 * method. It analyzes items at the central traders depot and pushes the
 	 * results into the given {@link AnalyzeResult} object that contains all
 	 * items that should be bought because they are accepted by
-	 * {@link Store#isItemAccepted(Item)}. After this task has ended it should
-	 * not be used anymore, instead create a new instance.
+	 * {@link Store#isItemAcceptedForPurchase(Item)}. After this task has ended
+	 * it should not be used anymore, instead create a new instance.
 	 * 
 	 * @param driver
 	 *            The driver to use for accessing browser contents
@@ -292,7 +292,7 @@ public final class AnalyzeTask implements ITask {
 			final int itemProfit;
 			if (isConsideredForShop) {
 				final int standardShopPrice = itemPriceData.getStandardShopPrice();
-				itemProfit = Store.computeFullShopPrice(standardShopPrice) - itemCost;
+				itemProfit = Store.computeShopPriceWithDiscount(standardShopPrice) - itemCost;
 			} else {
 				final Optional<PlayerPrice> playerPrice = itemPriceData.getPlayerPrice();
 				if (playerPrice.isPresent()) {
@@ -306,7 +306,7 @@ public final class AnalyzeTask implements ITask {
 					isConsideredForShop, itemPriceData, this.mItemCategory);
 
 			// Add the item to the analyze result if accepted
-			if (Store.isItemAccepted(item)) {
+			if (Store.isItemAcceptedForPurchase(item)) {
 				this.mResult.add(item);
 			}
 		}

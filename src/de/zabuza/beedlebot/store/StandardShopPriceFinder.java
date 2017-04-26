@@ -11,26 +11,80 @@ import de.zabuza.beedlebot.exceptions.StandardShopPriceServiceUnavailableExcepti
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
 
+/**
+ * Service which finds standard shop prices for given items. Use
+ * {@link #findStandardShopPrice(String)} to access the service.
+ * 
+ * @author Zabuza {@literal <zabuza.dev@gmail.com>}
+ *
+ */
 public final class StandardShopPriceFinder {
-
-	public static final int NO_PRICE = -1;
+	/**
+	 * First pattern that matches the end of the standard shop price content.
+	 */
 	private static final String CONTENT_END_PATTERN_FIRST = "|";
+	/**
+	 * Second pattern that matches the end of the standard shop price content.
+	 */
 	private static final String CONTENT_END_PATTERN_SECOND = "}";
+	/**
+	 * Pattern that if present indicates that the item is a pet and should be
+	 * ignored, yielding a standard shop price of <tt>zero</tt>.
+	 */
 	private static final String CONTENT_IGNORE_PET_PATTERN = "{{NPC/Layout|";
+	/**
+	 * Pattern that matches the start of the standard shop price content.
+	 */
 	private static final String CONTENT_START_PATTERN = "|VerkPreis=";
-	private static final String SERVER_QUERY_POST = "&action=edit";
+	/**
+	 * The prefix of the query to send to the server.
+	 */
 	private static final String SERVER_QUERY_PRE = "?title=";
+	/**
+	 * The suffix of the query to send to the server.
+	 */
+	private static final String SERVER_QUERY_SUFF = "&action=edit";
+	/**
+	 * The URL of the service to use.
+	 */
 	private static final String SERVER_URL = "http://www.fwwiki.de/index.php";
+	/**
+	 * Pattern that matches symbols to strip from integers before parsing them.
+	 */
 	private static final String STRIP_INTEGER_PATTERN = "[\\s\\.,]";
 
+	/**
+	 * The dictionary to use for exceptional items.
+	 */
 	private final ItemDictionary mItemDictionary;
+	/**
+	 * The logger to use for logging.
+	 */
 	private final ILogger mLogger;
 
+	/**
+	 * Creates a new standard shop price finder which is able to find standard
+	 * shop prices for given items.
+	 * 
+	 * @param itemDictionary
+	 *            The dictionary to use for exceptional items
+	 */
 	public StandardShopPriceFinder(final ItemDictionary itemDictionary) {
 		this.mItemDictionary = itemDictionary;
 		this.mLogger = LoggerFactory.getLogger();
 	}
 
+	/**
+	 * Tries to find the standard shop price of the item with the given name.
+	 * 
+	 * @param itemName
+	 *            The name of the item to find its standard shop price
+	 * @return If present the standard shop price of the given item, if not
+	 *         present there is no
+	 * @throws StandardShopPriceServiceUnavailableException
+	 *             When the service used to fetch standard shop price data is
+	 *             unavailable such that a connection could not be established
+	 */
 	public Optional<Integer> findStandardShopPrice(final String itemName)
 			throws StandardShopPriceServiceUnavailableException {
 		if (this.mLogger.isDebugEnabled()) {
@@ -49,7 +103,7 @@ public final class StandardShopPriceFinder {
 		final String itemToUrl = parsedItemName.replaceAll("\\s", "_");
 		URL url;
 		try {
-			url = new URL(SERVER_URL + SERVER_QUERY_PRE + itemToUrl + SERVER_QUERY_POST);
+			url = new URL(SERVER_URL + SERVER_QUERY_PRE + itemToUrl + SERVER_QUERY_SUFF);
 		} catch (final MalformedURLException e) {
 			throw new StandardShopPriceServiceUnavailableException(e);
 		}

@@ -21,7 +21,7 @@ public final class ItemEntry {
 	 */
 	private final int mCost;
 	/**
-	 * Whether the item is considered to get sold in the shop or to players.
+	 * Whether the item is considered to get sold to the shop or to players.
 	 */
 	private final boolean mIsConsideredForShop;
 	/**
@@ -56,7 +56,7 @@ public final class ItemEntry {
 	 * @param wasCached
 	 *            Whether the item price data was cached or not
 	 * @param isConsideredForShop
-	 *            Whether the item is considered to get sold in the shop or to
+	 *            Whether the item is considered to get sold to the shop or to
 	 *            players
 	 */
 	public ItemEntry(final String item, final int cost, final int profit, final boolean wasCached,
@@ -107,9 +107,9 @@ public final class ItemEntry {
 	}
 
 	/**
-	 * Whether the item is considered to get sold in the shop or to players.
+	 * Whether the item is considered to get sold to the shop or to players.
 	 * 
-	 * @return <tt>True</tt> if the item is considered to get sold in the shop,
+	 * @return <tt>True</tt> if the item is considered to get sold to the shop,
 	 *         <tt>false</tt> if it is considered to get sold to players.
 	 */
 	public boolean isConsideredForShop() {

@@ -306,7 +306,10 @@ public final class Service extends Thread {
 						this.mPushDataService.updateActiveData();
 
 						this.mLogger.logInfo("Pause service");
+
+						// Flush log and save the store
 						this.mLogger.flush();
+						this.mStore.save();
 					}
 				}
 				if (this.mShouldStopService) {
