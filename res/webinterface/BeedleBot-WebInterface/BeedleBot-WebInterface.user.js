@@ -672,7 +672,7 @@ function createPurchaseTabLayout() {
 	$('#beedleStatusPanel').append('<table id="beedleStatusPanelLayout">\
 			<tr>\
 				<td id="beedleStateCell" class="beedleStatusLeftOuter beedleStatusUpper"></td>\
-				<td id="beedlePhaseAnalyseCell" class="beedleStatusRightOuter beedleStatusUpper"></td>\
+				<td id="beedlePhaseAnalyzeCell" class="beedleStatusRightOuter beedleStatusUpper"></td>\
 			</tr>\
 			<tr>\
 				<td id="beedleActivationCell" class="beedleStatusLeftOuter beedleStatusInner"></td>\
@@ -799,7 +799,7 @@ function createPurchaseTabContent() {
 function createStatusPanelContent() {
 	$('#beedleStateCell').append(buildStatusRibbonTable('ribbonState', localization.ribbonState));
 
-	$('#beedlePhaseAnalyseCell').append(buildStatusRibbonTable('ribbonAnalyse', localization.ribbonAnalyse));
+	$('#beedlePhaseAnalyzeCell').append(buildStatusRibbonTable('ribbonAnalyze', localization.ribbonAnalyze));
 	$('#beedlePhasePurchaseCell').append(buildStatusRibbonTable('ribbonPurchase', localization.ribbonPurchase));
 	$('#beedlePhaseWaitCell').append(buildStatusRibbonTable('ribbonWait', localization.ribbonWait));
 
@@ -963,16 +963,16 @@ function updateStatusPanel() {
 
 	// Update phase
 	var phase = getItem('phase');
-	var ribbonAnalyse = $('#ribbonAnalyse');
+	var ribbonAnalyze = $('#ribbonAnalyze');
 	var ribbonPurchase = $('#ribbonPurchase');
 	var ribbonWait = $('#ribbonWait');
 
-	if (phase == phases.analyse) {
-		$(ribbonAnalyse).removeClass('grayRibbon');
-		$(ribbonAnalyse).addClass('blueRibbon');
+	if (phase == phases.analyze) {
+		$(ribbonAnalyze).removeClass('grayRibbon');
+		$(ribbonAnalyze).addClass('blueRibbon');
 	} else {
-		$(ribbonAnalyse).removeClass('blueRibbon');
-		$(ribbonAnalyse).addClass('grayRibbon');
+		$(ribbonAnalyze).removeClass('blueRibbon');
+		$(ribbonAnalyze).addClass('grayRibbon');
 	}
 
 	if (phase == phases.purchase) {
@@ -1313,7 +1313,7 @@ states.problem = 'PROBLEM';
 
 // BeedleBots phases
 var phases = {};
-phases.analyse = 'ANALYSE';
+phases.analyze = 'ANALYZE';
 phases.awaitingDelivery = 'AWAITING_DELIVERY';
 phases.purchase = 'PURCHASE';
 phases.wait = 'WAIT';
@@ -1368,7 +1368,7 @@ localization.miscellaneousTab = 'Sonstiges';
 localization.hideInterface = 'Interface ausblenden';
 localization.showInterface = 'Interface einblenden';
 localization.ribbonState = 'Status';
-localization.ribbonAnalyse = 'Analyse';
+localization.ribbonAnalyze = 'Analyse';
 localization.ribbonPurchase = 'Kaufen';
 localization.ribbonWait = 'Warten';
 localization.activationStart = {};
