@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -54,7 +55,13 @@ public final class Routine {
 	 * resolving a problem by itself. If it does not resolve the problem within
 	 * this limit it must give up and throw the problem to parent objects.
 	 */
-	private final static int PROBLEM_SELF_RESOLVING_TRIES_MAX = 10;
+	private final static int PROBLEM_SELF_RESOLVING_TRIES_MAX = 5;
+	/**
+	 * Amount of how many update phases the routine needs to pass without
+	 * encountering a problem until it is allowed to reset the resolving tries
+	 * counter.
+	 */
+	private static final int PROBLEM_SELF_RESOLVING_TRIES_RESET = 3;
 	/**
 	 * Time to pass until the method will check if the player is able to move
 	 * instead of checking it every phase of {@link #update()}. This is done to
@@ -109,6 +116,11 @@ public final class Routine {
 	 * The current phase the routine is in.
 	 */
 	private EPhase mPhase;
+	/**
+	 * Amount of how often after encountering a problem the routine has
+	 * successfully passes an update phase without encountering a problem again.
+	 */
+	private int mProblemSelfResolvingPhasesWithoutProblem;
 	/**
 	 * Amount of how often the routine has tried to resolve a problem by itself
 	 * in a row. The counter is reseted once it finishes an update phase without
@@ -193,6 +205,7 @@ public final class Routine {
 		this.mLastWaitForCanMoveTimestamp = 0;
 
 		this.mProblemSelfResolvingTries = 0;
+		this.mProblemSelfResolvingPhasesWithoutProblem = 0;
 		this.mWasProblemLastUpdate = false;
 	}
 
@@ -251,6 +264,7 @@ public final class Routine {
 
 		this.mWasProblemLastUpdate = false;
 		this.mProblemSelfResolvingTries = 0;
+		this.mProblemSelfResolvingPhasesWithoutProblem = 0;
 	}
 
 	/**
@@ -267,7 +281,16 @@ public final class Routine {
 	public void update() {
 		// Check the problem state
 		if (!this.mWasProblemLastUpdate) {
-			this.mProblemSelfResolvingTries = 0;
+			// There was no problem in the last round
+			if (this.mProblemSelfResolvingTries > 0) {
+				this.mProblemSelfResolvingPhasesWithoutProblem++;
+				if (this.mProblemSelfResolvingPhasesWithoutProblem >= PROBLEM_SELF_RESOLVING_TRIES_RESET) {
+					// Managed enough rounds without problem to reset the
+					// counter
+					this.mProblemSelfResolvingPhasesWithoutProblem = 0;
+					this.mProblemSelfResolvingTries = 0;
+				}
+			}
 		} else {
 			// Reset the problem state for this round
 			this.mWasProblemLastUpdate = false;
@@ -395,9 +418,9 @@ public final class Routine {
 				}
 				return;
 			}
-		} catch (final StaleElementReferenceException | TimeoutException | PageContentWrongFormatException
-				| ItemCategoryNotOpenedException e) {
-			if (this.mProblemSelfResolvingTries > PROBLEM_SELF_RESOLVING_TRIES_MAX) {
+		} catch (final StaleElementReferenceException | NoSuchElementException | TimeoutException
+				| PageContentWrongFormatException | ItemCategoryNotOpenedException e) {
+			if (this.mProblemSelfResolvingTries >= PROBLEM_SELF_RESOLVING_TRIES_MAX) {
 				// The problem could not get resolved in the limit
 				this.mWasProblemLastUpdate = true;
 				this.mService.setProblem(e);

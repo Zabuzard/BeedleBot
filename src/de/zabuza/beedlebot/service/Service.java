@@ -271,12 +271,10 @@ public final class Service extends Thread {
 					continue;
 				}
 
-				final boolean hasProblem = hasProblem();
-
 				// Determine if to update services
 				final boolean doUpdate;
 				final long currentMillis = System.currentTimeMillis();
-				if (hasProblem || currentMillis - this.lastUpdateMillis >= UPDATE_INTERVAL) {
+				if (hasProblem() || currentMillis - this.lastUpdateMillis >= UPDATE_INTERVAL) {
 					this.lastUpdateMillis = currentMillis;
 					doUpdate = true;
 				} else {
@@ -300,7 +298,7 @@ public final class Service extends Thread {
 
 						this.mLogger.logInfo("Continuing service");
 					}
-					if (!this.mPaused && (hasProblem || this.mFetchDataService.isStopSignalSet())) {
+					if (!this.mPaused && (hasProblem() || this.mFetchDataService.isStopSignalSet())) {
 						// Pause
 						this.mPaused = true;
 						this.mFetchDataService.clearStopSignal();
