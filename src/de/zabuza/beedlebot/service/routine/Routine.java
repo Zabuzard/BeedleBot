@@ -5,12 +5,15 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 
 import de.zabuza.beedlebot.databridge.DataBridge;
 import de.zabuza.beedlebot.databridge.EPhase;
 import de.zabuza.beedlebot.databridge.io.PushDataService;
+import de.zabuza.beedlebot.exceptions.ItemCategoryNotOpenedException;
 import de.zabuza.beedlebot.exceptions.NotAtCentralTradersDepotException;
+import de.zabuza.beedlebot.exceptions.PageContentWrongFormatException;
 import de.zabuza.beedlebot.logging.ILogger;
 import de.zabuza.beedlebot.logging.LoggerFactory;
 import de.zabuza.beedlebot.logging.LoggerUtil;
@@ -45,14 +48,20 @@ public final class Routine {
 	 * over-stress the driver resource and minimize
 	 * {@link StaleElementReferenceException}s.
 	 */
-	private final static long AWAITING_DELIVERY_YIELD_UNTIL = 2000;
+	private final static long AWAITING_DELIVERY_YIELD_UNTIL = 4_000;
+	/**
+	 * Amount of how many update phases the routine is allowed to use for
+	 * resolving a problem by itself. If it does not resolve the problem within
+	 * this limit it must give up and throw the problem to parent objects.
+	 */
+	private final static int PROBLEM_SELF_RESOLVING_TRIES_MAX = 10;
 	/**
 	 * Time to pass until the method will check if the player is able to move
 	 * instead of checking it every phase of {@link #update()}. This is done to
 	 * not over-stress the driver resource and minimize
 	 * {@link StaleElementReferenceException}s.
 	 */
-	private final static long WAIT_FOR_CAN_MOVE_YIELD_UNTIL = 2000;
+	private final static long WAIT_FOR_CAN_MOVE_YIELD_UNTIL = 2_000;
 	/**
 	 * Buffer that contains all bought items. Can be used by a parent object to
 	 * fetch the progress of the routine.
@@ -101,6 +110,13 @@ public final class Routine {
 	 */
 	private EPhase mPhase;
 	/**
+	 * Amount of how often the routine has tried to resolve a problem by itself
+	 * in a row. The counter is reseted once it finishes an update phase without
+	 * problems and increased whenever an error occurs that the routine likes to
+	 * resolve by itself.
+	 */
+	private int mProblemSelfResolvingTries;
+	/**
 	 * The service to use for pushing data over the {@link DataBridge}.
 	 */
 	private final PushDataService mPushDataService;
@@ -125,6 +141,11 @@ public final class Routine {
 	 * The task to use for waiting to the next item delivery.
 	 */
 	private final WaitForDeliveryTask mWaitForDeliveryTask;
+	/**
+	 * Whether there was a problem in the last update phase of the routine or
+	 * not.
+	 */
+	private boolean mWasProblemLastUpdate;
 
 	/**
 	 * Creates a new instance of a routine with the given data. The routine
@@ -170,6 +191,9 @@ public final class Routine {
 
 		this.mLastAwaitingDeliveryTimestamp = 0;
 		this.mLastWaitForCanMoveTimestamp = 0;
+
+		this.mProblemSelfResolvingTries = 0;
+		this.mWasProblemLastUpdate = false;
 	}
 
 	/**
@@ -224,6 +248,9 @@ public final class Routine {
 		setPhase(EPhase.ANALYZE);
 		this.mCurrentCategory = null;
 		this.mCurrentAnalyzeResult = null;
+
+		this.mWasProblemLastUpdate = false;
+		this.mProblemSelfResolvingTries = 0;
 	}
 
 	/**
@@ -238,6 +265,14 @@ public final class Routine {
 	 * {@link PushDataService#updateActiveData()}.
 	 */
 	public void update() {
+		// Check the problem state
+		if (!this.mWasProblemLastUpdate) {
+			this.mProblemSelfResolvingTries = 0;
+		} else {
+			// Reset the problem state for this round
+			this.mWasProblemLastUpdate = false;
+		}
+
 		try {
 			// Check if the current location is the central traders depot
 			final Point currentLocation = this.mInstance.getLocation().getPosition();
@@ -360,10 +395,20 @@ public final class Routine {
 				}
 				return;
 			}
-		} catch (final StaleElementReferenceException e) {
-			// Log the problem but continue
-			this.mLogger.logError("Error while routine: " + LoggerUtil.getStackTrace(e));
+		} catch (final StaleElementReferenceException | TimeoutException | PageContentWrongFormatException
+				| ItemCategoryNotOpenedException e) {
+			if (this.mProblemSelfResolvingTries > PROBLEM_SELF_RESOLVING_TRIES_MAX) {
+				// The problem could not get resolved in the limit
+				this.mWasProblemLastUpdate = true;
+				this.mService.setProblem(e);
+			} else {
+				// Log the problem but continue
+				this.mWasProblemLastUpdate = true;
+				this.mProblemSelfResolvingTries++;
+				this.mLogger.logError("Error while routine: " + LoggerUtil.getStackTrace(e));
+			}
 		} catch (final Exception e) {
+			this.mWasProblemLastUpdate = true;
 			this.mService.setProblem(e);
 		}
 	}

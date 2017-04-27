@@ -33,11 +33,11 @@ public final class Service extends Thread {
 	 * The time in milliseconds to wait for the next iteration of the life
 	 * cycle.
 	 */
-	private final static long SERVICE_INTERVAL = 100;
+	private final static long SERVICE_INTERVAL = 200;
 	/**
 	 * The time in milliseconds to wait for the next data push and fetch cycle.
 	 */
-	private final static long UPDATE_INTERVAL = 500;
+	private final static long UPDATE_INTERVAL = 1_000;
 
 	/**
 	 * The timestamp of the last data push and fetch cycle.
@@ -271,10 +271,12 @@ public final class Service extends Thread {
 					continue;
 				}
 
+				final boolean hasProblem = hasProblem();
+
 				// Determine if to update services
 				final boolean doUpdate;
 				final long currentMillis = System.currentTimeMillis();
-				if (currentMillis - this.lastUpdateMillis >= UPDATE_INTERVAL) {
+				if (hasProblem || currentMillis - this.lastUpdateMillis >= UPDATE_INTERVAL) {
 					this.lastUpdateMillis = currentMillis;
 					doUpdate = true;
 				} else {
@@ -298,18 +300,17 @@ public final class Service extends Thread {
 
 						this.mLogger.logInfo("Continuing service");
 					}
-					if (!this.mPaused && (hasProblem() || this.mFetchDataService.isStopSignalSet())) {
+					if (!this.mPaused && (hasProblem || this.mFetchDataService.isStopSignalSet())) {
 						// Pause
 						this.mPaused = true;
 						this.mFetchDataService.clearStopSignal();
 						this.mRoutine.reset();
 						this.mPushDataService.updateActiveData();
 
-						this.mLogger.logInfo("Pause service");
-
 						// Flush log and save the store
-						this.mLogger.flush();
 						this.mStore.save();
+						this.mLogger.logInfo("Pause service");
+						this.mLogger.flush();
 					}
 				}
 				if (this.mShouldStopService) {
