@@ -95,6 +95,9 @@ public final class Store {
 		}
 
 		// Check player to player price validity
+		if (!itemPrice.hasPlayerPrice()) {
+			return false;
+		}
 		final long playerTimestamp = itemPrice.getPlayerPrice().get().getTimestamp();
 		final long playerDiff = now - playerTimestamp;
 
