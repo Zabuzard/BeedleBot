@@ -1,7 +1,7 @@
 package de.zabuza.beedlebot.logging;
 
 /**
- * Factory that provides intances of {@link ILogger}.
+ * Factory that provides instances of {@link ILogger}.
  * 
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}
  *

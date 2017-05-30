@@ -176,7 +176,6 @@ public final class BeedleBot {
 			} catch (final Exception e) {
 				this.mLogger.logError("Error while removing tray icon: " + LoggerUtil.getStackTrace(e));
 			}
-
 		}
 
 		this.mLogger.logInfo("BeedleBot shutdown");

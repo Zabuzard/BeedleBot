@@ -197,6 +197,9 @@ public final class ItemDictionary {
 		this.mItemNamePatterns.put(".*Wissenszauber von .*", "Wissenszauber von Beispieluser");
 		this.mItemNamePatterns.put(".*Hinzauber zu .*", "Hinzauber zu Beispielspieler");
 		this.mItemNamePatterns.put(".*Forschungssalz der .*", "Forschungssalz der XY-Mutation");
+
+		// Dummy item used for items that are inexistent
+		this.mItemNamePatterns.put(".*Geist von .*", "rostiger Werkzeugkoffer");
 	}
 
 	/**
