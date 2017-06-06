@@ -250,7 +250,7 @@ public final class AnalyzeTask implements ITask {
 
 			// Extract cost
 			final int itemCostStart = itemContentLine.indexOf(CONTENT_ITEM_COST_PRE);
-			final int itemCostEnd = itemContentLine.indexOf(CONTENT_ITEM_COST_SUC);
+			final int itemCostEnd = itemContentLine.indexOf(CONTENT_ITEM_COST_SUC, itemCostStart);
 
 			if (itemCostStart == -1 || itemCostEnd == -1) {
 				throw new ItemLineWrongFormatException(itemContentLine);
