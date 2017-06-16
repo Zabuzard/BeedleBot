@@ -91,7 +91,7 @@ public final class StoreCache implements Serializable {
 	/**
 	 * The logger to use for logging which is not contained in serialized
 	 * objects, instead use {@link #refreshLogger()} to initialize the logger if
-	 * deserializing a store cache..
+	 * deserializing a store cache.
 	 */
 	private transient ILogger mLogger;
 
