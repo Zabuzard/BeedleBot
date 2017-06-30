@@ -199,6 +199,7 @@ public final class ItemDictionary {
 		this.mItemNamePatterns.put(".*Forschungssalz der .*", "Forschungssalz der XY-Mutation");
 		this.mItemNamePatterns.put(".*schreckliches NPC: .*", "schreckliches NPC: Beispiel-NPC");
 		this.mItemNamePatterns.put(".*Duft der .+-Wesen.*", "Duft der XY-Wesen");
+		this.mItemNamePatterns.put(".*Portalkristall von .*", "Portalkristall von Beispieluser");
 
 		// Dummy item used for items that are inexistent
 		this.mItemNamePatterns.put(".*Geist von .*", "rostiger Werkzeugkoffer");
