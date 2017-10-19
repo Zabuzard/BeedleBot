@@ -54,8 +54,8 @@ public final class HtmlLogger implements ILogger {
 	 */
 	private static final int LOG_EVERY = 200;
 	/**
-	 * The maximal size of the logging file, i.e. the amount of messages when
-	 * the logger deletes old messages.
+	 * The maximal size of the logging file, i.e. the amount of messages when the
+	 * logger deletes old messages.
 	 */
 	private static final int LOG_MESSAGES_MAX = 10_000;
 	/**
@@ -139,9 +139,9 @@ public final class HtmlLogger implements ILogger {
 	 *            Already logged messages
 	 * @param bufferedMessages
 	 *            Buffered message to mix with the already logged messages
-	 * @return A queue of messages that has a maximum of
-	 *         {@link #LOG_MESSAGES_MAX} messages where the buffered messages
-	 *         come after the already logged messages
+	 * @return A queue of messages that has a maximum of {@link #LOG_MESSAGES_MAX}
+	 *         messages where the buffered messages come after the already logged
+	 *         messages
 	 */
 	private static Queue<String> mixBufferIntoMessages(final Queue<String> loggedMessages,
 			final Queue<LogMessage> bufferedMessages) {
@@ -186,8 +186,8 @@ public final class HtmlLogger implements ILogger {
 	}
 
 	/**
-	 * The head message that comes before any log messages in the HTML format.
-	 * It contains meta information for the HTML to get displayed correctly like
+	 * The head message that comes before any log messages in the HTML format. It
+	 * contains meta information for the HTML to get displayed correctly like
 	 * stylesheet data.
 	 */
 	private String mHeadMessage;
@@ -200,14 +200,14 @@ public final class HtmlLogger implements ILogger {
 	 */
 	private final String mLineSeparator;
 	/**
-	 * The queue that buffers log messages of queries. It can be flushed into
-	 * the log-file by using {@link #flush()}.
+	 * The queue that buffers log messages of queries. It can be flushed into the
+	 * log-file by using {@link #flush()}.
 	 */
 	private final Queue<LogMessage> mMessageBuffer;
 	/**
-	 * The trailing message that comes after all log messages in the HTML
-	 * format. It contains meta information for the HTML to get displayed
-	 * correctly like stylesheet data.
+	 * The trailing message that comes after all log messages in the HTML format. It
+	 * contains meta information for the HTML to get displayed correctly like
+	 * stylesheet data.
 	 */
 	private String mTailMessage;
 
@@ -224,9 +224,9 @@ public final class HtmlLogger implements ILogger {
 	 * Creates a new instance of this logger.
 	 * 
 	 * @param isDebugEnabled
-	 *            <tt>True</tt> if the debugging channel of this logger should
-	 *            get enabled, <tt>false</tt> if not. Note that this can later
-	 *            be changed by {@link #setDebugEnabled(boolean)}.
+	 *            <tt>True</tt> if the debugging channel of this logger should get
+	 *            enabled, <tt>false</tt> if not. Note that this can later be
+	 *            changed by {@link #setDebugEnabled(boolean)}.
 	 */
 	public HtmlLogger(final boolean isDebugEnabled) {
 		this.mLineSeparator = System.lineSeparator();
@@ -323,10 +323,10 @@ public final class HtmlLogger implements ILogger {
 	}
 
 	/**
-	 * Gets the head message that comes before any log messages in the HTML
-	 * format. It contains meta information for the HTML to get displayed
-	 * correctly like stylesheet data. Note that this method uses a singleton
-	 * pattern to not create the head message unnecessarily often.
+	 * Gets the head message that comes before any log messages in the HTML format.
+	 * It contains meta information for the HTML to get displayed correctly like
+	 * stylesheet data. Note that this method uses a singleton pattern to not create
+	 * the head message unnecessarily often.
 	 * 
 	 * @return The head message
 	 */
@@ -348,7 +348,22 @@ public final class HtmlLogger implements ILogger {
 				.append(" { background-color: #F2CEC8; }");
 		sb.append(".").append(CLASS_LOG_CONTENT).append(" { margin-left: 10px;}");
 		sb.append("</style>");
-		sb.append("</head><body>");
+		sb.append("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>");
+		sb.append("<script>");
+		sb.append("var isLogCompressed = false;");
+		sb.append("function toggleCompressLog() {");
+		sb.append("if (isLogCompressed) {");
+		sb.append("$('." + CLASS_LOG_INFO + ", ." + CLASS_LOG_DEBUG + "').show();");
+		sb.append("$('." + CLASS_LOG_INFO + " + br, ." + CLASS_LOG_DEBUG + " + br').show();");
+		sb.append("isLogCompressed = false;");
+		sb.append("} else {");
+		sb.append("$('." + CLASS_LOG_INFO + ", ." + CLASS_LOG_DEBUG + "').hide();");
+		sb.append("$('." + CLASS_LOG_INFO + " + br, ." + CLASS_LOG_DEBUG + " + br').hide();");
+		sb.append("isLogCompressed = true;");
+		sb.append("}");
+		sb.append("}");
+		sb.append("</script>");
+		sb.append("</head><body><button onclick=\"toggleCompressLog()\">Toggle Compress Log</button><br/>");
 		sb.append(NO_LOG_MESSAGE_INDICATOR);
 
 		this.mHeadMessage = sb.toString();
@@ -357,9 +372,9 @@ public final class HtmlLogger implements ILogger {
 
 	/**
 	 * Gets the trailing message that comes after all log messages in the HTML
-	 * format. It contains meta information for the HTML to get displayed
-	 * correctly like stylesheet data. Note that this method uses a singleton
-	 * pattern to not create the tail message unnecessarily often.
+	 * format. It contains meta information for the HTML to get displayed correctly
+	 * like stylesheet data. Note that this method uses a singleton pattern to not
+	 * create the tail message unnecessarily often.
 	 * 
 	 * @return The trailing message
 	 */

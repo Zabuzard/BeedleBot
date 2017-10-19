@@ -120,8 +120,9 @@ public final class StoreUtil {
 		http.setDoOutput(true);
 
 		final StringJoiner queryJoiner = new StringJoiner(QUERY_SEPARATOR);
-		for (final Entry<String, String> entry : arguments.entrySet())
+		for (final Entry<String, String> entry : arguments.entrySet()) {
 			queryJoiner.add(encodeUtf8(entry.getKey()) + QUERY_ALLOCATION + encodeUtf8(entry.getValue()));
+		}
 		final byte[] out = queryJoiner.toString().getBytes(StandardCharsets.UTF_8);
 		final int length = out.length;
 
