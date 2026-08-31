@@ -2,6 +2,7 @@ package de.zabuza.beedlebot.store;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -119,7 +120,7 @@ public final class PurchaseRegister {
 		}
 
 		try {
-			final URL url = new URL(StoreUtil.SERVER_URL + StoreUtil.BEEDLE_BOT_SERVICE + SERVER_FILE);
+			final URL url = URI.create(StoreUtil.SERVER_URL + StoreUtil.BEEDLE_BOT_SERVICE + SERVER_FILE).toURL();
 			final HashMap<String, String> arguments = new HashMap<>();
 			final ItemPrice itemPrice = item.getStorePriceData();
 

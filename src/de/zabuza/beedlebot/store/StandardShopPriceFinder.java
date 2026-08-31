@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 
@@ -103,7 +104,7 @@ public final class StandardShopPriceFinder {
 		final String itemToUrl = parsedItemName.replaceAll("\\s", "_");
 		URL url;
 		try {
-			url = new URL(SERVER_URL + SERVER_QUERY_PRE + itemToUrl + SERVER_QUERY_SUFF);
+			url = URI.create(SERVER_URL + SERVER_QUERY_PRE + itemToUrl + SERVER_QUERY_SUFF).toURL();
 		} catch (final MalformedURLException e) {
 			throw new StandardShopPriceServiceUnavailableException(e);
 		}
@@ -162,7 +163,7 @@ public final class StandardShopPriceFinder {
 
 			// Price extracted, format it
 			final String shopPriceText = shopPriceContent.toString();
-			shopPrice = new Integer(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
+			shopPrice = Integer.valueOf(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
 		} catch (final IOException e) {
 			throw new StandardShopPriceServiceUnavailableException(e);
 		}

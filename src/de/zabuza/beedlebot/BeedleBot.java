@@ -225,13 +225,7 @@ public final class BeedleBot {
 
 			// Create Freewar API
 			final EBrowser browser = browserSettingsProvider.getBrowser();
-			this.mApi = new Sparkle(browser);
-
-			// Set options
-			final DesiredCapabilities capabilities = this.mApi.createCapabilities(browser,
-					browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary(),
-					browserSettingsProvider.getUserProfile());
-			this.mApi.setCapabilities(capabilities);
+			this.mApi = new Sparkle(browser, browserSettingsProvider.getDriverForBrowser(browser), browserSettingsProvider.getBrowserBinary());
 
 			// Login and create an instance
 			this.mInstance = this.mApi.login(username, password, world);

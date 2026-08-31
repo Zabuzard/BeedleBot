@@ -3,12 +3,10 @@ package de.zabuza.beedlebot.databridge;
 import java.text.DateFormat;
 import java.util.Date;
 
+import de.zabuza.beedlebot.exceptions.DriverStorageUnsupportedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.html5.SessionStorage;
-import org.openqa.selenium.html5.WebStorage;
 
-import de.zabuza.beedlebot.exceptions.DriverStorageUnsupportedException;
 import de.zabuza.beedlebot.logging.LoggerUtil;
 import de.zabuza.sparkle.webdriver.IWrapsWebDriver;
 
@@ -49,7 +47,7 @@ public final class DataBridge {
 	 * <a href="https://www.w3schools.com/html/html5_webstorage.asp">HTML 5
 	 * Webstorage technology</a>.
 	 */
-	private final SessionStorage mStorage;
+	private final JavaScriptSessionStorage mStorage;
 
 	/**
 	 * Creates a new instance of a data bridge which is capable of communicating
@@ -63,23 +61,20 @@ public final class DataBridge {
 	 *             If the given driver does not support <a href=
 	 *             "https://www.w3schools.com/html/html5_webstorage.asp">HTML 5
 	 *             Webstorage technology</a>. That is the case if the driver
-	 *             does not implement {@link WebStorage} nor
-	 *             {@link JavascriptExecutor}.
+	 *             does not implement {@link JavascriptExecutor}.
 	 */
 	public DataBridge(final WebDriver driver) throws DriverStorageUnsupportedException {
 		// Get storage from driver
-		SessionStorage sessionStorage = null;
+		JavaScriptSessionStorage sessionStorage = null;
 
 		// Get the underlying raw driver
 		WebDriver rawDriver = driver;
-		while (rawDriver instanceof IWrapsWebDriver) {
-			rawDriver = ((IWrapsWebDriver) rawDriver).getRawDriver();
+		while (rawDriver instanceof IWrapsWebDriver nestedDriver) {
+			rawDriver = nestedDriver.getRawDriver();
 		}
 
-		if (rawDriver instanceof WebStorage) {
-			sessionStorage = ((WebStorage) rawDriver).getSessionStorage();
-		} else if (rawDriver instanceof JavascriptExecutor) {
-			sessionStorage = new JavaScriptSessionStorage((JavascriptExecutor) rawDriver);
+		if (rawDriver instanceof JavascriptExecutor executor) {
+			sessionStorage = new JavaScriptSessionStorage(executor);
 		}
 
 		if (sessionStorage == null) {

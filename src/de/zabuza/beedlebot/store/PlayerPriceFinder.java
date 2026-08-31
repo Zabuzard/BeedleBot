@@ -2,6 +2,7 @@ package de.zabuza.beedlebot.store;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 
@@ -111,7 +112,7 @@ public final class PlayerPriceFinder {
 			queryBuilder.append(StoreUtil.QUERY_ALLOCATION);
 			queryBuilder.append(encodedItemName);
 
-			final URL url = new URL(queryBuilder.toString());
+			final URL url = URI.create(queryBuilder.toString()).toURL();
 			final JsonStreamParser parser = new JsonStreamParser(new InputStreamReader(url.openStream()));
 
 			if (!parser.hasNext()) {
