@@ -66,6 +66,11 @@ public final class CentralTradersDepotNavigator {
 	 */
 	private static final String SPELL_CATEGORY_ANCHOR = "Kategorie: Anwendbare Items und Zauber";
 	/**
+	 * Partial link text of the anchor that opens the signet ring item
+	 * category.
+	 */
+	private static final String SIGNET_RING_CATEGORY_ANCHOR = "Kategorie: Siegelringe";
+	/**
 	 * The chat object to use for focusing the chat input.
 	 */
 	private final IChat mChat;
@@ -110,6 +115,7 @@ public final class CentralTradersDepotNavigator {
 		this.mItemCategoryToAnchorNeedle.put(EItemCategory.ATTACK_WEAPON, ATTACK_WEAPON_CATEGORY_ANCHOR);
 		this.mItemCategoryToAnchorNeedle.put(EItemCategory.DEFENSE_WEAPON, DEFENSE_WEAPON_CATEGORY_ANCHOR);
 		this.mItemCategoryToAnchorNeedle.put(EItemCategory.AMULET, AMULET_CATEGORY_ANCHOR);
+		this.mItemCategoryToAnchorNeedle.put(EItemCategory.SIGNET_RING, SIGNET_RING_CATEGORY_ANCHOR);
 		this.mItemCategoryToAnchorNeedle.put(EItemCategory.SPELL, SPELL_CATEGORY_ANCHOR);
 		this.mItemCategoryToAnchorNeedle.put(EItemCategory.MISCELLANEOUS, MISCELLANEOUS_CATEGORY_ANCHOR);
 	}

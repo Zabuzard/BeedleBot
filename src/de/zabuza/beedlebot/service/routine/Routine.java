@@ -316,6 +316,8 @@ public final class Routine {
 				} else if (this.mCurrentCategory == EItemCategory.SPELL) {
 					this.mCurrentCategory = EItemCategory.MISCELLANEOUS;
 				} else if (this.mCurrentCategory == EItemCategory.MISCELLANEOUS) {
+					this.mCurrentCategory = EItemCategory.SIGNET_RING;
+				} else if (this.mCurrentCategory == EItemCategory.SIGNET_RING) {
 					this.mCurrentCategory = EItemCategory.ATTACK_WEAPON;
 				} else if (this.mCurrentCategory == EItemCategory.ATTACK_WEAPON) {
 					this.mCurrentCategory = EItemCategory.DEFENSE_WEAPON;

@@ -26,5 +26,9 @@ public enum EItemCategory {
 	/**
 	 * Category of spell items.
 	 */
-	SPELL
+	SPELL,
+	/**
+	 * Category of signet rings.
+	 */
+	SIGNET_RING,
 }
