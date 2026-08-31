@@ -30,7 +30,7 @@ public final class WaitForDeliveryTask implements ITask {
 	/**
 	 * The content of a correct item delivery message.
 	 */
-	private static final String MESSAGE_DELIVERY_CONTENT = "Eine Händler-Karawane kommt aus dem Süden und liefert neue Waren an.";
+	private static final String MESSAGE_DELIVERY_CONTENT = "Eine HÃ¤ndler-Karawane kommt aus dem SÃ¼den und liefert neue Waren an.";
 	/**
 	 * The chat to use for accessing message contents.
 	 */
