@@ -48,7 +48,7 @@ public final class StandardShopPriceFinder {
 	/**
 	 * The URL of the service to use.
 	 */
-	private static final String SERVER_URL = "http://www.fwwiki.de/index.php";
+	private static final String SERVER_URL = "https://www.fwwiki.de/index.php";
 	/**
 	 * Pattern that matches symbols to strip from integers before parsing them.
 	 */
@@ -120,8 +120,8 @@ public final class StandardShopPriceFinder {
 				}
 
 				// The item is a pet
-				if (line.indexOf(CONTENT_IGNORE_PET_PATTERN) != -1) {
-					return Optional.of(Integer.valueOf(0));
+				if (line.contains(CONTENT_IGNORE_PET_PATTERN)) {
+					return Optional.of(0);
 				}
 
 				startIndex = line.indexOf(CONTENT_START_PATTERN);
@@ -151,7 +151,7 @@ public final class StandardShopPriceFinder {
 
 				if (endIndex != -1) {
 					// Add beginning of line
-					shopPriceContent.append(line.substring(0, endIndex));
+					shopPriceContent.append(line, 0, endIndex);
 					break;
 				}
 				// Add whole line
@@ -163,6 +163,9 @@ public final class StandardShopPriceFinder {
 
 			// Price extracted, format it
 			final String shopPriceText = shopPriceContent.toString();
+			if ("?".equals(shopPriceText)) {
+				return Optional.empty();
+			}
 			shopPrice = Integer.valueOf(shopPriceText.replaceAll(STRIP_INTEGER_PATTERN, ""));
 		} catch (final IOException e) {
 			throw new StandardShopPriceServiceUnavailableException(e);

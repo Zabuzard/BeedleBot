@@ -51,7 +51,7 @@ public final class AnalyzeTask implements ITask {
 	/**
 	 * The prefix of when the cost of an item follows.
 	 */
-	private static final String CONTENT_ITEM_COST_PRE = "für ";
+	private static final String CONTENT_ITEM_COST_PRE = "fÃ¼r ";
 	/**
 	 * The suffix of when the cost of an item ends.
 	 */
@@ -76,11 +76,11 @@ public final class AnalyzeTask implements ITask {
 	/**
 	 * The prefix of when the content follows.
 	 */
-	private static final String CONTENT_NEEDLE_PRE = "Zurück";
+	private static final String CONTENT_NEEDLE_PRE = "ZurÃ¼ck";
 	/**
 	 * The suffix of when the content ends.
 	 */
-	private static final String CONTENT_NEEDLE_SUC = "Zurück";
+	private static final String CONTENT_NEEDLE_SUC = "ZurÃ¼ck";
 	/**
 	 * The driver to use for accessing browser contents.
 	 */
@@ -281,7 +281,10 @@ public final class AnalyzeTask implements ITask {
 				throw new ItemLineWrongFormatException(itemContentLine);
 			}
 
-			final int id = Integer.parseInt(purchaseAnchor.substring(idStart + CONTENT_ID_PRE.length()));
+			final int actualIdStart = purchaseAnchor.indexOf(CONTENT_ID_PRE) + CONTENT_ID_PRE.length();
+			final int actualIdEnd = purchaseAnchor.indexOf("&amp;", actualIdStart);
+			final String idString = purchaseAnchor.substring(actualIdStart, actualIdEnd == -1 ? purchaseAnchor.length() : actualIdEnd);
+			final int id = Integer.parseInt(idString);
 
 			// Extract is magical state
 			final boolean isMagical = itemContentLine.contains(CONTENT_IS_MAGICAL_PRESENCE);

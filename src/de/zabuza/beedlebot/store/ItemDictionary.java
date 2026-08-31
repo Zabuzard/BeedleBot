@@ -184,7 +184,7 @@ public final class ItemDictionary {
 		this.mItemNamePatterns.put(".*Cocktail.*", "Cocktail von Beispielsponsor");
 		this.mItemNamePatterns.put(".*Tee.*", "Tee von Beispielsponsor");
 		this.mItemNamePatterns.put(".*Zaubertruhe von.*", "Zaubertruhe von Beispieluser");
-		this.mItemNamePatterns.put(".*Rückangriff.*", "starker Rückangriffszauber");
+		this.mItemNamePatterns.put(".*RÃ¼ckangriff.*", "starker RÃ¼ckangriffszauber");
 		this.mItemNamePatterns.put(".*Tagebuch.*", "Tagebuch Tag 125");
 		this.mItemNamePatterns.put(".*Notizblock.*", "Notizblock");
 		this.mItemNamePatterns.put(".*Freundschaftsring.*", "Freundschaftsring");
@@ -216,12 +216,12 @@ public final class ItemDictionary {
 		this.mItemsRegisteredForPlayer.add("Seelenkugel");
 		this.mItemsRegisteredForPlayer.add("toter Blutwurm");
 		this.mItemsRegisteredForPlayer.add("Onlo-Knochen");
-		this.mItemsRegisteredForPlayer.add("tote Wüstenmaus");
+		this.mItemsRegisteredForPlayer.add("tote WÃ¼stenmaus");
 		this.mItemsRegisteredForPlayer.add("Pfeil");
 		this.mItemsRegisteredForPlayer.add("Phasenkugel");
-		this.mItemsRegisteredForPlayer.add("Zauberbrötchen");
+		this.mItemsRegisteredForPlayer.add("ZauberbrÃ¶tchen");
 		this.mItemsRegisteredForPlayer.add("Holz");
-		this.mItemsRegisteredForPlayer.add("Ölfass");
+		this.mItemsRegisteredForPlayer.add("Ã–lfass");
 		this.mItemsRegisteredForPlayer.add("Artefakt von Dranar");
 		this.mItemsRegisteredForPlayer.add("blauer Kristall");
 		this.mItemsRegisteredForPlayer.add("roter Bergstein");
@@ -248,6 +248,8 @@ public final class ItemDictionary {
 	 * shop prices.
 	 */
 	private void initializeStandardShopPrices() {
-		this.mStandardShopPrices.put("altes Relikt", Integer.valueOf(0));
+		this.mStandardShopPrices.put("altes Relikt", 0);
+		this.mStandardShopPrices.put("Eimer des Auftragshauses", 0);
+		this.mStandardShopPrices.put("GefÃ¤ÃŸgelee", 0);
 	}
 }

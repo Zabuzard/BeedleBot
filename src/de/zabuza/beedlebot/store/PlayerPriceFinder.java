@@ -96,6 +96,9 @@ public final class PlayerPriceFinder {
 			return Optional.of(new PlayerPrice(price, timestampNow, world));
 		}
 
+		// MPLogger service is currently offline
+		return Optional.of(new PlayerPrice(0, System.currentTimeMillis(), world));
+		/*
 		final int worldAsNumber = StoreUtil.worldToNumber(world);
 		final String encodedItemName = StoreUtil.encodeUtf8(itemName);
 		try {
@@ -134,5 +137,6 @@ public final class PlayerPriceFinder {
 		} catch (final IOException e) {
 			throw new PlayerPriceServiceUnavailableException(e);
 		}
+		*/
 	}
 }

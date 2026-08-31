@@ -119,6 +119,8 @@ public final class PurchaseRegister {
 			this.mLogger.logDebug("Register purchase: " + item);
 		}
 
+		// Service is currently unavailable
+		/*
 		try {
 			final URL url = URI.create(StoreUtil.SERVER_URL + StoreUtil.BEEDLE_BOT_SERVICE + SERVER_FILE).toURL();
 			final HashMap<String, String> arguments = new HashMap<>();
@@ -151,5 +153,6 @@ public final class PurchaseRegister {
 		} catch (final MalformedURLException e) {
 			throw new PurchaseRegisterServiceUnavailableException(e);
 		}
+		*/
 	}
 }
