@@ -435,11 +435,11 @@ function toBoolean(text) {
 }
 
 function trunc(text, length, useWordBoundary ){
-    if (text.length <= length) {
+	if (text.length <= length) {
 		return text;
 	}
 
-    var subText = text.substr(0, length - 1);
+	var subText = text.substr(0, length - 1);
 	if (useWordBoundary) {
 		var lastIndexOfSpace = subText.lastIndexOf(' ');
 		var lastIndexOfHyphen = subText.lastIndexOf('-');
@@ -452,7 +452,7 @@ function trunc(text, length, useWordBoundary ){
 		}
 	}
 
-    return subText + '&hellip;';
+	return subText + '&hellip;';
 };
 
 /*
@@ -469,7 +469,7 @@ function numberFormat(x) {
  * Fires a notification sound.
  */
 function fireNotification() {
-	notificationSound.play();
+	//notificationSound.play();
 }
 
 /*
@@ -711,9 +711,9 @@ function createPurchaseTabLayout() {
 					<tr id="beedleItemHeader">\
 						<th class="beedleItemName"></td>\
 						<th id="beedleTotalCostCell" class="beedleItemCost" title="' +
-							localization.totalCost + '">0</td>\
+		localization.totalCost + '">0</td>\
 						<th id="beedleTotalProfitCell" class="beedleItemProfit" title="' +
-							localization.totalProfit + '">+0</td>\
+		localization.totalProfit + '">+0</td>\
 					</tr>\
 				</thead>\
 				<tbody>\
@@ -753,11 +753,11 @@ function createMiscellaneousTabLayout() {
 function createNavigationContent() {
 	$('#beedleNavigation').append('<div id="beedleTabNavigation">\
 			<button class="beedleTab" id="purchaseTab">' +
-				localization.purchaseTab + '</button>\
+		localization.purchaseTab + '</button>\
 			<button class="beedleTab" id="sellTab">' +
-				localization.sellTab + '</button>\
+		localization.sellTab + '</button>\
 			<button class="beedleTab" id="miscellaneousTab">' +
-				localization.miscellaneousTab + '</button>\
+		localization.miscellaneousTab + '</button>\
 		</div>');
 
 	// Add click event handler
@@ -807,11 +807,11 @@ function createStatusPanelContent() {
 			<tr>\
 				<td id="statusActivationOnCell">\
 					<img id="activationOn" class="activationIsOn" title="' + localization.activationStart.on +
-						'" alt="start" src="' + images.start.on + '"></img>\
+		'" alt="start" src="' + images.start.on + '"></img>\
 				</td>\
 				<td id="statusActivationOffCell">\
 					<img id="activationOff" class="activationIsOff" title="' + localization.activationStop.off +
-						'" alt="stop" src="' + images.stop.off + '"></img>\
+		'" alt="stop" src="' + images.stop.off + '"></img>\
 				</td>\
 			</tr>\
 		</table>');
@@ -861,12 +861,12 @@ function createMiscellaneousTabContent() {
  */
 function createProblemPanelContent() {
 	$('#beedleProblemDescription').append('<span id="beedleProblemDescriptionText">' +
-				localization.problemDescription +
-			':</span>');
+		localization.problemDescription +
+		':</span>');
 
 	$('#beedleProblemDetails').append('<textarea id="beedleProblemDetailsArea" placeholder="' +
-				localization.problemDetailsPlaceholder + '" readonly>' +
-			'</textarea>');
+		localization.problemDetailsPlaceholder + '" readonly>' +
+		'</textarea>');
 }
 
 /*
@@ -1175,8 +1175,8 @@ function updateItemPanel() {
 		$('#beedleItemPanelLayout tbody').prepend('<tr class="beedleItemEntryRow'
 			+ notCachedClass + consideredForPlayerClass + '">\
 				<td class="beedleItemName" title="' + itemName + '">' +
-					itemNameTruncated + '<input type="hidden" value="' +
-					itemTimestamp + '">\
+			itemNameTruncated + '<input type="hidden" value="' +
+			itemTimestamp + '">\
 				</td>\
 				<td class="beedleItemCost">' + numberFormat(itemCost) + '</td>\
 				<td class="beedleItemProfit">' + numberFormat(itemProfit) + '</td>\
@@ -1348,17 +1348,17 @@ itemEntryFormat.entrySeparator = ';';
 
 // Image ressource constants
 var images = {};
-images.icon = 'http://file1.npage.de/005000/36/bilder/webicon.png';
+images.icon = 'https://i.vgy.me/66AKct.png';
 images.start = {};
-images.start.on = 'http://file1.npage.de/005000/36/bilder/webstarton.png';
-images.start.off = 'http://file1.npage.de/005000/36/bilder/webstartoff.png';
+images.start.on = 'https://i.vgy.me/973NC6.png';
+images.start.off = 'https://i.vgy.me/4eE7YQ.png';
 images.stop = {};
-images.stop.on = 'http://file1.npage.de/005000/36/bilder/webstopon.png';
-images.stop.off = 'http://file1.npage.de/005000/36/bilder/webstopoff.png';
-images.lifepoints = 'http://file1.npage.de/005000/36/bilder/weblifepoints.png';
-images.gold = 'http://file1.npage.de/005000/36/bilder/webgold.png';
-images.inventory = 'http://file1.npage.de/005000/36/bilder/webinventory.png';
-images.waitingTime = 'http://file1.npage.de/005000/36/bilder/webwaitingtime.png';
+images.stop.on = 'https://i.vgy.me/oBMWfP.png';
+images.stop.off = 'https://i.vgy.me/ssEiOV.png';
+images.lifepoints = 'https://i.vgy.me/2wRxYb.png';
+images.gold = 'https://i.vgy.me/RAxrB3.png';
+images.inventory = 'https://i.vgy.me/YGKi8Y.png';
+images.waitingTime = 'https://i.vgy.me/09O8ma.png';
 
 // Localization constants
 var localization = {};
@@ -1394,10 +1394,10 @@ var interfaceHeightSpacing = 1;
 var interfaceWidthSpacing = 1;
 
 // Notification sound
-var notificationSound = document.createElement('audio');
-notificationSound.src = 'http://zabuza.square7.ch/freewar/notifier/notification1.mp3';
-notificationSound.preload = 'auto';
-notificationSound.volume = 0.5;
+//var notificationSound = document.createElement('audio');
+//notificationSound.src = 'http://zabuza.square7.ch/freewar/notifier/notification1.mp3';
+//notificationSound.preload = 'auto';
+//notificationSound.volume = 0.5;
 
 // Load the web user interface
 loadInterface();
