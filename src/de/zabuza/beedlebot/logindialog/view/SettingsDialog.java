@@ -24,7 +24,7 @@ import de.zabuza.sparkle.webdriver.EBrowser;
 
 /**
  * Dialog window for changing the settings of the tool.
- * 
+ *
  * @author Zabuza {@literal <zabuza.dev@gmail.com>}
  *
  */
@@ -153,10 +153,18 @@ public final class SettingsDialog extends JDialog {
 	 * The trailer panel of the dialog.
 	 */
 	private JPanel mTrailerPanel;
+	/**
+	 * Select user profile button of the dialog for browsers.
+	 */
+	private JButton mUserProfileBtn;
+	/**
+	 * The browser user profile input field.
+	 */
+	private JTextField mUserProfileField;
 
 	/**
 	 * Creates a new settings dialog window.
-	 * 
+	 *
 	 * @param owner
 	 *            The owning frame of this dialog
 	 */
@@ -170,7 +178,7 @@ public final class SettingsDialog extends JDialog {
 
 	/**
 	 * Adds an action listener to the given browser binary selection action.
-	 * 
+	 *
 	 * @param listener
 	 *            Listener to add
 	 */
@@ -180,7 +188,7 @@ public final class SettingsDialog extends JDialog {
 
 	/**
 	 * Adds an action listener to the given browser driver selection action.
-	 * 
+	 *
 	 * @param browser
 	 *            Browser to add listener to its corresponding driver selection
 	 *            action
@@ -208,7 +216,7 @@ public final class SettingsDialog extends JDialog {
 
 	/**
 	 * Adds an action listener to the cancel action
-	 * 
+	 *
 	 * @param listener
 	 *            Listener to add
 	 */
@@ -218,7 +226,7 @@ public final class SettingsDialog extends JDialog {
 
 	/**
 	 * Adds an action listener to the save action
-	 * 
+	 *
 	 * @param listener
 	 *            Listener to add
 	 */
@@ -227,8 +235,19 @@ public final class SettingsDialog extends JDialog {
 	}
 
 	/**
+	 * Adds an action listener to the given browser user binary selection
+	 * action.
+	 *
+	 * @param listener
+	 *            Listener to add
+	 */
+	public void addListenerToUserProfileSelectionAction(final ActionListener listener) {
+		this.mUserProfileBtn.addActionListener(listener);
+	}
+
+	/**
 	 * Gets the binary field.
-	 * 
+	 *
 	 * @return The binary field
 	 */
 	public JTextField getBinaryField() {
@@ -237,7 +256,7 @@ public final class SettingsDialog extends JDialog {
 
 	/**
 	 * Gets the driver field of the corresponding given browser.
-	 * 
+	 *
 	 * @param browser
 	 *            Browser to get its driver field
 	 * @return The driver field corresponding to the given browser
@@ -261,8 +280,17 @@ public final class SettingsDialog extends JDialog {
 	}
 
 	/**
+	 * Gets the user profile field.
+	 *
+	 * @return The user profile field
+	 */
+	public JTextField getUserProfileField() {
+		return this.mUserProfileField;
+	}
+
+	/**
 	 * Enables or disables all elements of the dialog.
-	 * 
+	 *
 	 * @param enabled
 	 *            Whether the elements should be enabled or disabled
 	 */
@@ -274,7 +302,7 @@ public final class SettingsDialog extends JDialog {
 
 	/**
 	 * Initialize the contents of the view.
-	 * 
+	 *
 	 * @param owner
 	 *            The owning frame of this dialog
 	 */
@@ -325,6 +353,11 @@ public final class SettingsDialog extends JDialog {
 		this.mBinaryBtn.setBounds(290, 30, 80, 20);
 		this.mBrowserPanel.add(this.mBinaryBtn);
 		this.mElements.add(this.mBinaryBtn);
+
+		this.mUserProfileBtn = new JButton(SELECT_TITLE);
+		this.mUserProfileBtn.setBounds(290, 60, 80, 20);
+		this.mBrowserPanel.add(this.mUserProfileBtn);
+		this.mElements.add(this.mUserProfileBtn);
 
 		this.mSaveBtn = new JButton("Save");
 		this.mSaveBtn.setBounds((FRAME_WIDTH / 2) - 100, 345, 80, 20);
@@ -382,6 +415,13 @@ public final class SettingsDialog extends JDialog {
 		this.mBrowserPanel.add(this.mBinaryField);
 		this.mElements.add(this.mBinaryField);
 		this.mBinaryField.setColumns(DEFAULT_FIELD_COLUMNS);
+
+		this.mUserProfileField = new JTextField();
+		this.mUserProfileField.setHorizontalAlignment(SwingConstants.LEFT);
+		this.mUserProfileField.setBounds(80, 60, 200, 20);
+		this.mBrowserPanel.add(this.mUserProfileField);
+		this.mElements.add(this.mUserProfileField);
+		this.mUserProfileField.setColumns(DEFAULT_FIELD_COLUMNS);
 	}
 
 	/**
@@ -423,6 +463,12 @@ public final class SettingsDialog extends JDialog {
 		mBinaryLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
 		mBinaryLbl.setBounds(10, 30, 60, 14);
 		this.mBrowserPanel.add(mBinaryLbl);
+
+		final JLabel mUserProfileLbl = new JLabel("Profile:");
+		mUserProfileLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		mUserProfileLbl.setFont(new Font(DEFAULT_FONT, Font.BOLD, DEFAULT_FONT_SIZE + 1));
+		mUserProfileLbl.setBounds(10, 60, 60, 14);
+		this.mBrowserPanel.add(mUserProfileLbl);
 	}
 
 	/**
