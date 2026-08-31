@@ -42,9 +42,8 @@ public final class JavaScriptSessionStorage {
 	}
 
 	public String getItem(final String key) {
-		final String script = String.format("return " + VAR_SESSION_STORAGE + ".getItem('%s')" + SYMBOL_END_COMMAND,
-				key);
-		final String item = (String) this.mExecutor.executeScript(script);
+		final String script = "return " + VAR_SESSION_STORAGE + ".getItem(arguments[0])" + SYMBOL_END_COMMAND;
+		final String item = (String) this.mExecutor.executeScript(script, key);
 		return item;
 	}
 
@@ -54,7 +53,7 @@ public final class JavaScriptSessionStorage {
 		final int size = size();
 		for (int i = 0; i < size; i++) {
 			final String getKeyNameScript = String
-					.format("return " + VAR_SESSION_STORAGE + ".key(%d)" + SYMBOL_END_COMMAND, Integer.valueOf(i));
+					.format("return " + VAR_SESSION_STORAGE + ".key(%d)" + SYMBOL_END_COMMAND, i);
 			final String key = (String) this.mExecutor.executeScript(getKeyNameScript);
 			keys.add(key);
 		}
@@ -63,15 +62,14 @@ public final class JavaScriptSessionStorage {
 	}
 
 	public String removeItem(final String key) {
-		final String script = String.format(VAR_SESSION_STORAGE + ".removeItem('%s')" + SYMBOL_END_COMMAND, key);
-		this.mExecutor.executeScript(script);
+		final String script = VAR_SESSION_STORAGE + ".removeItem(arguments[0])" + SYMBOL_END_COMMAND;
+		this.mExecutor.executeScript(script, key);
 		return null;
 	}
 
 	public void setItem(final String key, final String value) {
-		final String script = String.format(VAR_SESSION_STORAGE + ".setItem('%s', '%s')" + SYMBOL_END_COMMAND, key,
-				value);
-		this.mExecutor.executeScript(script);
+		final String script = VAR_SESSION_STORAGE + ".setItem(arguments[0], arguments[1])" + SYMBOL_END_COMMAND;
+		this.mExecutor.executeScript(script, key, value);
 	}
 
 	public int size() {

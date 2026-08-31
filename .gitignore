@@ -4,3 +4,4 @@
 *.iml
 config.ini
 log.html
+*.ser

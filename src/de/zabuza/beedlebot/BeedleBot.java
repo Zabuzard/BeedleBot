@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import de.zabuza.beedlebot.databridge.DataBridge;
 import de.zabuza.beedlebot.databridge.io.FetchDataService;
