@@ -301,7 +301,8 @@ public final class AnalyzeTask implements ITask {
 				if (playerPrice.isPresent()) {
 					itemProfit = playerPrice.get().getPrice() - itemCost;
 				} else {
-					throw new NoPlayerPriceThoughConsideredException(itemName);
+					itemProfit = 0; // The Player-Price system is currently not available
+					// throw new NoPlayerPriceThoughConsideredException(itemName);
 				}
 			}
 
