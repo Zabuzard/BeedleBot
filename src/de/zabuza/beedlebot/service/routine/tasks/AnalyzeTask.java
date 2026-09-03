@@ -47,7 +47,7 @@ public final class AnalyzeTask implements ITask {
 	/**
 	 * The needle that represents if present whether an item is magic or not.
 	 */
-	private static final String CONTENT_IS_MAGICAL_PRESENCE = "class=\"itemmagic\"";
+	private static final String CONTENT_IS_MAGICAL_PRESENCE = "class=\"itemmagic";
 	/**
 	 * The prefix of when the cost of an item follows.
 	 */
