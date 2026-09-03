@@ -69,7 +69,7 @@ public final class Store {
 			return false;
 		}
 
-		return item.getProfit() > 0;
+		return item.getProfit() > 5;
 	}
 
 	/**
