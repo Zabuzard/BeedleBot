@@ -252,5 +252,6 @@ public final class ItemDictionary {
 		this.mStandardShopPrices.put("altes Relikt", 0);
 		this.mStandardShopPrices.put("Eimer des Auftragshauses", 0);
 		this.mStandardShopPrices.put("Gefäßgelee", 0);
+		this.mStandardShopPrices.put("mächtiger Starreschutz-Zauber", 55);
 	}
 }
