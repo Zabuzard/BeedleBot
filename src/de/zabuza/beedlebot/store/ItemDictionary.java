@@ -204,6 +204,7 @@ public final class ItemDictionary {
 
 		// Dummy item used for items that are inexistent
 		this.mItemNamePatterns.put(".*Geist von .*", "rostiger Werkzeugkoffer");
+		this.mItemNamePatterns.put(".*Pflanzendünger:.*", "rostiger Werkzeugkoffer");
 	}
 
 	/**
@@ -253,5 +254,6 @@ public final class ItemDictionary {
 		this.mStandardShopPrices.put("Eimer des Auftragshauses", 0);
 		this.mStandardShopPrices.put("Gefäßgelee", 0);
 		this.mStandardShopPrices.put("mächtiger Starreschutz-Zauber", 55);
+		this.mStandardShopPrices.put("Kieselstein", 0);
 	}
 }
