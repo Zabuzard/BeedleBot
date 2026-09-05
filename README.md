@@ -11,11 +11,11 @@ interface.
 When launching, the login window shows and allows entering credentials, the world (Freewar server),
 as well as the desired browser to use.
 
-![Login](https://i.vgy.me/lpVhu5.jpg)
-
 Clicking _Settings_ allows configuring details.
 
-![Settings](https://i.vgy.me/mwBwaN.jpg)
+| Login                                 | Settings                                 |
+|---------------------------------------|------------------------------------------|
+| ![Login](https://i.vgy.me/lpVhu5.jpg) | ![Settings](https://i.vgy.me/mwBwaN.jpg) |
 
 It is necessary to enter the executable (binary) and the Selenium driver (Driver) of the browser to
 use. For Firefox, optionally, a User Profile can be given.
